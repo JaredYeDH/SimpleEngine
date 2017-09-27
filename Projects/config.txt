@@ -1,16 +1,7 @@
 Data
-<<<<<<< HEAD
 map 1501.map
-shape.wdf 49386FCE 54F3FC94 
-shape.wd3 DF749306 1BEC0D8A 
-=======
-map 1135.map
 shape.wdf A16A06FF 4FBA48B8 
 shape.wd3 72013AF5 F2FB1AFA 
-
-#shape.wdf 49386FCE 54F3FC94 
-#shape.wd3 DF749306 1BEC0D8A 
->>>>>>> little milestone archieved
 # 
 1501.map 建邺城
 
