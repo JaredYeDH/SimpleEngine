@@ -119,7 +119,7 @@ void Player::OnUpdate(double dt)
 					m_Box.x = d.x;
 					m_Box.y = d.y;
 					m_MoveList.pop_front();
-                    HandleMoveToCalled();
+                 //  HandleMoveToCalled();
 
 				}
 			}
@@ -130,19 +130,20 @@ void Player::OnUpdate(double dt)
 				SetDir(m_Dir);
 				m_Box.x = GetBoxX();
 				m_Box.y = GetBoxY();
-                HandleMoveToCalled();
+             // HandleMoveToCalled();
 
 			}
 			Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
 		}else
 		{
-            HandleMoveToCalled();
+           // HandleMoveToCalled();
 		}
 
 	}
 
 	m_PlayerAnimation[m_AnimationState]->OnUpdate(dt);
 	m_WeapAnimation[m_AnimationState]->OnUpdate(dt);
+    HandleMoveToCalled();
 }
 
 void Player::OnDraw(SpriteRenderer * renderer, int px,int py)

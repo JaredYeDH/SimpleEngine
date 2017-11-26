@@ -152,9 +152,20 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 	mapOffsetY = GMath::Clamp(mapOffsetY, -mHeight + screenHeight, 0);
 
 	// mGameMap->Draw(m_RendererPtr, mapOffsetX, mapOffsetY);
+    int startRow , endRow,startCol,endCol ;
+    startRow = playerY/240-3;
+    startRow = startRow<0?0:startRow;
+    endRow = playerY/240+3;
+    endRow = endRow>mRow?mRow:endRow;
 
-	for (int i = 0; i<mRow; i++) {
-		for (int j = 0; j<mCol; j++) {
+    startCol = playerX/320-3;
+    startCol = startCol<0?0:startCol;
+    endCol = playerX/320+3;
+    endCol = endCol>mCol?mCol:endCol;
+
+
+	for (int i = startRow; i<endRow; i++) {
+		for (int j = startCol; j<endCol; j++) {
 			renderer->DrawSprite(mMapTiles[i*mCol + j],
 				glm::vec2(j * 320 + mapOffsetX, i * 240 + mapOffsetY),
 				glm::vec2(320, 240),

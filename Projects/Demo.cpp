@@ -294,7 +294,7 @@ void Demo::Draw()
 		ImGui::ShowTestWindow(&show_test_window);
 	}
 
-	ImGui::Render();
+	//ImGui::Render();
 
 
 }
