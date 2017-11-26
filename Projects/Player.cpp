@@ -127,7 +127,7 @@ void Player::OnUpdate(double dt)
 			{
 				m_IsMove = false;
 				SetAnimationState(Player::Idle);
-				SetDir(m_Dir);
+				//SetDir(m_Dir);
 				m_Box.x = GetBoxX();
 				m_Box.y = GetBoxY();
              // HandleMoveToCalled();
@@ -191,15 +191,18 @@ void Player::ResetDirAll(int dir)
 
 void Player::ResetDir(int dir)
 {
-	m_PlayerAnimation[m_AnimationState]->Reset(dir);
-	m_WeapAnimation[m_AnimationState]->Reset(dir);
+    m_WeapAnimation[Idle]->Reset(dir);
+    m_WeapAnimation[Moving]->Reset(dir);
+    m_PlayerAnimation[Idle]->Reset(dir);
+    m_PlayerAnimation[Moving]->Reset(dir);
 }
 
 void Player::SetDir(int dir)
 {
-	m_PlayerAnimation[m_AnimationState]->SetCurrentGroup(dir);
-	m_WeapAnimation[m_AnimationState]->SetCurrentGroup(dir);
-    m_UpdateDelta=0;
+    m_WeapAnimation[Idle]->SetCurrentGroup(dir);
+    m_WeapAnimation[Moving]->SetCurrentGroup(dir);
+    m_PlayerAnimation[Idle]->SetCurrentGroup(dir);
+    m_PlayerAnimation[Moving]->SetCurrentGroup(dir);
 }
 
 

@@ -7,6 +7,9 @@
 #include "Environment.h"
 #include "Demo.h"
 
+#include "include/InputHandler.h"
+
+
 
 GameMap::GameMap(uint32 mapId)
 { 	/*读取配置*/
@@ -76,7 +79,7 @@ GameMap::GameMap(uint32 mapId)
 			}
 		}
 	}
-	mAstar = new Astar(mCellWidth, mCellHeight, mCell);
+	//mAstar = new Astar(mCellWidth, mCellHeight, mCell);
 
 	// std::ofstream outfile("a.map");
 	// for (int y = 0; y < mCellHeight; y++) 
@@ -121,13 +124,47 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 
 	// 	13 ，35
 	// 115，20
-	if (mAstar->PathFinding(sx, sy, ex, ey))
-	{
-		return mAstar->GetMoveList();
+	// if (mAstar->PathFinding(sx, sy, ex, ey))
+	// {
+	// 	return mAstar->GetMoveList();
+	// }
+	// else {
+	// 	return{ };
+	// }
+	int dimension = mCellHeight<mCellWidth? mCellWidth:mCellHeight;
+	SquareGraph graph(dimension);
+	for (int y = 0; y < dimension; y++)
+	{	
+		for (int x = 0; x < dimension; x++)
+		{
+			if(x>=mCellWidth || y >= mCellHeight)
+			{
+				graph.setCellValue(std::make_pair(y,x),'X');
+				continue;
+			}
+			if (mCell[x][y] >= 1)
+			{
+				graph.setCellValue(std::make_pair(y,x),'X');
+			}else
+			{
+				graph.setCellValue(std::make_pair(y,x),' ');
+			}
+		}
 	}
-	else {
-		return{ };
+	graph.setFirstRobotPos(std::make_pair(sy,sx));
+	graph.setSecondRobotPos(std::make_pair(ey,ex));
+	std::vector<Node> path = graph.executeAStar();
+	graph.printPath(path);
+
+	std::list<Pos> moveList;
+	moveList.clear();
+	for(auto i=path.begin(); i != path.end(); i++){
+		Node node = *i;
+		//cout << "node : (" << node.x << "," << node.y << ")" << endl;
+        moveList.push_back(Pos(node.y,node.x));
 	}
+
+	return moveList;
 
 }
 

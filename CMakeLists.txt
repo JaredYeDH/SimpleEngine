@@ -15,7 +15,7 @@ endif()
 add_definitions(-DGLEW_STATIC)
 option(glew-cmake_BUILD_SHARED "" OFF)
 add_subdirectory(external/glew-cmake)
-include_directories(external/glew-cmake/include external/glew-cmake/src)
+include_directories(external/glew-cmake/include external/glew-cmake/src Astar)
 
 # adding glfw
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Do not build the GLFW example programs" FORCE)
@@ -216,6 +216,12 @@ external/imgui/stb_textedit.h
 external/imgui/stb_truetype.h
 imgui_impl_glfw_gl3.h
 imgui_impl_glfw_gl3.cpp
+Astar/include/Node.h
+Astar/include/InputHandler.h
+Astar/include/SquareGraph.h
+Astar/Node.cpp
+Astar/InputHandler.cpp
+Astar/SquareGraph.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
