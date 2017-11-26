@@ -21,6 +21,7 @@ public:
 	Player(int PlayerAnimationId,int WeapAnimationId);
 	~Player();
 	void OnUpdate(double dt);
+    void HandleMoveToCalled();
 	
 	void ResetDirAll(int dir);
 	void ResetDir(int dir);
@@ -31,6 +32,7 @@ public:
 	
 	void OnDraw(SpriteRenderer * renderer, int px,int py);
 	void SetPos(double x, double y);
+    void SetBox( );
 	double GetX() { return m_Pos.x; }
 	double GetY() { return m_Pos.y; }
 
@@ -55,7 +57,10 @@ private:
 	int m_AnimationState;
 	int m_Dir;
 	Pos m_Pos;
+	Pos m_Box;
+	bool m_MoveToCalled;
 	std::list<Pos> m_MoveList;
+	std::list<Pos> m_BackupMoveList;
 	double m_UpdateDelta;
 	bool m_IsMove;
 	

@@ -5,7 +5,7 @@
 #ifdef _WIN32
 #define WORK_DIR "F:/Github/SimpleEngine"
 #else
-#define WORK_DIR "/Users/oceancx/SimpleEngine"
+#define WORK_DIR "/Users/oceancx/MHXY/SimpleEngine"
 #endif
 
 

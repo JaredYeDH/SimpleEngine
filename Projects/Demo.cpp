@@ -43,6 +43,7 @@ Demo::Demo()
 	m_StriderPtr = new Player(1, 120);
 	
 	m_StriderPtr->SetPos(300, 300);
+    m_StriderPtr->SetBox();
 
 	int birthPos[10][2] = 
 	{
@@ -62,6 +63,7 @@ Demo::Demo()
 	{
 		Player* player = new Player(1, 120);
 		player->SetPos(birthPos[i][0], birthPos[i][1]);
+        player->SetBox();
 		player->ResetDirAll(i % 8);
 		m_NPCs.push_back(player);
 		i++;
