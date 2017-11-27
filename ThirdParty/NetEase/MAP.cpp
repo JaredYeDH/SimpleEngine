@@ -427,17 +427,17 @@ namespace NetEase {
 		m_MapUnits[index].BitmapRGB24 = SOIL_load_image_from_memory(jpegData,tmpSize, &width, &height, 0,
 			SOIL_LOAD_RGB);
 		
-		int row = index / m_ColCount;
-		int col = index%m_ColCount;
-		uint8* pSrc = m_MapUnits[index].BitmapRGB24;
-		uint8* pDes = m_MapPixelsRGB24;
-		pDes += row * 240 * m_ColCount * 320 * 3 + col * 320 * 3;
-		for (int h = 0; h<240; h++) {
-			for (int w = 0; w<320 * 3; w++) {
-				*(pDes + w) = *pSrc++;
-			}
-			pDes += m_ColCount * 320 * 3;
-		}
+		// int row = index / m_ColCount;
+		// int col = index%m_ColCount;
+		// uint8* pSrc = m_MapUnits[index].BitmapRGB24;
+		// uint8* pDes = m_MapPixelsRGB24;
+		// pDes += row * 240 * m_ColCount * 320 * 3 + col * 320 * 3;
+		// for (int h = 0; h<240; h++) {
+		// 	for (int w = 0; w<320 * 3; w++) {
+		// 		*(pDes + w) = *pSrc++;
+		// 	}
+		// 	pDes += m_ColCount * 320 * 3;
+		// }
 
 		// sprintf(fname,"file2_%d.tga",index);
 		// SaveImageFile(fname,width,height,24,(char*)(m_MapPixelsRGB24+(row*320+col*240)*3));
@@ -446,11 +446,11 @@ namespace NetEase {
 		delete[] jpegData;
 		jpegData = nullptr;
 
-		// 		printf("width: %d height: %d\n",width,height );
+		// printf("width: %d height: %d\n",width,height );
 		// char name[50];
 		// sprintf(name,"out%d.jpg",index);
-		// 		SaveImageFile(name,width,height,24,(char*)m_MapUnits[index].BitmapRGB24);
-		// 	printf("JPEG%d读取完成！\n",index);
+		// SaveImageFile(name,width,height,24,(char*)m_MapUnits[index].BitmapRGB24);
+		// printf("JPEG%d读取完成！\n",index);
 		return true;
 	}
 
@@ -587,9 +587,9 @@ namespace NetEase {
 							int bmpIndex_y = (maskInfo.StartY+h)*m_MapWidth * 3;
 							int bmpIndex_x = (maskInfo.StartX+w) * 3;
 							int bmpIndex = bmpIndex_y + bmpIndex_x;
-							uint8 r = m_MapPixelsRGB24[bmpIndex];
-							uint8 g = m_MapPixelsRGB24[bmpIndex + 1];
-							uint8 b = m_MapPixelsRGB24[bmpIndex + 2];
+							uint8 r = 0x80; //= m_MapPixelsRGB24[bmpIndex];
+							uint8 g = 0x80;//= m_MapPixelsRGB24[bmpIndex + 1];
+							uint8 b = 0x80;//= m_MapPixelsRGB24[bmpIndex + 2];
 							pOutMaskBmp[h*maskInfo.Width + w] = ( 0x80 << 24 )| (b<< 16)| (g << 8 )| r ;
 						}
 						else {

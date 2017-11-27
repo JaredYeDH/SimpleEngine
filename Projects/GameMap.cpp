@@ -30,6 +30,7 @@ GameMap::GameMap(uint32 mapId)
 	printf("初始化GameMap %d %d ", mRow, mCol);
 
 	mMapTiles.clear();
+	/*
 	for (int i = 0; i<mXyqMap->m_UnitSize; i++)
 	{
 		mXyqMap->ReadUnit(i);
@@ -38,6 +39,8 @@ GameMap::GameMap(uint32 mapId)
 		// delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
 		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
 	}
+	*/
+
 
 	mMaskTiles.clear();
 	for (int i = 0; i<mXyqMap->m_MaskSize; i++)
@@ -47,8 +50,8 @@ GameMap::GameMap(uint32 mapId)
 		mMaskTiles.push_back(new Texture(mXyqMap->m_MaskInfos[i].Width,
 			mXyqMap->m_MaskInfos[i].Height,true, (uint8*)(mXyqMap->m_MaskInfos)[i].Data ));
 
-		// delete[] mXyqMap->m_MaskInfos[i].Data;
-		mXyqMap->m_MaskInfos[i].Data = nullptr;
+	//	 delete[] mXyqMap->m_MaskInfos[i].Data;
+//		mXyqMap->m_MaskInfos[i].Data = nullptr;
 	}
 
 	delete[] mXyqMap->m_MapPixelsRGB24;
@@ -203,6 +206,16 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 
 	for (int i = startRow; i<endRow; i++) {
 		for (int j = startCol; j<endCol; j++) {
+            int unit = i*mCol+j;
+
+
+            if(mMapTiles.find(unit) == mMapTiles.end())
+            {
+            	mXyqMap->ReadUnit(unit);
+                mMapTiles[unit] = new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[unit].BitmapRGB24);
+                mXyqMap->m_MapUnits[unit].BitmapRGB24 = nullptr;
+            }
+
 			renderer->DrawSprite(mMapTiles[i*mCol + j],
 				glm::vec2(j * 320 + mapOffsetX, i * 240 + mapOffsetY),
 				glm::vec2(320, 240),
