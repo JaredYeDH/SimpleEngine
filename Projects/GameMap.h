@@ -30,7 +30,7 @@ public:
 	int GetWidth(){return mWidth;}
 	int GetHeight(){return mHeight;}
 private:
-	std::vector<Texture *> mMapTiles;
+	std::map<int,Texture *> mMapTiles;
 	std::vector<Texture *> mMaskTiles;
 	// Texture mCellPic;
 	int mWidth;
