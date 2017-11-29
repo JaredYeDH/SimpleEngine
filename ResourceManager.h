@@ -29,6 +29,7 @@ public:
 
 	Sprite2 LoadWdfSprite(int wasId);
 	Sprite2 LoadWd3Sprite(int wasId);
+	void SaveWdfSprite(int wasId);
 
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     void LoadShader(const std::string vShaderFile, const std::string fShaderFile, const std::string gShaderFile, std::string name);

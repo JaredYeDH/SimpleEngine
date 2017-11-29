@@ -179,7 +179,7 @@ namespace NetEase {
 				DataHandler((char*)lineData, pBmpStart, pixelOffset, pixelLen);
 
 			}
-		//	 sprite.SaveImage(i);
+			 //sprite.SaveImage(i);
 		}
 		return sprite;
 	}

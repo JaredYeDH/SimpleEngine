@@ -164,6 +164,8 @@ Projects/GameMap.h
 Projects/Config.h
 Projects/config.txt
 Projects/Config.cpp
+Projects/AlphaSence.cpp
+Projects/AlphaSence.h
 InputManager.h
 InputManager.cpp
 Window.h

@@ -72,6 +72,11 @@ Sprite2 ResourceManager::LoadWdfSprite(int wasId)
 	return m_ShapeWdfPtr->LoadSprite(wasId);
 }
 
+void ResourceManager::SaveWdfSprite(int wasId)
+{
+    m_ShapeWdfPtr->LoadSprite(wasId).SaveImage(0);
+}
+
 Sprite2 ResourceManager::LoadWd3Sprite(int wasId)
 {
 	return m_ShapeWd3Ptr->LoadSprite(wasId);
