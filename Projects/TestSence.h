@@ -10,7 +10,7 @@
 #include "Environment.h"
 #include <array>
 
-class TestSence  :public IUpdateDraw
+class TestSence  : public IUpdateDraw
 {
 public:
 	TestSence();

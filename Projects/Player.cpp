@@ -35,6 +35,7 @@ m_MoveToCalled(false)
 	m_PlayerAnimation[Idle] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Idle])
 		);
+	ResourceManager::GetInstance()->SaveWdfSprite(s_PlayerAnimationTable[PlayerId][Idle]);
 
 	m_PlayerAnimation[Moving] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Moving])

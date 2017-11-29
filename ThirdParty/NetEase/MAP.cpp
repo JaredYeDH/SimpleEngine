@@ -474,6 +474,15 @@ namespace NetEase {
 		// file.seekg(Size,ios::cur);
 		return false;
 	}
+	
+	void MAP::SaveUnit(int index)
+	{
+		ReadUnit(index);
+		char filename[50];
+		sprintf(filename, "MAP_unit_%d.tga", index);
+
+		SaveImageFile(filename, 320,240, 24, (char*) m_MapUnits[index].BitmapRGB24);
+	}
 
 	void MAP::ReadUnit(int index)
 	{
@@ -597,12 +606,12 @@ namespace NetEase {
 						}
 					}
 				}
-				/*
-				char maskFileName[50];
-				sprintf(maskFileName, "mask_i%d.tga", index);
-				SaveImageFile(maskFileName, maskInfo.Width, maskInfo.Height, 32, (char*)pOutMaskBmp);
-				delete[] pOutMaskBmp;
-				*/
+				
+				//char maskFileName[50];
+				//sprintf(maskFileName, "mask_i%d.tga", index);
+				//SaveImageFile(maskFileName, maskInfo.Width, maskInfo.Height, 32, (char*)pOutMaskBmp);
+				//delete[] pOutMaskBmp;
+				
 			}
 		}
 	}

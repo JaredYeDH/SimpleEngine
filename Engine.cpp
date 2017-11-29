@@ -4,6 +4,7 @@
 #include "CubeBatch.h"
 #include "InputManager.h"
 #include "Projects/TestSence.h"
+#include "Projects/AlphaSence.h"
 #include "Projects/Demo.h"
 
 Engine::~Engine()
@@ -22,7 +23,7 @@ Engine::Engine()
 void Engine::Init()
 {
 	//mSence = new TestNetwork();
-	//mSence = new TestSence();
+	//mSence = new AlphaSence();
 	mSence = new Demo();
     InputManager::GetInstance()->SetKeyCallback();
     InputManager::GetInstance()->SetScrollCallback();

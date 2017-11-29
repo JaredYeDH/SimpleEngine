@@ -78,6 +78,7 @@ namespace NetEase {
 		MAP(string filename);
 		~MAP();
 		void ReadUnit(int index);
+		void SaveUnit(int index);
 		void ReadUnit(int row, int col) { ReadUnit(row*m_ColCount + col); };
 		void ReadMask(int index);
 		uint8* MapHandler(uint8* jpegData, uint32 inSize, uint32* outSize);

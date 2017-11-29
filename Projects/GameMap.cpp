@@ -212,6 +212,8 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
             if(mMapTiles.find(unit) == mMapTiles.end())
             {
             	mXyqMap->ReadUnit(unit);
+                //mXyqMap->SaveUnit(unit);
+
                 mMapTiles[unit] = new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[unit].BitmapRGB24);
                 mXyqMap->m_MapUnits[unit].BitmapRGB24 = nullptr;
             }
