@@ -38,7 +38,7 @@ Window::Window(int width,int height)
 
     p_Game = new Game(width,height,WINDOW_TITLE);
     InputManager::GetInstance()->Init(p_Window);
-
+	p_Game->Start();
 }
 
 Window::~Window()
@@ -51,8 +51,6 @@ GLfloat lastFrame = 0.0f;
 void Window::Show()
 {
     
-
-    p_Game->Start();
 	
 	 // Game loop
     while (!glfwWindowShouldClose(p_Window))

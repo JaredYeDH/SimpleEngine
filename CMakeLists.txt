@@ -151,6 +151,10 @@ Components/BaseComponent.h
 Components/BaseComponent.cpp
 Components/TransformComponent.h
 Components/TransformComponent.cpp
+Network/Client.cpp
+Network/Client.h
+Network/Message.cpp
+Network/Message.h
 Projects/TestSence.cpp
 Projects/TestSence.h
 Projects/Demo.h

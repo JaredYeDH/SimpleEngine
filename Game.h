@@ -18,6 +18,4 @@ public:
 private:
 	int mResWidth,mResHeight;
 	std::string mTitle;
-	Engine* p_Engine;
-
 };

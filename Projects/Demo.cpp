@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Random.h"
 #include <asio.hpp>
+#include <thread>
 
 float Demo::s_ScreenWidth = 800.0f;
 float Demo::s_ScreenHeight = 600.0f;
@@ -24,13 +25,43 @@ void Demo::OnEvent(int button, int action, int mods)
 		double mouseX = InputManager::GetInstance()->GetMouseX();
 		double mouseY = InputManager::GetInstance()->GetMouseY();
 		
+		IntPos src, dest;
+		src.x = m_StriderPtr->GetX();
+		src.y = m_StriderPtr->GetY();
+		dest.x = -mapOffsetX + mouseX;
+		dest.y = -mapOffsetY + mouseY;
+
+		MoveMessage msg(m_StriderPtr->GetId(), src, dest, "hello");
+		msg.EncodeBody();
+		msg.EncodeHeader();
+		m_ClientPtr->Write(msg);
+
 		m_StriderPtr->MoveTo(m_GameMapPtr,(-mapOffsetX + mouseX) / 20,(-mapOffsetY + mouseY) / 20);
 	}
 }
 
+
+void Demo::SetClient(Client* clientPtr)
+{
+	m_ClientPtr = clientPtr;
+}
+
+
+void Demo::OnMove(MoveMessage msg)
+{ 
+	if (m_OtherPtr == nullptr || m_StriderPtr==nullptr)return;
+	if (m_StriderPtr->IsMove())return;
+	m_OtherPtr->SetX(msg.m_Src.x);
+	m_OtherPtr->SetY(msg.m_Src.y);
+	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x ) / 20, (msg.m_Dest.y) / 20);
+}
+
+Player* Demo::m_OtherPtr  = nullptr;
+Player* Demo::m_StriderPtr = nullptr;
 Demo::Demo()
 	:m_IsTestNpc0(true)
 {
+
 	InputManager::GetInstance()->SetMouseEvent(this);
 	
 	m_RendererPtr = new SpriteRenderer();
@@ -40,14 +71,18 @@ Demo::Demo()
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
 	m_BlockTexturePtr = new Texture(blockPath);
 
-	m_StriderPtr = new Player(1, 120);
-	
-	m_StriderPtr->SetPos(300, 300);
-    m_StriderPtr->SetBox();
+	m_StriderPtr = new Player(1 ,1, 120);
+	m_StriderPtr->SetPos(990, 650);
+	m_StriderPtr->SetBox();
+
+
+	m_OtherPtr = new Player(2, 1, 120);
+	m_OtherPtr->SetPos(990, 650);
+	m_OtherPtr->SetBox();
 
 	int birthPos[10][2] = 
 	{
-		{ 400, 300},
+		{ 780, 700},
 		{ 600, 900 },
 		{ 1550, 300 },
 		{ 600, 1900 },
@@ -61,7 +96,7 @@ Demo::Demo()
 
 	for (int i = 0; i < 10; i++)
 	{
-		Player* player = new Player(1, 120);
+		Player* player = new Player(2+i ,1, 120);
 		player->SetPos(birthPos[i][0], birthPos[i][1]);
         player->SetBox();
 		player->ResetDirAll(i % 8);
@@ -74,7 +109,7 @@ Demo::Demo()
 
 Demo::~Demo()
 {
-
+	m_ClientPtr->Close();
 }
 
 void Demo::Update()
@@ -82,7 +117,7 @@ void Demo::Update()
 	double dt = Engine::GetInstance()->GetDeltaTime(); 
 	
 	m_StriderPtr->OnUpdate(dt);
-	
+	m_OtherPtr->OnUpdate(dt);
 	for (Player* npc : m_NPCs)
 	{
 		npc->OnUpdate(dt);
@@ -228,6 +263,7 @@ void Demo::Draw()
 {
 	
 	m_GameMapPtr->Draw(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+
 	
 	int screenWidth = Demo::GetScreenWidth();
 	int screenHeight = Demo::GetScreenHeight();
@@ -256,43 +292,44 @@ void Demo::Draw()
 
 	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
 
+	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX(),m_OtherPtr->GetY());
 
-	for (Player* npc : m_NPCs)
+	/*for (Player* npc : m_NPCs)
 	{
 		npc->OnDraw(m_RendererPtr, npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
-	}
+	}*/
 
 	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	
 	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
 
 
-	// 1. Show a simple window
-	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
-	{
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!");
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		ImGui::ColorEdit3("clear color", (float*)&clear_color);
-		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		if (ImGui::Button("Another Window")) show_another_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	}
+	//// 1. Show a simple window
+	//// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+	//{
+	//	static float f = 0.0f;
+	//	ImGui::Text("Hello, world!");
+	//	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	//	ImGui::ColorEdit3("clear color", (float*)&clear_color);
+	//	if (ImGui::Button("Test Window")) show_test_window ^= 1;
+	//	if (ImGui::Button("Another Window")) show_another_window ^= 1;
+	//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	//}
 
-	// 2. Show another simple window, this time using an explicit Begin/End pair
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello from another window!");
-		ImGui::End();
-	}
+	//// 2. Show another simple window, this time using an explicit Begin/End pair
+	//if (show_another_window)
+	//{
+	//	ImGui::Begin("Another Window", &show_another_window);
+	//	ImGui::Text("Hello from another window!");
+	//	ImGui::End();
+	//}
 
-	// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-	if (show_test_window)
-	{
-		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
-		ImGui::ShowTestWindow(&show_test_window);
-	}
+	//// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+	//if (show_test_window)
+	//{
+	//	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
+	//	ImGui::ShowTestWindow(&show_test_window);
+	//}
 
 	//ImGui::Render();
 

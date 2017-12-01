@@ -5,10 +5,10 @@
 
 
 /*用于控制Game 负责Game的Init Update Draw*/
-class Window : public Singleton<Engine>
+class Window : public Singleton<Window>
 {
 public:
-	friend Singleton<Engine>;
+	friend Singleton<Window>;
 
 	Window(int w,int h);
 	~Window();

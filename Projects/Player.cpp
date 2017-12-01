@@ -8,8 +8,8 @@
 //shape.wdf 49386FCE 54F3FC94
 //shape.wd3 DF749306 1BEC0D8A
 
-// PlayerId : 1-12 ¬Ω¬£√è√Ä¬ø√ç√ä√á1
-// WeaponId : 0-160 ¬∂√î√ì¬¶√Ñ¬≥¬∏√∂√é√§√Ü√∑
+// PlayerId : 1-12 Ω£œ¿øÕ «1
+// WeaponId : 0-160 ∂‘”¶ƒ≥∏ˆŒ‰∆˜
 std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
 {
 	{ 1, { 0x49386FCE, 0x54F3FC94 } }
@@ -21,7 +21,8 @@ std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimati
 };
 
 
-Player::Player(int PlayerId,int WeaponId):
+Player::Player(int id ,int PlayerId,int WeaponId):
+m_Id(id),
 m_PlayerAnimation(2),
 m_WeapAnimation(2),
 m_AnimationState(Idle),
@@ -35,7 +36,6 @@ m_MoveToCalled(false)
 	m_PlayerAnimation[Idle] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Idle])
 		);
-	ResourceManager::GetInstance()->SaveWdfSprite(s_PlayerAnimationTable[PlayerId][Idle]);
 
 	m_PlayerAnimation[Moving] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Moving])
@@ -52,34 +52,6 @@ m_MoveToCalled(false)
 
 Player::~Player()
 {
-
-}
-void Player::HandleMoveToCalled()
-{
-    if(m_MoveToCalled)
-    {
-        if(!m_BackupMoveList.empty())
-        {
-            m_MoveList=m_BackupMoveList;
-            m_IsMove=true;
-            Pos d = m_MoveList.front();
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Moving);
-        }
-        else
-        {
-            m_MoveList.clear();
-            m_IsMove=false;
-            Pos d(GetBoxX(),GetBoxY());
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Idle);
-        }
-        m_MoveToCalled=false;
-    }
 
 }
 
@@ -102,7 +74,7 @@ void Player::OnUpdate(double dt)
 
 					m_Dir = GMath::Astar_GetDirUseInt(degree);
 
-					Logger::Print("degree:%d dir:%d \n", degree, m_Dir);
+					//Logger::Print("degree:%lf dir:%d \n", degree, m_Dir);
 
 					double stepRangeX = cos(DegreeToRadian(degree));
 					double stepRangeY = sin(DegreeToRadian(degree));
@@ -134,10 +106,7 @@ void Player::OnUpdate(double dt)
              // HandleMoveToCalled();
 
 			}
-			Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
-		}else
-		{
-           // HandleMoveToCalled();
+			//Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
 		}
 
 	}

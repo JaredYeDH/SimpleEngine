@@ -17,8 +17,7 @@
 
 #include "FrameAnimation.h"
 #include "Player.h"
-
-
+#include "Network/Client.h"
 
 class Demo : public IUpdateDraw, public IMouseEvent
 {
@@ -36,6 +35,8 @@ public:
 	void Draw() override;
 	void OnEvent(int button, int action, int mods) override;
 
+	void SetClient(Client* clientPtr);
+	void OnMove(MoveMessage msg);
 private:
 	void ProcessInput();
 	void TestServer();
@@ -46,13 +47,17 @@ private:
 
 	GameMap* m_GameMapPtr;
 
-	Player * m_StriderPtr;
+	static Player * m_StriderPtr;
+	static Player * m_OtherPtr;
 	
 	std::vector< Player * > m_NPCs;
 
 	bool m_IsChangeState = false;
 	double m_ChangeStateTimeInterval = 0;
 	bool m_IsTestNpc0;
+	
+	
+	Client* m_ClientPtr;
 };
 
 
