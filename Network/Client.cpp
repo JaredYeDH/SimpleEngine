@@ -1,5 +1,7 @@
 #include "Client.h"
 #include "../Engine.h"
+#include "../Projects/Demo.h"
+
 void Client::DoReadBody()
 {
 	asio::async_read(m_Socket,

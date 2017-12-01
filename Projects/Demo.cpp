@@ -9,6 +9,7 @@
 float Demo::s_ScreenWidth = 800.0f;
 float Demo::s_ScreenHeight = 600.0f;
 bool g_IsTest = true;
+
 void Demo::OnEvent(int button, int action, int mods) 
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -31,7 +32,7 @@ void Demo::OnEvent(int button, int action, int mods)
 		dest.x = -mapOffsetX + mouseX;
 		dest.y = -mapOffsetY + mouseY;
 
-		MoveMessage msg(m_StriderPtr->GetId(), src, dest, "hello");
+		MoveMessage msg(Demo::g_Id, src, dest, "hello");
 		msg.EncodeBody();
 		msg.EncodeHeader();
 		m_ClientPtr->Write(msg);
@@ -49,8 +50,12 @@ void Demo::SetClient(Client* clientPtr)
 
 void Demo::OnMove(MoveMessage msg)
 { 
-	if (m_OtherPtr == nullptr || m_StriderPtr==nullptr)return;
-	if (m_StriderPtr->IsMove())return;
+	if (msg.m_Pid == g_Id)return;
+
+	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
+
+	//if (m_StriderPtr->IsMove())return;
+
 	m_OtherPtr->SetX(msg.m_Src.x);
 	m_OtherPtr->SetY(msg.m_Src.y);
 	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x ) / 20, (msg.m_Dest.y) / 20);
@@ -71,12 +76,12 @@ Demo::Demo()
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
 	m_BlockTexturePtr = new Texture(blockPath);
 
-	m_StriderPtr = new Player(1 ,1, 120);
+	m_StriderPtr = new Player(Demo::g_Id , Demo::g_Id, 120);
 	m_StriderPtr->SetPos(990, 650);
 	m_StriderPtr->SetBox();
 
 
-	m_OtherPtr = new Player(2, 1, 120);
+	m_OtherPtr = new Player(-1, Demo::g_Id2, 120);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 
@@ -292,7 +297,7 @@ void Demo::Draw()
 
 	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
 
-	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX(),m_OtherPtr->GetY());
+	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
 
 	/*for (Player* npc : m_NPCs)
 	{

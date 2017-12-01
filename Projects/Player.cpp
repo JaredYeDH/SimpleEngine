@@ -6,6 +6,7 @@
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94
+<<<<<<< HEAD
 //shape.wd3 DF749306 1BEC0D8A
 
 // PlayerId : 1-12 剑侠客是1
@@ -57,6 +58,62 @@ Player::~Player()
 
 void Player::OnUpdate(double dt)
 {
+=======
+//shape.wd3 DF749306 1BEC0D8A
+
+// PlayerId : 1-12 剑侠客是1
+// WeaponId : 0-160 对应某个武器
+
+//shape.wdf A16A06FF 4FBA48B8 
+//shape.wd3 72013AF5 F2FB1AFA 
+std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
+{
+	{ 1, { 0x49386FCE, 0x54F3FC94 } },
+	{ 11,{ 0xA16A06FF , 0x4FBA48B8 } }
+};
+
+std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimationTable =
+{
+	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A } } } },
+	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA } } } }
+};
+
+
+Player::Player(int id ,int PlayerId,int WeaponId):
+m_Id(id),
+m_PlayerAnimation(2),
+m_WeapAnimation(2),
+m_AnimationState(Idle),
+m_IsMove(false),
+m_MoveVelocity(500),
+m_UpdateDelta(0),
+m_MoveList()
+{
+	m_PlayerAnimation[Idle] = new FrameAnimation(
+		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Idle])
+		);
+
+	m_PlayerAnimation[Moving] = new FrameAnimation(
+		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Moving])
+		) ;
+
+	m_WeapAnimation[Idle] = new FrameAnimation(
+		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][Idle])
+		);
+
+	m_WeapAnimation[Moving] = new FrameAnimation(
+		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][Moving])
+		);
+}
+
+Player::~Player()
+{
+
+}
+
+void Player::OnUpdate(double dt)
+{
+>>>>>>> little milestone archieved
 	m_UpdateDelta += dt;
 	if (m_UpdateDelta >= dt) {
 		m_UpdateDelta = 0;
