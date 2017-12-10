@@ -24,4 +24,10 @@ public:
 	{
 		return GetPath()+"/"+localPath;
 	}
+
+    static std::string GetAssetsPath(std::string path)
+    {
+        return GetPath()+"/Resource/Assets/"+path;
+    }
+
 };

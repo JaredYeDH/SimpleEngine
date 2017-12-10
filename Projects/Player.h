@@ -31,6 +31,7 @@ public:
 	
 	void OnDraw(SpriteRenderer * renderer, int px,int py);
 	void SetPos(double x, double y);
+	void SetBox();
 	double GetX() { return m_Pos.x; }
 	double GetY() { return m_Pos.y; }
 
@@ -49,14 +50,17 @@ public:
 
 	bool IsMove() { return m_IsMove; }
 	int GetId() { return m_Id; }
-	
+	void HandleMoveToCalled();
 private:
 	std::vector<FrameAnimation*> m_WeapAnimation;
 	std::vector<FrameAnimation*> m_PlayerAnimation;
 	int m_AnimationState;
 	int m_Dir;
 	Pos m_Pos;
+    BoxPos m_Box;
 	std::list<Pos> m_MoveList;
+    std::list<Pos> m_BackupMoveList;
+    bool m_MoveToCalled;
 	double m_UpdateDelta;
 	bool m_IsMove;
 	int m_Id;

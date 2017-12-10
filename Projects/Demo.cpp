@@ -56,8 +56,9 @@ void Demo::OnMove(MoveMessage msg)
 
 	//if (m_StriderPtr->IsMove())return;
 
-	m_OtherPtr->SetX(msg.m_Src.x);
-	m_OtherPtr->SetY(msg.m_Src.y);
+	
+	m_OtherPtr->SetPos(msg.m_Src.x,msg.m_Src.y);
+	m_OtherPtr->SetBox();
 	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x ) / 20, (msg.m_Dest.y) / 20);
 }
 
@@ -103,7 +104,7 @@ Demo::Demo()
 	{
 		Player* player = new Player(2+i ,1, 120);
 		player->SetPos(birthPos[i][0], birthPos[i][1]);
-        player->SetBox();
+       // player->SetBox();
 		player->ResetDirAll(i % 8);
 		m_NPCs.push_back(player);
 		i++;
@@ -295,6 +296,7 @@ void Demo::Draw()
 		(py> maxMapOffsetY ?
 		(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
+	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
 	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
 
 	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
@@ -306,7 +308,7 @@ void Demo::Draw()
 
 	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	
-	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
+	
 
 
 	//// 1. Show a simple window

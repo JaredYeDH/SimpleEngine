@@ -75,9 +75,9 @@ void Player::OnUpdate(double dt)
 				dest.y = d.y * 20 + 10;
 
 				if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
-					int degree = GMath::Astar_GetAngleUseBoxXY(m_Box.x, m_Box.y, d.x, d.y);
+					int degree = GMath::Astar_GetAngle(m_Box.x, m_Box.y, d.x, d.y);
 
-					m_Dir = GMath::Astar_GetDirUseInt(degree);
+					m_Dir = GMath::Astar_GetDir(degree);
 
 					//Logger::Print("degree:%lf dir:%d \n", degree, m_Dir);
 
@@ -120,6 +120,35 @@ void Player::OnUpdate(double dt)
 	m_WeapAnimation[m_AnimationState]->OnUpdate(dt);
     HandleMoveToCalled();
 }
+void Player::HandleMoveToCalled()
+{
+    if(m_MoveToCalled)
+    {
+        if(!m_BackupMoveList.empty())
+        {
+            m_MoveList=m_BackupMoveList;
+            m_IsMove=true;
+            Pos d = m_MoveList.front();
+
+            SetX(d.x * 20 + 10);
+            SetY(d.y * 20 + 10);
+            SetAnimationState(Player::Moving);
+        }
+        else
+        {
+            m_MoveList.clear();
+            m_IsMove=false;
+            Pos d(GetBoxX(),GetBoxY());
+
+            SetX(d.x * 20 + 10);
+            SetY(d.y * 20 + 10);
+            SetAnimationState(Player::Idle);
+        }
+        m_MoveToCalled=false;
+    }
+    
+}
+
 
 void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 {

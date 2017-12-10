@@ -30,9 +30,10 @@ public:
 	int GetWidth(){return mWidth;}
 	int GetHeight(){return mHeight;}
 private:
+	bool CanArriveDirect(Pos src,Pos dest);
 	std::map<int,Texture *> mMapTiles;
 	std::vector<Texture *> mMaskTiles;
-	// Texture mCellPic;
+	 Texture* mCellPic;
 	int mWidth;
 	int mHeight;
 	int mMapWidth;
