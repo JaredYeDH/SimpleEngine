@@ -1,0 +1,4 @@
+#pragma once
+   
+#define WORK_DIR "@WORK_DIR@"
+   

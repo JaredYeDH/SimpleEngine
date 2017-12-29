@@ -53,6 +53,12 @@ include_directories(SYSTEM external/imgui)
 add_subdirectory(external/SOIL)
 include_directories(SYSTEM external/SOIL/include)
 
+SET(WORK_DIR  "${PROJECT_SOURCE_DIR}")  
+
+configure_file (  
+  "${PROJECT_SOURCE_DIR}/precompile.h.in"  
+  "${PROJECT_SOURCE_DIR}/precompile.h"  
+  )  
 if(WIN32)
 	find_package(OpenGL REQUIRED)
 	#set(LIBS glfw opengl32 libglew_static SOIL_Static assimp)
