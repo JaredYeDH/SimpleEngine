@@ -40,6 +40,12 @@ typedef uint8_t   byte;
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
 #include <imgui.h>
 
 template <typename T>
