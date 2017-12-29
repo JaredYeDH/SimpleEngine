@@ -30,16 +30,16 @@ GameMap::GameMap(uint32 mapId)
 	printf("初始化GameMap %d %d ", mRow, mCol);
 
 	mMapTiles.clear();
-	/*
+	
 	for (int i = 0; i<mXyqMap->m_UnitSize; i++)
 	{
 		mXyqMap->ReadUnit(i);
 		
-		mMapTiles.push_back(new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[i].BitmapRGB24) );
-		// delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
-		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
+		mMapTiles[i] = (new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[i].BitmapRGB24) );
+	//	 delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
+//		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
 	}
-	*/
+	
 
 
 	mMaskTiles.clear();
@@ -50,7 +50,7 @@ GameMap::GameMap(uint32 mapId)
 		mMaskTiles.push_back(new Texture(mXyqMap->m_MaskInfos[i].Width,
 			mXyqMap->m_MaskInfos[i].Height,true, (uint8*)(mXyqMap->m_MaskInfos)[i].Data ));
 
-	//	 delete[] mXyqMap->m_MaskInfos[i].Data;
+//		 delete[] mXyqMap->m_MaskInfos[i].Data;
 //		mXyqMap->m_MaskInfos[i].Data = nullptr;
 	}
 
@@ -97,12 +97,8 @@ GameMap::GameMap(uint32 mapId)
 	// outfile.close();
 
 	
-	// int width, height;
-	// unsigned char* image = SOIL_load_image("X.png", &width, &height, 0,
-	// 	SOIL_LOAD_RGBA);
-	
-	// mCellPic = Texture(image,true);
-	// SOIL_free_image_data(image);
+
+	mCellPic = new Texture(Environment::GetAssetsPath("X.png"));
 
 }
 
@@ -115,6 +111,60 @@ void GameMap::clamp(int val, int min, int max)
 NetEase::MAP* GameMap::GetMapPtr()
 {
 	return mXyqMap;
+}
+
+bool GameMap::CanArriveDirect(Pos src,Pos dest)
+{
+	int dx = dest.x - src.x;
+	int dy = dest.y - src.y;
+	if(dx == 0)
+	{
+		int opt = dy < 0 ? -1 : 1;
+		for(int i=0;i<dy*opt;i++)
+		{
+			int cellX = src.x;
+			int cellY = src.y + i*opt;
+			if(mCell[cellX][cellY]>=1)
+				return false;
+		}
+		return true;
+	}
+
+	if(dy == 0)
+	{
+		int opt = dx < 0 ? -1 : 1;
+		for(int i=0;i<dx*opt;i++)
+		{
+			int cellX = src.x + i*opt;
+			int cellY = src.y;
+			if(mCell[cellX][cellY]>=1)
+				return false;
+		}
+		return true;
+	}
+
+	double ratio = dy / dx;
+	int opt = dx < 0 ? -1 : 1;
+	for (int i = 0; i < dx * opt; ++i)
+	{
+		int cellX = src.x + opt*i;
+		int cellY = src.y + ratio*i*opt;
+		if(mCell[cellX][cellY]>=1)
+			return false;
+	}
+
+	ratio = dx / dy;
+	opt = dy < 0 ? -1 : 1;
+	for (int i = 0; i < dy * opt; ++i)
+	{
+		int cellX = src.x + ratio*opt*i;
+		int cellY = src.y + i*opt;
+		if(mCell[cellX][cellY]>=1)
+			return false;
+	}
+
+	return true;
+
 }
 
 std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
@@ -159,7 +209,7 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 	std::vector<Node> path = graph.executeAStar();
 	graph.printPath(path);
 
-	std::list<Pos> moveList;
+	std::vector<Pos> moveList;
 	moveList.clear();
 	for(auto i=path.begin(); i != path.end(); i++){
 		Node node = *i;
@@ -167,7 +217,31 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
         moveList.push_back(Pos(node.y,node.x));
 	}
 
-	return moveList;
+    // Smooth move List
+    /*
+     算法：
+     1.第一个节点为当前节点，查看下一个节点
+     2.如果可以无障碍直接到达，则下一个节点为第一个节点的后继
+     3.如果不可到达，当前节点为后继节点
+     */
+    int currentNode = 0;
+    int nextNode = 1;
+    std::list<Pos> smoothMoveList;
+    smoothMoveList.push_back(moveList[currentNode]);
+    while(nextNode!=moveList.size())
+    {
+    	int lastNextNode = nextNode;
+        while(nextNode!=moveList.size() && CanArriveDirect(moveList[currentNode],moveList[nextNode]) )
+        {
+        	lastNextNode = nextNode;
+        	nextNode++;
+        }
+        currentNode=lastNextNode;
+        smoothMoveList.push_back(moveList[currentNode]);
+    }
+    
+
+	return smoothMoveList;
 
 }
 
@@ -231,17 +305,34 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 
 void GameMap::DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y)
 {
-	for (int y = 0; y < mCellHeight; y++)
+    int minx,maxx,miny,maxy;
+    int posx,posy;
+    posx = -cur_x + 400;
+    posy = -cur_y + 300;
+    minx = posx - 410 ;
+    minx = minx<0?0:minx;
+    maxx = posx + 410;
+    maxx = maxx>mMapWidth?mMapWidth:maxx;
+
+    miny = posy - 310 ;
+    miny = miny<0?0:miny;
+    maxy = posy + 310;
+    maxy = maxy>mMapHeight?mMapHeight:maxy;
+
+
+	//for (int y = 0; y < mCellHeight; y++)
+    for (int y = miny/20; y < maxy/20; y++)
 	{
-		for (int x = 0; x < mCellWidth; x++)
+		//for (int x = 0; x < mCellWidth; x++)
+        for (int x = minx/20; x < maxx/20; x++)
 		{
 			if (mCell[x][y] >= 1)
 			{
-				// renderer->DrawSprite(mCellPic,
-				// 	glm::vec2( x*20 + cur_x,
-				// 		y*20 + cur_y),
-				// 	glm::vec2(20, 20),
-				// 	0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+				 renderer->DrawSprite(mCellPic,
+				 	glm::vec2( x*20 + cur_x,
+				 		y*20 + cur_y),
+				 	glm::vec2(20, 20),
+				 	0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 			}
 		}
 	}
@@ -274,3 +365,4 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 			0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 }
+

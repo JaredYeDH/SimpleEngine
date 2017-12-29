@@ -17,15 +17,20 @@ typedef long double float128;
 
 typedef uint8_t   byte;
 
-
+#include <cstdlib>
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <fstream>
 
+#include <memory>
+#include <utility>
+
 #include <vector>
 #include <list>
 #include <map>
+#include <deque>
+#include <set>
 
 #include <GL/glew.h>
 

@@ -8,20 +8,26 @@
 //shape.wdf 49386FCE 54F3FC94
 //shape.wd3 DF749306 1BEC0D8A
 
-// PlayerId : 1-12 ¬Ω¬£√è√Ä¬ø√ç√ä√á1
-// WeaponId : 0-160 ¬∂√î√ì¬¶√Ñ¬≥¬∏√∂√é√§√Ü√∑
+// PlayerId : 1-12 Ω£œ¿øÕ «1
+// WeaponId : 0-160 ∂‘”¶ƒ≥∏ˆŒ‰∆˜
+
+//shape.wdf A16A06FF 4FBA48B8 
+//shape.wd3 72013AF5 F2FB1AFA 
 std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
 {
-	{ 1, { 0x49386FCE, 0x54F3FC94 } }
+	{ 1, { 0x49386FCE, 0x54F3FC94 } },
+	{ 11,{ 0xA16A06FF , 0x4FBA48B8 } }
 };
 
 std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimationTable =
 {
-	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A } } } }
+	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A } } } },
+	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA } } } }
 };
 
 
-Player::Player(int PlayerId,int WeaponId):
+Player::Player(int id ,int PlayerId,int WeaponId):
+m_Id(id),
 m_PlayerAnimation(2),
 m_WeapAnimation(2),
 m_AnimationState(Idle),
@@ -54,34 +60,6 @@ Player::~Player()
 {
 
 }
-void Player::HandleMoveToCalled()
-{
-    if(m_MoveToCalled)
-    {
-        if(!m_BackupMoveList.empty())
-        {
-            m_MoveList=m_BackupMoveList;
-            m_IsMove=true;
-            Pos d = m_MoveList.front();
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Moving);
-        }
-        else
-        {
-            m_MoveList.clear();
-            m_IsMove=false;
-            Pos d(GetBoxX(),GetBoxY());
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Idle);
-        }
-        m_MoveToCalled=false;
-    }
-
-}
 
 void Player::OnUpdate(double dt)
 {
@@ -98,11 +76,11 @@ void Player::OnUpdate(double dt)
 				dest.y = d.y * 20 + 10;
 
 				if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
-					int degree = GMath::Astar_GetAngleUseBoxXY(m_Box.x, m_Box.y, d.x, d.y);
+					int degree = GMath::Astar_GetAngle(m_Box.x, m_Box.y, d.x, d.y);
 
-					m_Dir = GMath::Astar_GetDirUseInt(degree);
+					m_Dir = GMath::Astar_GetDir(degree);
 
-					Logger::Print("degree:%d dir:%d \n", degree, m_Dir);
+					//Logger::Print("degree:%lf dir:%d \n", degree, m_Dir);
 
 					double stepRangeX = cos(DegreeToRadian(degree));
 					double stepRangeY = sin(DegreeToRadian(degree));
@@ -134,10 +112,7 @@ void Player::OnUpdate(double dt)
              // HandleMoveToCalled();
 
 			}
-			Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
-		}else
-		{
-           // HandleMoveToCalled();
+			//Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
 		}
 
 	}
@@ -146,6 +121,35 @@ void Player::OnUpdate(double dt)
 	m_WeapAnimation[m_AnimationState]->OnUpdate(dt);
     HandleMoveToCalled();
 }
+void Player::HandleMoveToCalled()
+{
+    if(m_MoveToCalled)
+    {
+        if(!m_BackupMoveList.empty())
+        {
+            m_MoveList=m_BackupMoveList;
+            m_IsMove=true;
+            Pos d = m_MoveList.front();
+
+            SetX(d.x * 20 + 10);
+            SetY(d.y * 20 + 10);
+            SetAnimationState(Player::Moving);
+        }
+        else
+        {
+            m_MoveList.clear();
+            m_IsMove=false;
+            Pos d(GetBoxX(),GetBoxY());
+
+            SetX(d.x * 20 + 10);
+            SetY(d.y * 20 + 10);
+            SetAnimationState(Player::Idle);
+        }
+        m_MoveToCalled=false;
+    }
+    
+}
+
 
 void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 {

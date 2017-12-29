@@ -6,7 +6,6 @@
 #include "InputManager.h"
 #include "imgui_impl_glfw_gl3.h"
 
-
 Window::Window(int width,int height)
 {
     // Init GLFW
@@ -38,7 +37,7 @@ Window::Window(int width,int height)
 
     p_Game = new Game(width,height,WINDOW_TITLE);
     InputManager::GetInstance()->Init(p_Window);
-
+	p_Game->Start();
 }
 
 Window::~Window()
@@ -49,11 +48,7 @@ Window::~Window()
 GLfloat deltaTime = 0;
 GLfloat lastFrame = 0.0f;
 void Window::Show()
-{
-    
-
-    p_Game->Start();
-	
+{	
 	 // Game loop
     while (!glfwWindowShouldClose(p_Window))
     {
