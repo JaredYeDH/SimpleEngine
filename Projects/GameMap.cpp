@@ -207,7 +207,7 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 	graph.setFirstRobotPos(std::make_pair(sy,sx));
 	graph.setSecondRobotPos(std::make_pair(ey,ex));
 	std::vector<Node> path = graph.executeAStar();
-	graph.printPath(path);
+	//graph.printPath(path);
 
 	std::vector<Pos> moveList;
 	moveList.clear();
@@ -239,7 +239,12 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
         currentNode=lastNextNode;
         smoothMoveList.push_back(moveList[currentNode]);
     }
-    
+
+    for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
+		Pos node = *i;
+		cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;
+        
+	}
 
 	return smoothMoveList;
 

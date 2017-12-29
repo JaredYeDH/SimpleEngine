@@ -8,8 +8,8 @@
 //shape.wdf 49386FCE 54F3FC94
 //shape.wd3 DF749306 1BEC0D8A
 
-// PlayerId : 1-12 剑侠客是1
-// WeaponId : 0-160 对应某个武器
+// PlayerId : 1-12 
+// WeaponId : 0-160
 
 //shape.wdf A16A06FF 4FBA48B8 
 //shape.wd3 72013AF5 F2FB1AFA 
@@ -41,7 +41,6 @@ m_MoveToCalled(false)
 	m_PlayerAnimation[Idle] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Idle])
 		);
-	//ResourceManager::GetInstance()->SaveWdfSprite(s_PlayerAnimationTable[PlayerId][Idle]);
 
 	m_PlayerAnimation[Moving] = new FrameAnimation(
 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Moving])
@@ -74,20 +73,22 @@ void Player::OnUpdate(double dt)
 				Pos dest;
 				dest.x = d.x * 20 + 10;
 				dest.y = d.y * 20 + 10;
+				
+				Logger::Print("Src X:%.1lf Y:%.1f \t Dest X:%.1lf Y:%.1lf vel:%.1lf dir:%d\n",m_Pos.x,m_Pos.y, dest.x,dest.y,localVelocity,m_Dir);
 
 				if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
-					int degree = GMath::Astar_GetAngle(m_Box.x, m_Box.y, d.x, d.y);
+					int degree = GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
 
 					m_Dir = GMath::Astar_GetDir(degree);
 
-					//Logger::Print("degree:%lf dir:%d \n", degree, m_Dir);
+					
 
 					double stepRangeX = cos(DegreeToRadian(degree));
 					double stepRangeY = sin(DegreeToRadian(degree));
 
 					TranslateX(stepRangeX * localVelocity);
 					TranslateY(stepRangeY * localVelocity);
-
+				
 					SetDir(m_Dir);
 				}
 				else {
@@ -112,7 +113,7 @@ void Player::OnUpdate(double dt)
              // HandleMoveToCalled();
 
 			}
-			//Logger::Print("cur_x:%lf cur_y:%lf\n",GetX(), GetY());
+			//Logger::Print("boxX:%d boxY:%d x:%.1lf y:%.1lf dir:%d \n",GetBoxX(),GetBoxY(), GetX(),GetY(), m_Dir);
 		}
 
 	}
