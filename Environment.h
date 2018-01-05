@@ -23,5 +23,11 @@ public:
     {
         return GetPath()+"/Resource/Assets/"+path;
     }
+	
+	static std::string GetShaderPath(std::string path)
+	{
+		return GetPath() + "/Shader/" + path;
+	}
+
 
 };

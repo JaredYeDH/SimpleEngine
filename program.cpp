@@ -15,7 +15,7 @@ int Demo::g_Id2 = 0;
 int main(int argc,char** argv)
 {
 	/*根据配置创建出来一个窗口，窗口的作用是初始化游戏 以及结束游戏 这里相当于说创建一个游戏窗口*/
-
+	/*
 	asio::io_context io_context;
 	auto work = asio::make_work_guard(io_context);
 	std::thread t([&io_context]() { io_context.run(); });
@@ -48,12 +48,9 @@ int main(int argc,char** argv)
 	io_context.stop();
 	t.join();
 
-	
-
-	
-
-
-
+	*/
+	Window* p_Window = new  Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+	p_Window->Show();
 
 	return 0;
 }

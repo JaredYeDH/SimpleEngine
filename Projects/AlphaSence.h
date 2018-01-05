@@ -6,6 +6,6 @@ public:
 	AlphaSence();
 	~AlphaSence();
 	void Update() override ;
-	void Draw() override;
+	 void Draw() override;
 	
 };

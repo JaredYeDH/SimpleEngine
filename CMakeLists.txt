@@ -153,6 +153,7 @@ Environment.h
 image.h
 global.h
 defines.h
+defineTypes.h
 Objects/Object.h
 Objects/Object.inl
 Objects/Object.cpp

@@ -6,8 +6,12 @@
 #include "InputManager.h"
 #include "imgui_impl_glfw_gl3.h"
 
+int Window::m_Width=0;
+int Window::m_Height=0;
 Window::Window(int width,int height)
 {
+	m_Width = width;
+	m_Height = height;
     // Init GLFW
 	glfwInit();
     // Set all the required options for GLFW
@@ -83,3 +87,12 @@ GLFWwindow* Window::GetGLFWwindow()
     return p_Window;
 }
 
+int Window::GetWidth()
+{
+	return m_Width;
+}
+
+int Window::GetHeight()
+{
+	return m_Height;
+}

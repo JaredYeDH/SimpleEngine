@@ -8,7 +8,6 @@ Shader::Shader()
 
 Shader::Shader(const std::string vertPath,const std::string fragPath,const std::string geomPath)
 {
-	std::cout << " what 2" << std::endl;
 	std::string vertexCode;
 	std::string fragmentCode;
 	std::string geometryCode;
