@@ -7,13 +7,13 @@
 #include "Environment.h"
 #include "Demo.h"
 
-#include "include/InputHandler.h"
+#include "Astar/include/InputHandler.h"
 
 
 
 GameMap::GameMap(uint32 mapId)
 { 	/*读取配置*/
-	Config config(Environment::GetAbsPath("Projects/config.txt"));
+	Config config(Environment::GetAbsPath("Resource/Table/config.txt"));
 	config.Print();
 	std::string fileName = config.GetMapPath(config.mDict["map"][mapId]);
 

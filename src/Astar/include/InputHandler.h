@@ -6,7 +6,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
-#include "include/SquareGraph.h"
+#include "Astar/include/SquareGraph.h"
 using namespace std;
 
 class InputHandler {
