@@ -78,3 +78,9 @@ struct TGA_FILE_HEADER
 	uint8 ImageDescruptor;
 };
 #pragma pack(pop)
+
+#ifdef _T
+	#undef _T
+#endif
+
+#define _T(x) x

@@ -190,8 +190,8 @@ Time/TimeManager.cpp
 Time/TimeManager.h
 Time/Timer.cpp
 Time/Timer.h
-Time/Timertest.cpp
-Time/Timertest.h
+Time/TimerManager.cpp
+Time/TimerManager.h
 Window.cpp
 Window.h
 ${IMGUI_SRCS}
