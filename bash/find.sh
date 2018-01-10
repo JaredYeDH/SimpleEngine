@@ -1,0 +1,1 @@
+find /d/Github/SimpleEngine/src  \( -name  "*.h" -o -name "*.cpp"  -o -name "*.inl" \)  -print>/d/Github/SimpleEngine/bash/tmp.txt

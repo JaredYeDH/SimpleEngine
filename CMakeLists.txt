@@ -51,6 +51,18 @@ include_directories(SYSTEM external/asio/asio/include)
 # adding imgui
 include_directories(SYSTEM external/imgui)
 
+set(IMGUI_SRCS 
+../external/imgui/imgui.cpp
+../external/imgui/imgui.h
+../external/imgui/imgui_demo.cpp
+../external/imgui/imgui_draw.cpp
+../external/imgui/imgui_internal.h
+../external/imgui/imconfig.h 
+../external/imgui/stb_rect_pack.h
+../external/imgui/stb_textedit.h
+../external/imgui/stb_truetype.h
+)
+
 # adding assimp
 #set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Do not build the tools" FORCE)
 #set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build the tests" FORCE)
@@ -65,4 +77,7 @@ include_directories(SYSTEM external/SOIL/include)
 add_subdirectory(external/Lua/cmake)
 include_directories(SYSTEM external/Lua/cmake)
 
+#execute_process(COMMAND echo "hello")
+
 add_subdirectory(src)
+
