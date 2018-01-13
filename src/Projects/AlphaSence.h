@@ -1,5 +1,7 @@
 #include "../defines.h"
 #include "IUpdateDraw.h"
+
+#include "../Renderer.h"
 class AlphaSence :public IUpdateDraw
 {
 public:

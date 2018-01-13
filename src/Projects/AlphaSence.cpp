@@ -1,44 +1,91 @@
 #include "AlphaSence.h"
 #include "Texture.h"
-#include "Shader.h"
-#include "Environment.h"
-#include "defineTypes.h"
-#include "Window.h"
-#include "Renderer.h"
 
-Shader* shaderPtr;
 
-const GLchar* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec2 position;\n"
-"uniform mat4 projection;\n"
-"void main()\n"
-"{\n"
-"gl_Position = projection * vec4(position.x, position.y, 0.0, 1.0);\n"
-"}\0";
-
-const GLchar* fragmentShaderSource = "#version 330 core\n"
-"out vec4 color;\n"
-"uniform vec4 lineColor;\n"
-"void main()\n"
-"{\n"
-"color = lineColor;\n"
-"}\n\0";
-
-void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill );
-
-void DrawTexture(int x, int y, int radius, Vec4 color, bool isFill);
+#include <iostream>
 
 
 
+static int Lua_DrawCircle(lua_State *L)
+{
+    printf("static int Lua_DrawCircle(lua_State *L)");
+    int x;
+    int y;
+    int radius;
+
+    x = luaL_checkinteger(L, 1);
+    y = luaL_checkinteger(L, 2);
+    radius = luaL_checkinteger(L, 3);
+    printf("%d %d %d\n",x,y,radius);
+    DrawCircle(x,y,radius,Vec4(0,1,0,1),false);
+
+    lua_pushnumber(L,0);
+    return 0;
+}
+lua_State *L ;
 AlphaSence::AlphaSence()
 {
 	//TestTimer
 	//TimerManager::GetInstance()->CreateTimer("Deda2", 1000, true, false, [this](){
 	//	printf("void AlphaSence::Update(4000)\n");
 	//	TimerManager::GetInstance()->CreateTimer("Deda3", 16, true, true,
-	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	//这个园的显示会出现闪烁，原因是主线程的glClearColor刷新了窗口导致，要解决这个问题，需要把drawcall放在主线程提交
+	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	
 	//	);
 	//});
+	L= luaL_newstate();
+	luaopen_base(L);
+	luaopen_table(L);
+	luaopen_package(L);
+	luaopen_io(L);
+	luaopen_string(L);
+
+	luaL_openlibs(L);
+
+
+    lua_pushcclosure(L,Lua_DrawCircle,0);
+    lua_setglobal(L, "DrawCircle");
+
+
+    /*
+	using string = std::string;
+
+    string luafile(Environment::GetAbsPath("/scripts/Test.lua"));
+	if(luaL_loadfile(L,luafile.c_str())
+		|| lua_pcall(L,0,0,0) )
+		{
+			const char* error = lua_tostring(L,-1);
+            std::cout<<string(error)<<std::endl;
+			return ;
+		}
+	int a= 0 ;
+	int b =0;
+	lua_getglobal(L,"a");
+	if (!lua_isnumber(L,-1))
+	{
+        std::cout << "not number " << std::endl;
+		return;
+	}
+
+	a = lua_tonumber(L,-1);
+
+	lua_getglobal(L,"b");
+	b = lua_tonumber(L,-1);
+    std::cout << a << "   b : " << b  << std::endl;
+	lua_close(L);
+
+
+     */
+
+    using string = std::string;
+    printf("");
+    string luafile(Environment::GetAbsPath("/scripts/Test3.lua"));
+    if(luaL_loadfile(L,luafile.c_str())
+       || lua_pcall(L,0,0,0) )
+    {
+        const char* error = lua_tostring(L,-1);
+        std::cout<<string(error)<<std::endl;
+        return ;
+    }
 
 }
 
@@ -49,159 +96,25 @@ AlphaSence::~AlphaSence()
 
 void AlphaSence::Update() 
 {
+    lua_settop(L,0);
+    lua_getglobal(L,"OnUpdate");
+    lua_pcall(L,0,0,0);
 
 }
 
-/************************************************************************/
-/* 画线步骤：
-1. 准备定点
-2. 设置shader vao vbo
-3. glDraw
-*/
-/************************************************************************/
-void DrawLine(Vec2 v1,Vec2 v2,Vec4 color)
-{
-	std::string  vPath, fPath;
-	vPath = Environment::GetShaderPath("LineShader.vs");
-	fPath = Environment::GetShaderPath("LineShader.fg");
-	Shader* shaderPtr = new Shader(vPath,fPath);
 
-	int windowWidth = Window::GetWidth();
-	int windowHeight = Window::GetHeight();
-	glm::mat4 projection = glm::ortho(0.0f, windowWidth*1.0f, windowHeight*1.0f, 0.0f, -1.0f, 1.0f);
-	shaderPtr->Bind();
-	glUniformMatrix4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)(&projection));
-	glUniform4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "lineColor"), 1,(GLfloat*)(&color));
-	shaderPtr->Unbind();
-
-	GLfloat lineVertices[4];
-	lineVertices[0] = v1.x;
-	lineVertices[1] = v1.y;
-	lineVertices[2] = v2.x;
-	lineVertices[3] = v2.y;
-
-	GLuint VBO, VAO;
-	RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-		glEnableVertexAttribArray(0);
-	));
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		shaderPtr->Bind();
-		glDrawArrays(GL_LINES, 0, 2);
-		shaderPtr->Unbind();
-	));
-
-	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
-}
-
-void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill = false)
-{
-	std::string  vPath, fPath;
-	vPath = Environment::GetShaderPath("LineShader.vs");
-	fPath = Environment::GetShaderPath("LineShader.fg");
-	Shader* shaderPtr = new Shader(vPath, fPath);
-
-	int windowWidth = Window::GetWidth();
-	int windowHeight = Window::GetHeight();
-	glm::mat4 projection = glm::ortho(0.0f, windowWidth*1.0f, windowHeight*1.0f, 0.0f, -1.0f, 1.0f);
-	shaderPtr->Bind();
-	glUniformMatrix4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)(&projection));
-	glUniform4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "lineColor"), 1, (GLfloat*)(&color));
-	shaderPtr->Unbind();
-
-	GLfloat lineVertices[10];
-	lineVertices[0] = x;
-	lineVertices[1] = y;
-	lineVertices[2] = x+width;
-	lineVertices[3] = y;
-	lineVertices[4] = x+width;
-	lineVertices[5] = y+height;
-	lineVertices[6] = x;
-	lineVertices[7] = y+height;
-	lineVertices[8] = x;
-	lineVertices[9] = y;
-	
-
-	GLuint VBO, VAO;
-	RENDER_VERTEX_ARRAY_GEN(VBO, VAO); 
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-		glEnableVertexAttribArray(0);
-		));
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		shaderPtr->Bind();
-		glDrawArrays(GL_LINE_LOOP, 0, 5);
-		shaderPtr->Unbind();
-	));
-
-	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
-	
-}
-
-void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill = false)
-{
-	std::string  vPath, fPath;
-	vPath = Environment::GetShaderPath("LineShader.vs");
-	fPath = Environment::GetShaderPath("LineShader.fg");
-	Shader* shaderPtr = new Shader(vPath, fPath);
-
-	int windowWidth = Window::GetWidth();
-	int windowHeight = Window::GetHeight();
-	glm::mat4 projection = glm::ortho(0.0f, windowWidth*1.0f, windowHeight*1.0f, 0.0f, -1.0f, 1.0f);
-	shaderPtr->Bind();
-	glUniformMatrix4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)(&projection));
-	glUniform4fv(glGetUniformLocation(shaderPtr->GetProgramID(), "lineColor"), 1, (GLfloat*)(&color));
-	shaderPtr->Unbind();
-
-	int vecSize = 36+1;
-	int doubleSize = vecSize * 2;
-	GLfloat lineVertices[(36 + 1) * 2];
-	GLfloat doublePi = 2.0f * glm::pi<float>();
-	for (int i = 0; i < vecSize; i++)
-	{
-		lineVertices[i * 2] = x + (radius * glm::cos(i *doublePi / (vecSize-1)));
-		lineVertices[i * 2 + 1] = y + (radius * glm::sin(i *doublePi / (vecSize-1)));
-	}
-
-
-	GLuint VBO, VAO;
-	RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-		glEnableVertexAttribArray(0);
-	));
-
-	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-		shaderPtr->Bind();
-		glDrawArrays(GL_LINE_LOOP, 0, vecSize);
-		shaderPtr->Unbind();
-	));
-
-	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
-
-
-}
 
 void AlphaSence::Draw() 
 {
 	//DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
 
-	DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
+	//DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
 
-	DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
+	//DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
 	
-	DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
+	//DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
 
 	//DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
 	//DrawLine(Vec3(50, 0, 0), Vec3(50, 200, 0), Vec3(), 5);
-}
+    }
 

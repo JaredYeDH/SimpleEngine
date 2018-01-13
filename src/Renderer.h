@@ -3,6 +3,10 @@
 #include "defineTypes.h"
 
 #include "Shader.h"
+#include "Texture.h"
+#include "Environment.h"
+#include "Window.h"
+
 
 enum struct RenderType
 {
@@ -47,6 +51,12 @@ class RenderInfo
 #define C_O_D_E(CODE) \
 		CODE
 
+
+
+void DrawLine(Vec2 v1,Vec2 v2,Vec4 color);
+void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill = false);
+void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill = false);
+
 class Line
 {
 	Vec2 v1;
@@ -83,7 +93,7 @@ class Line
 		RENDER_VERTEX_ARRAY_UNBIND;	
 	};
 };
-class Object
+class RenderObject
 {
 	RenderType type;
 	void DrawSelf();
@@ -96,11 +106,11 @@ public:
 	~Renderer2D();
 	
 	void Render(RenderInfo info); 
-	void AddObject(Object obj);
-	void RemoveObject(Object obj);
+	void AddObject(RenderObject obj);
+	void RemoveObject(RenderObject obj);
 private:
 	glm::mat4 m_OrthoMat;//= glm::ortho(0.0f, windowWidth*1.0f, windowHeight*1.0f, 0.0f, -1.0f, 1.0f);
-	std::vector<Object> m_ObjectList;
+	std::vector<RenderObject> m_ObjectList;
 	GLuint m_VBO, m_VAO;
 	Shader m_Shader;
 };
