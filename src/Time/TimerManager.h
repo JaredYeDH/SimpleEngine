@@ -4,13 +4,13 @@
 
 #include <map>
 #include <functional>
+#include "Singleton.h"
 
 
 using tstring=std::string;
-struct Context;
 class Timer;
 
-class TimerManager final
+class TimerManager final: public Singleton<TimerManager>
 {
 public:
 	TimerManager();

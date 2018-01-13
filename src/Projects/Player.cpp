@@ -60,6 +60,11 @@ Player::~Player()
 
 }
 
+void Player::SaveFrame(int index)
+{
+	ResourceManager::GetInstance()->SaveWdfSprite(0x49386FCE);
+}
+
 void Player::OnUpdate(double dt)
 {
 	m_UpdateDelta += dt;

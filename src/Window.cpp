@@ -65,13 +65,12 @@ void Window::Show()
     	glfwPollEvents();
 		ImGui_ImplGlfwGL3_NewFrame();
 
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         p_Game->Update(deltaTime);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        p_Game->Draw();
-		
+        p_Game->Draw();		
         // Swap the screen buffers
         glfwSwapBuffers(p_Window);
     }

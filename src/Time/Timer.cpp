@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "Engine.h"
 
 Timer::Timer()
 	:m_TargetTime(1.0f)
@@ -82,8 +83,7 @@ bool Timer::Update()
 	}
 	if (m_CountingDown && m_CurrentTime >= 0)
 	{
-		//m_CurrentTime -= context.time->DeltaTime().GetSeconds();
-		m_CurrentTime -= 0;
+		m_CurrentTime -= Engine::GetInstance()->GetDeltaTimeMilliseconds() ;
 		if (m_CurrentTime < 0)
 		{
 			m_ExcecutingFunction();
@@ -98,8 +98,7 @@ bool Timer::Update()
 	}
 	else if (!m_CountingDown && m_CurrentTime <= m_TargetTime)
 	{
-		//m_CurrentTime += context.time->DeltaTime().GetSeconds();
-		m_CurrentTime = 0;
+		m_CurrentTime = Engine::GetInstance()->GetDeltaTimeMilliseconds() ;
 		if (m_CurrentTime > m_TargetTime)
 		{
 			m_ExcecutingFunction();
@@ -153,21 +152,21 @@ void Timer::SetFunction(const std::function<void()> & func)
 int32 Timer::GetCurrentMinutes() const
 {
 	int32 currentTime(0);
-	currentTime = (int32)m_CurrentTime;
+	currentTime = (int32)(m_CurrentTime/1000);
 	return currentTime / 60;
 }
 
 int32 Timer::GetCurrentSeconds() const
 {
 	int32 currentTime(0);
-	currentTime = (int32)m_CurrentTime;
+	currentTime = (int32)(m_CurrentTime/1000);
 	return currentTime % 60;
 }
 
 int32 Timer::GetCurrentTotalSeconds() const
 {
 	int32 currentTime(0);
-	currentTime = (int32)m_CurrentTime;
+	currentTime = (int32)(m_CurrentTime/1000);
 	return currentTime;
 }
 

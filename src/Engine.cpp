@@ -30,21 +30,25 @@ void Engine::Init()
     InputManager::GetInstance()->SetScrollCallback();
     InputManager::GetInstance()->SetMouseCallback();
     InputManager::GetInstance()->SetMouseButtonCallback();
-
+	TimerManager::GetInstance();
 }
 
 void Engine::Update(double dt)
 {
     m_DeltaTime = dt;
+	TimerManager::GetInstance()->Update();
     mSence->Update();
-
 }
 
 void Engine::Draw()
 { 
     mSence->Draw();
+}
 
-  
+void Engine::Destroy()
+{
+	TimerManager::GetInstance()->DeleteSingleton();
+	InputManager::GetInstance()->DeleteSingleton();
 }
 void Engine::DispatchMove(MoveMessage msg)
 {

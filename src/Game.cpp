@@ -34,5 +34,5 @@ void  Game::Draw()
 
 void  Game::End()
 {
-
+	Engine::GetInstance()->Destroy();
 }

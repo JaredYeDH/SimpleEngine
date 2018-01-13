@@ -15,12 +15,12 @@ struct MousePos
 class InputManager final : public Singleton<InputManager>
 {
 public:
+	friend Singleton<InputManager>;  // cause private ctor dtor
+
 	static void KeyCallbackFunc(GLFWwindow* window, int key, int scancode, int action, int mode);
 	static void ScrollCallbackFunc(GLFWwindow* window, double xoffset, double yoffset);
 	static void MouseCallbackFunc(GLFWwindow* window, double xpos, double ypos);
  	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-
-	friend Singleton<InputManager>;
 
 	void Init(GLFWwindow* window);
 	

@@ -23,10 +23,19 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
 "color = lineColor;\n"
 "}\n\0";
 
+void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill );
+
+void DrawTexture(int x, int y, int radius, Vec4 color, bool isFill);
 
 AlphaSence::AlphaSence()
 {
-
+	//TestTimer
+	//TimerManager::GetInstance()->CreateTimer("Deda2", 1000, true, false, [this](){
+	//	printf("void AlphaSence::Update(4000)\n");
+	//	TimerManager::GetInstance()->CreateTimer("Deda3", 16, true, true,
+	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	//这个园的显示会出现闪烁，原因是主线程的glClearColor刷新了窗口导致，要解决这个问题，需要把drawcall放在主线程提交
+	//	);
+	//});
 }
 
 AlphaSence::~AlphaSence()
@@ -211,3 +220,4 @@ void AlphaSence::Draw()
 	//DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
 	//DrawLine(Vec3(50, 0, 0), Vec3(50, 200, 0), Vec3(), 5);
 }
+
