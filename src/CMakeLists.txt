@@ -154,6 +154,8 @@ Projects/TestSence.cpp
 Projects/TestSence.h
 Random.cpp
 Random.h
+Renderer.cpp
+Renderer.h
 Resource.cpp
 Resource.h
 ResourceManager.cpp

@@ -22,7 +22,7 @@ SpriteRenderer::SpriteRenderer()
 
 	glUniform1i(glGetUniformLocation(m_pShader->GetProgramID(), "image"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)(&projection));
-
+	
     initRenderData();
 }
 

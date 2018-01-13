@@ -4,6 +4,7 @@
 #include "Environment.h"
 #include "defineTypes.h"
 #include "Window.h"
+#include "Renderer.h"
 
 Shader* shaderPtr;
 
@@ -27,6 +28,8 @@ void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill );
 
 void DrawTexture(int x, int y, int radius, Vec4 color, bool isFill);
 
+
+
 AlphaSence::AlphaSence()
 {
 	//TestTimer
@@ -36,6 +39,7 @@ AlphaSence::AlphaSence()
 	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	//这个园的显示会出现闪烁，原因是主线程的glClearColor刷新了窗口导致，要解决这个问题，需要把drawcall放在主线程提交
 	//	);
 	//});
+
 }
 
 AlphaSence::~AlphaSence()
@@ -77,37 +81,22 @@ void DrawLine(Vec2 v1,Vec2 v2,Vec4 color)
 	lineVertices[3] = v2.y;
 
 	GLuint VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
+
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
 		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 		glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0); 
-	glBindVertexArray(0);
-	
-	// Draw our first triangle
-	shaderPtr->Bind();
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawArrays(GL_LINES, 0, 2);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	shaderPtr->Unbind();
-}
+	));
 
-//#define GL_POINTS                         0x0000
-//#define GL_LINES                          0x0001
-//#define GL_LINE_LOOP                      0x0002
-//#define GL_LINE_STRIP                     0x0003
-//#define GL_TRIANGLES                      0x0004
-//#define GL_TRIANGLE_STRIP                 0x0005
-//#define GL_TRIANGLE_FAN                   0x0006
-//#define GL_QUADS                          0x0007
-//#define GL_QUAD_STRIP                     0x0008
-//#define GL_POLYGON                        0x0009
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		shaderPtr->Bind();
+		glDrawArrays(GL_LINES, 0, 2);
+		shaderPtr->Unbind();
+	));
+
+	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
+}
 
 void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill = false)
 {
@@ -138,25 +127,22 @@ void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill = false)
 	
 
 	GLuint VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+	RENDER_VERTEX_ARRAY_GEN(VBO, VAO); 
 
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+		glEnableVertexAttribArray(0);
+		));
 
-	// Draw our first triangle
-	shaderPtr->Bind();
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawArrays(GL_LINE_LOOP, 0, 5);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	shaderPtr->Unbind();
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		shaderPtr->Bind();
+		glDrawArrays(GL_LINE_LOOP, 0, 5);
+		shaderPtr->Unbind();
+	));
+
+	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
+	
 }
 
 void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill = false)
@@ -186,25 +172,23 @@ void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill = false)
 
 
 	GLuint VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+	RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
 
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+		glEnableVertexAttribArray(0);
+	));
 
-	// Draw our first triangle
-	shaderPtr->Bind();
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawArrays(GL_LINE_LOOP, 0, vecSize);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	shaderPtr->Unbind();
+	RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		shaderPtr->Bind();
+		glDrawArrays(GL_LINE_LOOP, 0, vecSize);
+		shaderPtr->Unbind();
+	));
+
+	RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
+
+
 }
 
 void AlphaSence::Draw() 
