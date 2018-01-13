@@ -1,3 +1,9 @@
 .vscode/
 Data/
 build/
+devlog/
+external/mysql_connector/
+.DS_Store
+Resource/.DS_Store
+Resource/Assets/.DS_Store
+external/.DS_Store

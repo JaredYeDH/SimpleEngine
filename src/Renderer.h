@@ -41,7 +41,7 @@ class RenderInfo
 
 #define RENDER_VERTEX_ARRAY_SCOPE(VBO,VAO,CODE) \
 	RENDER_VERTEX_ARRAY_BIND(VBO,VAO);\
-		CODE ## ;				\
+		CODE 		\
 	RENDER_VERTEX_ARRAY_UNBIND
 
 #define C_O_D_E(CODE) \
@@ -65,7 +65,7 @@ class Line
 		RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
 			glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-			glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(0);
 		));
 	}
 	
