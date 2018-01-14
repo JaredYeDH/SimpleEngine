@@ -48,9 +48,6 @@ class RenderInfo
 		CODE 		\
 	RENDER_VERTEX_ARRAY_UNBIND
 
-#define C_O_D_E(CODE) \
-		CODE
-
 
 
 void DrawLine(Vec2 v1,Vec2 v2,Vec4 color);
@@ -72,11 +69,12 @@ class Line
 		lineVertices[1] = v1.y;
 		lineVertices[2] = v2.x;
 		lineVertices[3] = v2.y;
-		RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
+		RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, 
+		{
 			glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
             glEnableVertexAttribArray(0);
-		));
+		});
 	}
 	
 	void End()

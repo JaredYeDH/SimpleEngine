@@ -106,15 +106,15 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
-	//DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
+	DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
 
-	//DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
+	DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
 
-	//DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
+	DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
 	
-	//DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
+	DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
 
-	//DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
-	//DrawLine(Vec3(50, 0, 0), Vec3(50, 200, 0), Vec3(), 5);
-    }
+	DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
+
+}
 

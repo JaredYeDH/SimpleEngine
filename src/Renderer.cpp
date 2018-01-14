@@ -49,17 +49,19 @@ void DrawLine(Vec2 v1,Vec2 v2,Vec4 color)
     GLuint VBO, VAO;
     RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-                                                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-                                                glEnableVertexAttribArray(0);
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, 
+    {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+        glEnableVertexAttribArray(0);
+    });
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                shaderPtr->Bind();
-                                                glDrawArrays(GL_LINES, 0, 2);
-                                                shaderPtr->Unbind();
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, 
+    {
+        shaderPtr->Bind();
+        glDrawArrays(GL_LINES, 0, 2);
+        shaderPtr->Unbind();
+    });
 
     RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
 }
@@ -95,17 +97,20 @@ void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill)
     GLuint VBO, VAO;
     RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-                                                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-                                                glEnableVertexAttribArray(0);
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, 
+    {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+        glEnableVertexAttribArray(0);                                            
+    });
+       
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                shaderPtr->Bind();
-                                                glDrawArrays(GL_LINE_LOOP, 0, 5);
-                                                shaderPtr->Unbind();
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, 
+    {
+        shaderPtr->Bind();
+        glDrawArrays(GL_LINE_LOOP, 0, 5);
+        shaderPtr->Unbind();
+    });
 
     RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
 
@@ -140,17 +145,19 @@ void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill )
     GLuint VBO, VAO;
     RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
-                                                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-                                                glEnableVertexAttribArray(0);
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO,
+    {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+        glEnableVertexAttribArray(0);
+    });
 
-    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, C_O_D_E(
-                                                shaderPtr->Bind();
-                                                glDrawArrays(GL_LINE_LOOP, 0, vecSize);
-                                                shaderPtr->Unbind();
-                                                ));
+    RENDER_VERTEX_ARRAY_SCOPE(VBO, VAO, {
+        shaderPtr->Bind();
+        glDrawArrays(GL_LINE_LOOP, 0, vecSize);
+        shaderPtr->Unbind();
+    });
+       
     
     RENDER_VERTEX_ARRAY_DELETE(VBO, VAO);
     
