@@ -96,6 +96,8 @@ Components/BaseComponent.cpp
 Components/BaseComponent.h
 Components/TransformComponent.cpp
 Components/TransformComponent.h
+core/Transform.cpp
+core/Transform.h
 CubeBatch.cpp
 CubeBatch.h
 defines.h
