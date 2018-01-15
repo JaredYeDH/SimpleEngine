@@ -6,15 +6,10 @@
 #include "Texture.h"
 #include "Environment.h"
 #include "Window.h"
+#include "core/Transform.h"
 
 
-enum struct RenderType
-{
-	Line,
-	Rect,
-	Circle,
-	Texture
-};
+
 
 class RenderData
 {
@@ -50,17 +45,48 @@ class RenderInfo
 
 
 
+
 void DrawLine(Vec2 v1,Vec2 v2,Vec4 color);
 void DrawRect(int x,int y,int width,int height, Vec4 color,bool isFill = false);
 void DrawCircle(int x, int y, int radius, Vec4 color, bool isFill = false);
+class Object2D 
+{
+public:
+	enum RenderType
+	{
+		NONE,
+		Line,
+		Rect,
+		Circle,
+		Texture
+	};
 
-class Line
+	virtual int type(){return NONE;}
+private:
+	Transform m_Transform;
+
+}
+
+class Graphics2D
+{
+private:
+	Shader m_Shader;
+public: 
+	Graphics2D(){};
+	~Graphics2D(){};
+	void Draw(const Object2D& obj){};
+
+}
+
+class Line : Object2D
 {
 	Vec2 v1;
 	Vec2 v2;
 	Vec3 color;
 	GLuint VAO;
 	GLuint VBO;
+	virtual int type(){return LINE;}
+
 	void Begin()
 	{
 		RENDER_VERTEX_ARRAY_GEN(VBO, VAO);
@@ -96,6 +122,7 @@ class RenderObject
 	RenderType type;
 	void DrawSelf();
 };
+
 class Renderer2D
 {
 public:
