@@ -19,20 +19,22 @@ public:
 
 	Object2D(){};
 
-	~Object2D(){};
+	virtual ~Object2D(){};
 
 	virtual int type(){return None;}
-	virtual void Draw( Graphics2D& g2d)  {};
+	virtual void Draw( Graphics2D& g2d) =0;
 
-	Vec3& Color(){ return color;};
+	Vec4& Color(){ return color;};
+	const Vec4& Color() const { return color;};
 	Transform& T(){ return transform;};
+	const Transform& T() const { return transform;};
 
-private:
+protected:
 	Transform transform;
-	Vec3 color;
+	Vec4 color;
 };
 
-class Line : Object2D
+class Line : public Object2D
 {
 public:
 	Vec2 v1;
@@ -56,7 +58,7 @@ public:
 };
 
 
-class Rect : Object2D
+class Rect :public Object2D
 {
 public:
 	int left;
@@ -83,7 +85,7 @@ public:
 };
 
 
-class Circle : Object2D
+class Circle :public Object2D
 {
 public:
 	int raduis;
@@ -109,26 +111,18 @@ public:
 
 
 
-class Image : Object2D
+class Image :public Object2D
 {
 public:
 
 	String path;
-	Image(String path,Vec2 pos,Vec2 size)
-	{
-		this->path = path;
-		this->T().pos.x  = pos.x;
-		this->T().pos.y  = pos.y;
-		this->T().size.x = size.x;
-		this->T().size.y = size.y;
-
-	}
+	Image(String path,Vec2 pos,Vec2 size);
 	~Image(){};
 	virtual int type(){return Object2D::Image;}
 	void Draw(Graphics2D& g2d);
 };
 
-class Text : Object2D
-{
+// class Text : public Object2D
+// {
 
-};
+// };

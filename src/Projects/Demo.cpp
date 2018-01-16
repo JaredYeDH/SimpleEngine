@@ -85,6 +85,10 @@ Demo::Demo()
 	m_OtherPtr = new Player(-1, Demo::g_Id2, 120);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
+	
+	Line l(Vec2(3,3),Vec2(5,5));
+	l.Color() = Vec4(1,0.5,0,1);
+	m_Render.AddObject(&l);
 
 	int birthPos[10][2] = 
 	{
@@ -309,7 +313,7 @@ void Demo::Draw()
 	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	
 	
-
+	m_Render.Render();
 
 	//// 1. Show a simple window
 	//// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"

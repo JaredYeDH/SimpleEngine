@@ -9,5 +9,5 @@ public:
 	~AlphaSence();
 	void Update() override ;
 	 void Draw() override;
-	
+	Renderer2D m_Render;
 };

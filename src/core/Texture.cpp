@@ -6,6 +6,16 @@ Texture::Texture()
 {
 
 }
+Texture::Texture(const Texture& t)
+{
+	this->mTextureId = t.mTextureId ;
+	this->mFormat = t.mFormat ;
+	this->mWidth= t.mWidth ;
+	this->mHeight= t.mHeight ;
+	this->mPath= t.mPath ;
+}
+
+
 Texture::Texture(std::string filePath) 
 : mTextureId(0),
 mFormat(0),

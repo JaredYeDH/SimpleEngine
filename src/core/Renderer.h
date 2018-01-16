@@ -8,6 +8,7 @@
 #include "Window.h"
 #include "core/Transform.h"
 #include "Object2D.h"
+#include "Graphics2D.h"
 
 #define RENDER_VERTEX_ARRAY_GEN(VBO,VAO) \
 	glGenBuffers(1, &VBO); \
@@ -38,13 +39,12 @@ public:
 	~Renderer2D();
 	
 	void Render(); 
-	void AddObject(Object2D obj);
-	void RemoveObject(Object2D obj);
+	void AddObject(Object2D* obj);
+	void RemoveObject(int index);
 private:
-	glm::mat4 m_OrthoMat;
-	std::vector<Object2D> m_ObjectList;
-	GLuint m_VBO, m_VAO;
-	Shader m_Shader;
+	
+	std::list<Object2D*> m_ObjectList;
+	Graphics2D m_Graphics;
 };
 
 

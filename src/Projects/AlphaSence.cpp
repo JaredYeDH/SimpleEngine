@@ -23,7 +23,10 @@ static int Lua_DrawCircle(lua_State *L)
     return 0;
 }
 lua_State *L ;
+
+Image* img;
 AlphaSence::AlphaSence()
+:m_Render()
 {
 	//TestTimer
 	//TimerManager::GetInstance()->CreateTimer("Deda2", 1000, true, false, [this](){
@@ -86,6 +89,22 @@ AlphaSence::AlphaSence()
         std::cout<<string(error)<<std::endl;
         return ;
     }
+	Line* l=new Line(Vec2(222,222),Vec2(111,111));
+	l->Color() = Vec4(1,0.5,0,1);
+	
+	m_Render.AddObject(l);
+
+	Rect* r=new Rect(20,20,200,200);
+	r->Color() = Vec4(1,0.8,0,1);
+	m_Render.AddObject(r);
+
+	Circle* c=new Circle(100,100,88);
+	c->Color() = Vec4(1,0.5,0.2,1);
+	m_Render.AddObject(c);
+
+	img=new Image("/Users/oceancx/Desktop/WX20171202-141539.png",Vec2(200,200),Vec2(400,300));
+	// c->Color() = Vec4(1,0.5,0.2,1);
+	m_Render.AddObject(img);
 
 }
 
@@ -96,16 +115,23 @@ AlphaSence::~AlphaSence()
 
 void AlphaSence::Update() 
 {
-    lua_settop(L,0);
-    lua_getglobal(L,"OnUpdate");
-    lua_pcall(L,0,0,0);
-
+    // lua_settop(L,0);
+    // lua_getglobal(L,"OnUpdate");
+    // lua_pcall(L,0,0,0);
+	img->T().pos.x++;
+	img->T().pos.y += 2;
+	if (img->T().pos.y > 500)
+	{
+		img->T().pos.x=0;
+		img->T().pos.y = 0;
+	}
 }
 
 
 
 void AlphaSence::Draw() 
 {
+	m_Render.Render();
 	//DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
 
 	//DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));

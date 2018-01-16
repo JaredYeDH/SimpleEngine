@@ -18,6 +18,7 @@
 #include "FrameAnimation.h"
 #include "Player.h"
 #include "Network/Client.h"
+#include "../core/Renderer.h"
 
 class Demo : public IUpdateDraw, public IMouseEvent
 {
@@ -61,6 +62,8 @@ private:
 	
 	
 	Client* m_ClientPtr;
+
+		Renderer2D m_Render;
 };
 
 
