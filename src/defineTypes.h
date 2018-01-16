@@ -12,3 +12,5 @@ using Mat3 = glm::mat3;
 using Mat4 = glm::mat4;
 using Mat2 = glm::mat2;
 
+using String = std::string;
+

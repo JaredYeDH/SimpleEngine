@@ -96,6 +96,16 @@ Components/BaseComponent.cpp
 Components/BaseComponent.h
 Components/TransformComponent.cpp
 Components/TransformComponent.h
+core/Graphics2D.cpp
+core/Graphics2D.h
+core/Object2D.cpp
+core/Object2D.h
+core/Renderer.cpp
+core/Renderer.h
+core/Shader.cpp
+core/Shader.h
+core/Texture.cpp
+core/Texture.h
 core/Transform.cpp
 core/Transform.h
 CubeBatch.cpp
@@ -156,8 +166,6 @@ Projects/TestSence.cpp
 Projects/TestSence.h
 Random.cpp
 Random.h
-Renderer.cpp
-Renderer.h
 Resource.cpp
 Resource.h
 ResourceManager.cpp
@@ -166,8 +174,6 @@ SenceManager.cpp
 SenceManager.h
 Sences/BaseSence.cpp
 Sences/BaseSence.h
-Shader.cpp
-Shader.h
 Singleton.h
 Singleton.inl
 Sprite.cpp
@@ -176,8 +182,6 @@ SpriteBatch.cpp
 SpriteBatch.h
 SpriteRenderer.cpp
 SpriteRenderer.h
-Texture.cpp
-Texture.h
 TextureManager.cpp
 TextureManager.h
 ThirdParty/NetEase/MAP.cpp

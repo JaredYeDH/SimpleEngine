@@ -2,7 +2,7 @@
 
 #include "defines.h"
 #include "Singleton.h"
-#include "Shader.h"
+#include "core/Shader.h"
 #include <array>
 
 struct CubeInfo

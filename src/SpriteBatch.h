@@ -1,7 +1,7 @@
 #pragma once 
 #include "defines.h"
 #include "Singleton.h"
-#include "Shader.h"
+#include "core/Shader.h"
 /*
 这个类主要用来控制每帧要刷新的Sprite的数量
 1. 将所有的SpriteInfo（pos,size,alpha,texture）转换为顶点+Texture

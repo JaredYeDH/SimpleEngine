@@ -10,8 +10,8 @@
 
 #include "defines.h"
 #include "Singleton.h"
-#include "Texture.h"
-#include "Shader.h"
+#include "core/Texture.h"
+#include "core/Shader.h"
 #include "ThirdParty/NetEase/Sprite2.h"
 #include "ThirdParty/NetEase/WDF.h"
 #include "ThirdParty/NetEase/WAS.h"

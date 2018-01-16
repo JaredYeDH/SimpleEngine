@@ -3,7 +3,7 @@
 #include "IUpdateDraw.h"
 #include "../Event/Event.h"
 #include "../Engine.h"
-#include "Texture.h"
+#include "core/Texture.h"
 #include "InputManager.h"
 #include "../SpriteRenderer.h"
 #include "../ThirdParty/NetEase/Sprite2.h"

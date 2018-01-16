@@ -1,5 +1,5 @@
 #include "AlphaSence.h"
-#include "Texture.h"
+#include "core/Texture.h"
 
 
 #include <iostream>
@@ -17,7 +17,7 @@ static int Lua_DrawCircle(lua_State *L)
     y = luaL_checkinteger(L, 2);
     radius = luaL_checkinteger(L, 3);
     printf("%d %d %d\n",x,y,radius);
-    DrawCircle(x,y,radius,Vec4(0,1,0,1),false);
+   // DrawCircle(x,y,radius,Vec4(0,1,0,1),false);
 
     lua_pushnumber(L,0);
     return 0;
@@ -106,15 +106,15 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
-	DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
+	//DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
 
-	DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
-
-	DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
+	//DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
+//
+	//DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
 	
-	DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
+	//DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
 
-	DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
+	//DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
 
 }
 

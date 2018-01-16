@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include "global.h"
-#include "Shader.h"
+#include "core/Shader.h"
 #include "Environment.h"
 #include "InputManager.h"
 #include "imgui_impl_glfw_gl3.h"
