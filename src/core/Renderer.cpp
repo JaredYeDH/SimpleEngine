@@ -17,7 +17,10 @@ void Renderer2D::Render()
     m_Graphics.Begin();
     for(Object2D* obj : m_ObjectList)
     {
-        m_Graphics.Draw(*obj);
+        if(obj->IsVisible())
+        {
+            m_Graphics.Draw(*obj);
+        }
     }
     m_Graphics.End();
 }

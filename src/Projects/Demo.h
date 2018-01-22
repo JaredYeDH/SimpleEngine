@@ -63,7 +63,7 @@ private:
 	
 	Client* m_ClientPtr;
 
-		Renderer2D m_Render;
+	Renderer2D m_Render;
 };
 
 

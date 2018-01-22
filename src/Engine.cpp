@@ -24,8 +24,8 @@ Engine::Engine()
 void Engine::Init()
 {
 	//mSence = new TestNetwork();
-	mSence = new AlphaSence();
-	// mSence = new Demo();
+	// mSence = new AlphaSence();
+	mSence = new Demo();
     InputManager::GetInstance()->SetKeyCallback();
     InputManager::GetInstance()->SetScrollCallback();
     InputManager::GetInstance()->SetMouseCallback();

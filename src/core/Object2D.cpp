@@ -2,6 +2,10 @@
 #include "Graphics2D.h"
 
 #include "../TextureManager.h"
+#include "../InputManager.h"
+//#include <ft2build.h>
+//#include FT_FREETYPE_H
+
 
 void Line::Draw( Graphics2D& g2d ) 
 {
@@ -29,7 +33,26 @@ Image::Image(String path,Vec2 pos,Vec2 size)
 }
 
 
-void Image::Draw( Graphics2D& g2d) 
+void Image::Draw(Graphics2D& g2d) 
 {
      g2d.DrawImage(*this); 
 };
+
+
+
+Text::Text(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+{
+
+}
+Text::~Text()
+{
+
+}
+	
+void Text::Draw(Graphics2D& g2d)
+{
+
+}
+
+
+

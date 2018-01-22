@@ -8,7 +8,7 @@
 
 float Demo::s_ScreenWidth = 800.0f;
 float Demo::s_ScreenHeight = 600.0f;
-bool g_IsTest = true;
+bool g_IsTest = false;
 
 void Demo::OnEvent(int button, int action, int mods) 
 {
@@ -68,6 +68,7 @@ Demo::Demo()
 	:m_IsTestNpc0(true)
 {
 
+    m_IsTestNpc0 =false;
 	InputManager::GetInstance()->SetMouseEvent(this);
 	
 	m_RendererPtr = new SpriteRenderer();
@@ -86,9 +87,9 @@ Demo::Demo()
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
-	Line l(Vec2(3,3),Vec2(5,5));
-	l.Color() = Vec4(1,0.5,0,1);
-	m_Render.AddObject(&l);
+	Line *l = new Line(Vec2(3,3),Vec2(5,5));
+	l->Color() = Vec4(1,0.5,0,1);
+	m_Render.AddObject(l);
 
 	int birthPos[10][2] = 
 	{
@@ -114,7 +115,7 @@ Demo::Demo()
 		i++;
 	}
 
-	TestServer();
+	//TestServer();
 }
 
 Demo::~Demo()
@@ -313,7 +314,7 @@ void Demo::Draw()
 	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	
 	
-	m_Render.Render();
+	//m_Render.Render();
 
 	//// 1. Show a simple window
 	//// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"

@@ -3,6 +3,7 @@
 #include "../defines.h"
 #include "../defineTypes.h"
 #include "Transform.h"
+#include <functional>
 
 class Graphics2D;
 class Object2D 
@@ -14,10 +15,11 @@ public:
 		Line,
 		Rect,
 		Circle,
-		Image
+		Image,
+		Text
 	};
 
-	Object2D(){};
+	Object2D():mVisible(true){};
 
 	virtual ~Object2D(){};
 
@@ -28,10 +30,15 @@ public:
 	const Vec4& Color() const { return color;};
 	Transform& T(){ return transform;};
 	const Transform& T() const { return transform;};
+	void SetVisible(bool visible) { this->mVisible = visible; } ;
+	bool IsVisible(){return mVisible;}
 
 protected:
 	Transform transform;
 	Vec4 color;
+private:
+	bool mVisible;
+	bool mKeyBlock;
 };
 
 class Line : public Object2D
@@ -118,11 +125,26 @@ public:
 	String path;
 	Image(String path,Vec2 pos,Vec2 size);
 	~Image(){};
-	virtual int type(){return Object2D::Image;}
+	int type(){return Object2D::Image;}
 	void Draw(Graphics2D& g2d);
 };
 
-// class Text : public Object2D
-// {
 
-// };
+
+class Text : public Object2D
+{
+public:
+	struct Character {
+		GLuint TextureID;   // ID handle of the glyph texture
+		glm::ivec2 Size;    // Size of glyph
+		glm::ivec2 Bearing;  // Offset from baseline to left/top of glyph
+		GLuint Advance;    // Horizontal offset to advance to next glyph
+	};
+	Text(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	~Text();
+	int type(){return Object2D::Text;}
+	void Draw(Graphics2D& g2d);
+private:
+	std::map<wchar_t, Character> Characters;
+};
+

@@ -2,6 +2,7 @@
 
 #include "Singleton.h"
 #include "Event/Event.h"
+#include <functional>
 
 /*
 管理输入 包括：鼠标移动，滚动 键盘按键等
@@ -11,6 +12,7 @@ struct MousePos
 	double x,y;
 	MousePos(double x,double y) { this->x = x ; this->y = y ;}
 };
+
 
 class InputManager final : public Singleton<InputManager>
 {
@@ -29,8 +31,14 @@ public:
     void SetMouseCallback();
     void SetMouseButtonCallback();
 
-    bool IsKeyDown(int keyCode) { return s_Keys[keyCode]; }
+    // bool IsKeyDown(int keyCode) { return s_KeyStates[keyCode] == GLFW_PRESS; }
+    // bool IsKeyUp(int keyCode) { return s_KeyStates[keyCode] == GLFW_RELEASE; }
+
+	 bool IsKeyDown(int keyCode) { return s_Keys[keyCode]; }
     bool IsKeyUp(int keyCode) { return s_Keys[keyCode]; }
+
+	int GetKeyState(int keyCode) { return s_KeyStates[keyCode]; }
+	//void BindKey(int keyCode, const std::function<void(int key,Object2D& )> & func  );
 
     double GetMouseX() { return s_MousePos.x; }
     double GetMouseY() { return s_MousePos.y; }
@@ -45,6 +53,10 @@ private:
 	GLFWwindow* m_pWindow;
 
 	static bool	s_Keys[1024];
+
+	static bool s_bKeyBlock;
+
+	static int	s_KeyStates[1024];
 
 	static bool	s_FirstMouse;
 

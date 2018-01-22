@@ -11,8 +11,6 @@ Transform::Transform()
     layer = 0;
 };
 
-
-
 Transform::~Transform()
 {
 

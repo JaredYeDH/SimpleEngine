@@ -1,30 +1,12 @@
 #include "AlphaSence.h"
 #include "core/Texture.h"
-
-
+#include "../InputManager.h"
 #include <iostream>
 
 
-
-static int Lua_DrawCircle(lua_State *L)
-{
-    printf("static int Lua_DrawCircle(lua_State *L)");
-    int x;
-    int y;
-    int radius;
-
-    x = luaL_checkinteger(L, 1);
-    y = luaL_checkinteger(L, 2);
-    radius = luaL_checkinteger(L, 3);
-    printf("%d %d %d\n",x,y,radius);
-   // DrawCircle(x,y,radius,Vec4(0,1,0,1),false);
-
-    lua_pushnumber(L,0);
-    return 0;
-}
-lua_State *L ;
-
 Image* img;
+
+
 AlphaSence::AlphaSence()
 :m_Render()
 {
@@ -35,60 +17,9 @@ AlphaSence::AlphaSence()
 	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	
 	//	);
 	//});
-	L= luaL_newstate();
-	luaopen_base(L);
-	luaopen_table(L);
-	luaopen_package(L);
-	luaopen_io(L);
-	luaopen_string(L);
-
-	luaL_openlibs(L);
-
-
-    lua_pushcclosure(L,Lua_DrawCircle,0);
-    lua_setglobal(L, "DrawCircle");
-
-
-    /*
-	using string = std::string;
-
-    string luafile(Environment::GetAbsPath("/scripts/Test.lua"));
-	if(luaL_loadfile(L,luafile.c_str())
-		|| lua_pcall(L,0,0,0) )
-		{
-			const char* error = lua_tostring(L,-1);
-            std::cout<<string(error)<<std::endl;
-			return ;
-		}
-	int a= 0 ;
-	int b =0;
-	lua_getglobal(L,"a");
-	if (!lua_isnumber(L,-1))
-	{
-        std::cout << "not number " << std::endl;
-		return;
-	}
-
-	a = lua_tonumber(L,-1);
-
-	lua_getglobal(L,"b");
-	b = lua_tonumber(L,-1);
-    std::cout << a << "   b : " << b  << std::endl;
-	lua_close(L);
-
-
-     */
-
     using string = std::string;
     printf("");
-    string luafile(Environment::GetAbsPath("/scripts/Test3.lua"));
-    if(luaL_loadfile(L,luafile.c_str())
-       || lua_pcall(L,0,0,0) )
-    {
-        const char* error = lua_tostring(L,-1);
-        std::cout<<string(error)<<std::endl;
-        return ;
-    }
+    
 	Line* l=new Line(Vec2(222,222),Vec2(111,111));
 	l->Color() = Vec4(1,0.5,0,1);
 	
@@ -102,7 +33,7 @@ AlphaSence::AlphaSence()
 	c->Color() = Vec4(1,0.5,0.2,1);
 	m_Render.AddObject(c);
 
-	img=new Image("/Users/oceancx/Desktop/WX20171202-141539.png",Vec2(200,200),Vec2(400,300));
+	img = new Image("/Users/oceancx/Documents/照片/湖工大-IMG_20130623_202050.jpg",Vec2(200,200),Vec2(400,300));
 	// c->Color() = Vec4(1,0.5,0.2,1);
 	m_Render.AddObject(img);
 
@@ -113,18 +44,42 @@ AlphaSence::~AlphaSence()
 	
 }
 
+bool toggle = false;
+bool s = false;
 void AlphaSence::Update() 
 {
     // lua_settop(L,0);
     // lua_getglobal(L,"OnUpdate");
     // lua_pcall(L,0,0,0);
-	img->T().pos.x++;
-	img->T().pos.y += 2;
-	if (img->T().pos.y > 500)
-	{
-		img->T().pos.x=0;
-		img->T().pos.y = 0;
+
+	if (InputManager::GetInstance()->IsKeyDown(GLFW_KEY_LEFT_SUPER)  )
+	{	
+		
+			
+		if(InputManager::GetInstance()->IsKeyDown(GLFW_KEY_E))
+		{
+			if(s ) return ;
+			s = true;
+			toggle = !toggle;				
+			// toggle = !toggle;
+		
+		// img->T().pos.x++;
+		// img->T().pos.y += 2;
+		// if (img->T().pos.y > 500)
+		// {
+		// 	img->T().pos.x=0;
+		// 	img->T().pos.y = 0;
+		// }	
+		}
+
+		if(InputManager::GetInstance()->IsKeyUp(GLFW_KEY_E))
+		{
+			img->SetVisible(toggle);
+			s=false;
+		}
 	}
+
+	
 }
 
 
@@ -132,15 +87,5 @@ void AlphaSence::Update()
 void AlphaSence::Draw() 
 {
 	m_Render.Render();
-	//DrawLine(Vec2(50, 150), Vec2(200, 150), Vec4(1,0,0,1));
-
-	//DrawRect(50,50,100,50, Vec4(0, 1, 0, 1));
-//
-	//DrawRect(250, 150, 100, 50, Vec4(0, 1, 0, 1));
-	
-	//DrawCircle(200, 200, 50, Vec4(0, 1, 0, 1));
-
-	//DrawLine(Vec2(0, 100), Vec2(200, 50), Vec4(1, 0, 0, 1));
-
 }
 
