@@ -69,6 +69,11 @@ set(IMGUI_SRCS
 #add_subdirectory(external/assimp)
 #include_directories(SYSTEM external/assimp/include)
 
+
+# adding freetype
+add_subdirectory(external/freetype)
+include_directories(SYSTEM external/freetype/include)
+
 # adding SOIL
 add_subdirectory(external/SOIL)
 include_directories(SYSTEM external/SOIL/include)
@@ -77,7 +82,6 @@ include_directories(SYSTEM external/SOIL/include)
 add_subdirectory(external/Lua/cmake)
 include_directories(SYSTEM external/Lua/cmake)
 
-#execute_process(COMMAND echo "hello")
 
 add_subdirectory(src)
 

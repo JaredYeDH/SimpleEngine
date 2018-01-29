@@ -22,3 +22,6 @@
 [submodule "external/Lua"]
 	path = external/Lua
 	url = git@github.com:oceancx/Lua.git
+[submodule "external/freetype"]
+	path = external/freetype
+	url = git@github.com:oceancx/freetype.git

@@ -3,9 +3,9 @@
 #include "../InputManager.h"
 #include <iostream>
 
-
+#include "../TextRenderer.h"
 Image* img;
-
+TextRenderer* textRenderer;
 
 AlphaSence::AlphaSence()
 :m_Render()
@@ -17,25 +17,27 @@ AlphaSence::AlphaSence()
 	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	
 	//	);
 	//});
+	textRenderer = new TextRenderer();
     using string = std::string;
     printf("");
     
-	Line* l=new Line(Vec2(222,222),Vec2(111,111));
-	l->Color() = Vec4(1,0.5,0,1);
+	// Line* l=new Line(Vec2(222,222),Vec2(111,111));
+	// l->Color() = Vec4(1,0.5,0,1);
 	
-	m_Render.AddObject(l);
+	// m_Render.AddObject(l);
 
-	Rect* r=new Rect(20,20,200,200);
-	r->Color() = Vec4(1,0.8,0,1);
-	m_Render.AddObject(r);
+	// Rect* r=new Rect(20,20,200,200);
+	// r->Color() = Vec4(1,0.8,0,1);
+	// m_Render.AddObject(r);
 
-	Circle* c=new Circle(100,100,88);
-	c->Color() = Vec4(1,0.5,0.2,1);
-	m_Render.AddObject(c);
-
-	img = new Image("/Users/oceancx/Documents/照片/湖工大-IMG_20130623_202050.jpg",Vec2(200,200),Vec2(400,300));
+	// Circle* c=new Circle(100,100,88);
 	// c->Color() = Vec4(1,0.5,0.2,1);
-	m_Render.AddObject(img);
+	// m_Render.AddObject(c);
+
+	// img = new Image("/Users/oceancx/Documents/照片/湖工大-IMG_20130623_202050.jpg",Vec2(200,200),Vec2(400,300));
+	// // c->Color() = Vec4(1,0.5,0.2,1);
+	// m_Render.AddObject(img);
+
 
 }
 
@@ -48,6 +50,7 @@ bool toggle = false;
 bool s = false;
 void AlphaSence::Update() 
 {
+	
     // lua_settop(L,0);
     // lua_getglobal(L,"OnUpdate");
     // lua_pcall(L,0,0,0);
@@ -74,8 +77,8 @@ void AlphaSence::Update()
 
 		if(InputManager::GetInstance()->IsKeyUp(GLFW_KEY_E))
 		{
-			img->SetVisible(toggle);
-			s=false;
+			//img->SetVisible(toggle);
+			//s=false;
 		}
 	}
 
@@ -86,6 +89,7 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
-	m_Render.Render();
+	textRenderer->Draw();
+	//m_Render.Render();
 }
 

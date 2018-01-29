@@ -13,7 +13,7 @@ endif()
 if(WIN32)
 	find_package(OpenGL REQUIRED)
 	#set(LIBS glfw opengl32 libglew_static SOIL_Static assimp)
-	set(LIBS glfw opengl32 libglew_static SOIL_Static Lua)
+	set(LIBS glfw opengl32 libglew_static SOIL_Static Lua freetype)
 	list(APPEND LIBS ${OPENGL_LIBRARY}) 
 elseif(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
@@ -22,6 +22,7 @@ elseif(UNIX)
   list(APPEND LIBS libglew_static)
   list(APPEND LIBS SOIL_Static)
   list(APPEND LIBS Lua)
+  list(APPEND LIBS freetype)
  #list(APPEND LIBS assimp)
   find_package(OpenGL REQUIRED)
   list(APPEND LIBS ${OPENGL_gl_LIBRARY}) # setting LIBS for the first time
@@ -162,6 +163,7 @@ Projects/Heap.h
 Projects/mhxy.h
 Projects/Player.cpp
 Projects/Player.h
+Projects/TestLua.cpp
 Projects/TestSence.cpp
 Projects/TestSence.h
 Random.cpp
@@ -182,6 +184,8 @@ SpriteBatch.cpp
 SpriteBatch.h
 SpriteRenderer.cpp
 SpriteRenderer.h
+TextRenderer.cpp
+TextRenderer.h
 TextureManager.cpp
 TextureManager.h
 ThirdParty/NetEase/MAP.cpp
@@ -206,7 +210,7 @@ ${IMGUI_SRCS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-	${LIBS}
+	${LIBS} 
 )
 
 
