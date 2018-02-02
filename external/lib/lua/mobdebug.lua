@@ -3,7 +3,7 @@
 -- Copyright 2011-15 Paul Kulchenko
 -- Based on RemDebug 1.0 Copyright Kepler Project 2005
 --
-
+print("mobduebug")
 -- use loaded modules or load explicitly on those systems that require that
 local require = require
 local io = io or require "io"
