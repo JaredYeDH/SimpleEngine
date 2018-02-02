@@ -79,8 +79,7 @@ add_subdirectory(external/SOIL)
 include_directories(SYSTEM external/SOIL/include)
 
 # adding Lua
-add_subdirectory(external/Lua/cmake)
-include_directories(SYSTEM external/Lua/cmake)
+include_directories(external/include/lua)
 
 
 add_subdirectory(src)

@@ -1,4 +1,4 @@
-﻿#include "defines.h"
+#include "defines.h"
 
 //包含Window 创建出来一个window
 #include "Window.h"
@@ -15,6 +15,12 @@ int Demo::g_Id2 = 0;
 int main(int argc,char** argv)
 {
 
+	lua_State *L ;
+	L= luaL_newstate();
+	
+	luaL_openlibs(L);
+	luaL_dofile(L, "/Users/oceancx/luadist/bin/hello2.lua" );
+    
 
 	asio::io_context io_context;
 	auto work = asio::make_work_guard(io_context);

@@ -13,7 +13,7 @@ endif()
 if(WIN32)
 	find_package(OpenGL REQUIRED)
 	#set(LIBS glfw opengl32 libglew_static SOIL_Static assimp)
-	set(LIBS glfw opengl32 libglew_static SOIL_Static Lua freetype)
+	set(LIBS glfw opengl32 libglew_static SOIL_Static freetype)
 	list(APPEND LIBS ${OPENGL_LIBRARY}) 
 elseif(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
@@ -21,7 +21,6 @@ elseif(UNIX)
   set(LIBS glfw)
   list(APPEND LIBS libglew_static)
   list(APPEND LIBS SOIL_Static)
-  list(APPEND LIBS Lua)
   list(APPEND LIBS freetype)
  #list(APPEND LIBS assimp)
   find_package(OpenGL REQUIRED)
@@ -209,8 +208,11 @@ Window.h
 ${IMGUI_SRCS}
 )
 
+find_library(LUA_LIBS lua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_SOCKET_LIBS luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+
 target_link_libraries(${PROJECT_NAME}
-	${LIBS} 
+	${LIBS} ${LUA_LIBS} ${LUA_SOCKET_LIBS}
 )
 
 

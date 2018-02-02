@@ -20,7 +20,7 @@ AlphaSence::AlphaSence()
 	textRenderer = new TextRenderer();
     using string = std::string;
     printf("");
-    
+
 	// Line* l=new Line(Vec2(222,222),Vec2(111,111));
 	// l->Color() = Vec4(1,0.5,0,1);
 	
