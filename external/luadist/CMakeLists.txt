@@ -6,8 +6,9 @@
 
 cmake_minimum_required ( VERSION 2.8 )
 
-
-configure_file ( lua/src/luaconf.h.orig ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h)
+set(LUA_LDIR "${PROJECT_SOURCE_DIR}/lib/lua/")
+set(LUA_CDIR "${PROJECT_SOURCE_DIR}/lib/lua/")
+configure_file ( lua/src/luaconf.h.in ${PROJECT_SOURCE_DIR}/luadist/lua/src/luaconf.h)
 
 #################luasocket start################
 # The standard luasocket build has this enabled in release mode.
@@ -67,8 +68,7 @@ install (TARGETS luasocket DESTINATION lib/lua)
 #################lua start################
 
 
-add_definitions(-DLUA_PATH=${CMAKE_INSTALL_PREFIX}/lib/lua;;)
-include_directories ( lua/src ${CMAKE_CURRENT_BINARY_DIR})
+include_directories ( lua/src )
 
 include_directories ( luasocket/src )
 
@@ -93,7 +93,7 @@ endif ( )
 add_library ( lua ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
 target_link_libraries ( lua  luasocket)
 
-install ( FILES lua/src/lua.h lua/src/lualib.h lua/src/lauxlib.h lua/src/lua.hpp ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h DESTINATION include/lua)
+install ( FILES lua/src/lua.h lua/src/lualib.h lua/src/lauxlib.h lua/src/lua.hpp lua/src/luaconf.h DESTINATION include/lua)
 install ( TARGETS lua  DESTINATION lib/lua)
 
 #################lua end################

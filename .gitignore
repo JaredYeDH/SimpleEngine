@@ -8,3 +8,6 @@ external/mysql_connector/
 Resource/.DS_Store
 Resource/Assets/.DS_Store
 external/.DS_Store
+external/include
+external/lib
+external/bin
