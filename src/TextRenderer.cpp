@@ -37,12 +37,12 @@ void TextRenderer::Draw()
 	int y = 0;
 	int x = 0;
 
-	RenderText(L"what 啊可怜的就阿喀琉斯 fuck",
+	RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
 		x, y,
 		1,
 		glm::vec3(1.0f, 1.0f,0));
 
-	RenderText(L"what 阿斯兰的空间 qwe qw eqw eqw e",
+	RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
 		200, 100,
 		1,
 		glm::vec3(199 / 255.0f, 1.0f, 137 / 255.0f));
