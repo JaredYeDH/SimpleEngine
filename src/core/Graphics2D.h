@@ -18,7 +18,7 @@ private:
  	Shader* m_SpriteShaderPtr;
 	GLuint m_SpriteVBO;
 	GLuint m_SpriteVAO;
-	GLfloat m_SpriteVertices[24];
+	std::array<GLfloat,24> m_SpriteVertices;
 public: 
 	Graphics2D();
 	~Graphics2D();

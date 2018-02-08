@@ -5,8 +5,7 @@
 #include "../Window.h"
 #include "../TextureManager.h"
 Graphics2D::Graphics2D()
-:m_SpriteVertices
-    {
+:m_SpriteVertices({
         // Pos      // Tex
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f,
@@ -15,7 +14,7 @@ Graphics2D::Graphics2D()
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
-    }
+})
 {
     String  vPath, fPath;
     vPath = Environment::GetShaderPath("LineShader.vs");
@@ -45,7 +44,7 @@ Graphics2D::Graphics2D()
 
     RENDER_VERTEX_ARRAY_SCOPE(m_SpriteVBO, m_SpriteVAO, 
     {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(m_SpriteVertices), m_SpriteVertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(m_SpriteVertices), &m_SpriteVertices[0], GL_STATIC_DRAW);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
     });

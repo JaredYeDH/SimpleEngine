@@ -54,7 +54,7 @@ endif ( )
 include_directories ( luasocket/src )
 
 
-add_library ( luasocket   ${LUA_SRC_SOCKET}  ${LUA_LIB_SOCKET} )
+add_library ( luasocket   ${LUA_SRC_SOCKET}   )
 target_link_libraries ( luasocket ${LUA_LIB_SOCKET} )
 install (FILES ${LUA_HEADER_SOCKET} DESTINATION include/lua)
 install (TARGETS luasocket DESTINATION lib/lua)

@@ -37,12 +37,12 @@ void TextRenderer::Draw()
 	int y = 0;
 	int x = 0;
 
-	RenderText(L"what 梦幻西游 哈哈哈 fuck",
+	RenderText(L"what 啊可怜的就阿喀琉斯 fuck",
 		x, y,
 		1,
 		glm::vec3(1.0f, 1.0f,0));
 
-	RenderText(L"what ；拉开的；辣点敬老卡的控件啊刷空间 qwe qw eqw eqw e",
+	RenderText(L"what 阿斯兰的空间 qwe qw eqw eqw e",
 		200, 100,
 		1,
 		glm::vec3(199 / 255.0f, 1.0f, 137 / 255.0f));

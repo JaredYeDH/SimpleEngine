@@ -27,6 +27,7 @@ typedef uint8_t   byte;
 #include <utility>
 
 #include <vector>
+#include <array>
 #include <list>
 #include <map>
 #include <deque>
