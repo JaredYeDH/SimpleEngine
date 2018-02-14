@@ -89,8 +89,8 @@
 ** In Windows, any exclamation mark ('!') in the path is replaced by the
 ** path of the directory of the executable file of the current process.
 */
-#define LUA_LDIR	"D:/Github/SimpleEngine/external/lib/lua/"
-#define LUA_CDIR	"D:/Github/SimpleEngine/external/lib/lua/"
+#define LUA_LDIR	"/Users/oceancx/MHXY/SimpleEngine/external/lib/lua/"
+#define LUA_CDIR	"/Users/oceancx/MHXY/SimpleEngine/external/lib/lua/"
 #define LUA_PATH_DEFAULT  \
 		LUA_LDIR"?.lua;"  LUA_LDIR"?\\init.lua;" \
 		LUA_CDIR"?.lua;"  LUA_CDIR"?\\init.lua;" ".\\?.lua"
@@ -101,8 +101,8 @@
 
 #define LUA_VDIR	""
 #define LUA_ROOT	""
-#define LUA_LDIR	"D:/Github/SimpleEngine/external/lib/lua/"
-#define LUA_CDIR	"D:/Github/SimpleEngine/external/lib/lua/"
+#define LUA_LDIR	"/Users/oceancx/MHXY/SimpleEngine/external/lib/lua/"
+#define LUA_CDIR	"/Users/oceancx/MHXY/SimpleEngine/external/lib/lua/"
 #define LUA_PATH_DEFAULT  \
 		LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
 		LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua;" "./?.lua"

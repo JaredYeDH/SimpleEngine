@@ -1,4 +1,4 @@
-#include "GameMap.h"
+        #include "GameMap.h"
 #include "Astar.h"
 #include <SOIL/SOIL.h>
 #include <random>

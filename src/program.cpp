@@ -15,11 +15,11 @@ int Demo::g_Id2 = 0;
 int main(int argc,char** argv)
 {
 
-	lua_State *L ;
-	L= luaL_newstate();
+	// lua_State *L ;
+	// L= luaL_newstate();
 	
-	luaL_openlibs(L);
-	luaL_dofile(L, "/Users/oceancx/luadist/bin/hello2.lua" );
+	// luaL_openlibs(L);
+	// luaL_dofile(L, "/Users/oceancx/luadist/bin/hello2.lua" );
     
 
 	asio::io_context io_context;

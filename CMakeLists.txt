@@ -19,21 +19,6 @@ Create an empty build directory,
 change into it and re-invoke cmake")
 endif() 
 
-# adding glew
-add_definitions(-DGLEW_STATIC)
-option(glew-cmake_BUILD_SHARED "" OFF)
-add_subdirectory(external/glew-cmake)
-include_directories(external/glew-cmake/include external/glew-cmake/src Astar)
-
-# adding glfw
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Do not build the GLFW example programs" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "Do not build the GLFW tests programs" FORCE)
-set(GLFW_INSTALL OFF CACHE STRING "" FORCE)
-add_subdirectory(external/glfw)
-include_directories(SYSTEM external/glfw/include)
-
-# adding glm
-include_directories(SYSTEM external/glm)
 
 # adding asio
 add_definitions(-DASIO_STANDALONE)
@@ -63,24 +48,8 @@ set(IMGUI_SRCS
 ../external/imgui/stb_truetype.h
 )
 
-# adding assimp
-#set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Do not build the tools" FORCE)
-#set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build the tests" FORCE)
-#add_subdirectory(external/assimp)
-#include_directories(SYSTEM external/assimp/include)
-
-
-# adding freetype
-add_subdirectory(external/freetype)
-include_directories(SYSTEM external/freetype/include)
-
-# adding SOIL
-add_subdirectory(external/SOIL)
-include_directories(SYSTEM external/SOIL/include)
-
-# adding Lua
-include_directories(external/include/lua)
 
 
 add_subdirectory(src)
+
 

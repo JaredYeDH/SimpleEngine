@@ -1,4 +1,4 @@
 #pragma once
    
-#define WORK_DIR "D:/Github/SimpleEngine"
+#define WORK_DIR "/Users/oceancx/MHXY/SimpleEngine"
    
