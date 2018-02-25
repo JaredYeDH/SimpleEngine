@@ -7,7 +7,7 @@
 #include "Projects/AlphaSence.h"
 #include "Projects/Demo.h"
 #include "Network/Message.h"
-
+#include "LuaVM.h"
 
 
 Engine::~Engine()
@@ -25,9 +25,13 @@ Engine::Engine()
 
 void Engine::Init()
 {
+	LuaVM::GetInstance()->Init();
+	luaL_dostring(LuaVM::get(),R"
+		print("hello world");
+	");
 	//mSence = new TestNetwork();
-	// mSence = new AlphaSence();
-	mSence = new Demo();
+	mSence = new AlphaSence();
+	// mSence = new Demo();
     InputManager::GetInstance()->SetKeyCallback();
     InputManager::GetInstance()->SetScrollCallback();
     InputManager::GetInstance()->SetMouseCallback();

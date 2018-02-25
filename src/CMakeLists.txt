@@ -104,9 +104,7 @@ endif()
 set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install)
 
 
-
-
-add_executable(${PROJECT_NAME}
+set(SRC_CPP_FILES 
 Actor.cpp
 Actor.h
 Astar/include/InputHandler.h
@@ -159,6 +157,8 @@ InputManager.h
 IUpdateDraw.h
 Logger.cpp
 Logger.h
+LuaVM.cpp
+LuaVM.h
 Network/Client.cpp
 Network/Client.h
 Network/Message.cpp
@@ -228,6 +228,11 @@ Time/TimerManager.cpp
 Time/TimerManager.h
 Window.cpp
 Window.h
+
+)
+
+add_executable(${PROJECT_NAME}
+${SRC_CPP_FILES}
 ${IMGUI_SRCS}
 )
 
