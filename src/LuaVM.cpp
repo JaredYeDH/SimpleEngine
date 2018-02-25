@@ -1,2 +1,2 @@
 #include "LuaVM.h"
-lua_State* LuaVM::m_State = nullptr;
+lua_State* LuaVM::L = nullptr;

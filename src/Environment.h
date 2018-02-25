@@ -28,6 +28,9 @@ public:
 	{
 		return GetPath() + "/Shader/" + path;
 	}
-
+	static std::string GetLuaPath(std::string path)
+	{
+		return GetPath() + "/scripts/client/" + path;
+	}
 
 };

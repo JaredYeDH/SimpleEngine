@@ -25,10 +25,12 @@ Engine::Engine()
 
 void Engine::Init()
 {
+	
 	LuaVM::GetInstance()->Init();
-	luaL_dostring(LuaVM::get(),R"(
-                  print("hello world");
-                  )" );
+	// LuaVM::GetInstance()->doLuaString(R"(
+    //               print("hello world");
+    //               )" );
+	
 	//mSence = new TestNetwork();
 	mSence = new AlphaSence();
 	// mSence = new Demo();
@@ -37,18 +39,24 @@ void Engine::Init()
     InputManager::GetInstance()->SetMouseCallback();
     InputManager::GetInstance()->SetMouseButtonCallback();
 	TimerManager::GetInstance();
+
+
+	LuaVM::GetInstance()->OnGameInit();
 }
 
 void Engine::Update(double dt)
 {
     m_DeltaTime = dt;
+	
 	TimerManager::GetInstance()->Update();
     mSence->Update();
+	LuaVM::GetInstance()->OnGameUpdate(dt);
 }
 
 void Engine::Draw()
 { 
     mSence->Draw();
+	LuaVM::GetInstance()->OnGameDraw();
 }
 
 void Engine::Destroy()
