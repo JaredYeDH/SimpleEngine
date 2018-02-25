@@ -51,6 +51,11 @@ void Engine::Update(double dt)
 	TimerManager::GetInstance()->Update();
     mSence->Update();
 	LuaVM::GetInstance()->OnGameUpdate(dt);
+
+	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_F5) )
+	{
+		LuaVM::GetInstance()->CallSimpleFunc("GotoDebug");
+	}
 }
 
 void Engine::Draw()

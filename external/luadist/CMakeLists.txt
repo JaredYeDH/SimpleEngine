@@ -57,8 +57,11 @@ include_directories ( luasocket/src )
 add_library ( luasocket   ${LUA_SRC_SOCKET}   )
 target_link_libraries ( luasocket ${LUA_LIB_SOCKET} )
 install (FILES ${LUA_HEADER_SOCKET} DESTINATION include/lua)
+install (FILES luasocket/src/socket.lua DESTINATION lib/lua)
 install (TARGETS luasocket DESTINATION lib/lua)
 
+
+install (FILES mobdebug/src/mobdebug.lua DESTINATION lib/lua)
 
 
 

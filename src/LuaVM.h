@@ -4,7 +4,6 @@
 #include "Singleton.h"
 #include "Environment.h" 
 
-
 class LuaVM : public Singleton<LuaVM>
 {
 public:
@@ -14,6 +13,8 @@ public:
     {
         L = luaL_newstate();
         luaL_openlibs(L);
+        luaopen_socket_core(L);
+
         int error = luaL_dofile(L,Environment::GetLuaPath("main.lua").c_str());
         if(error)
         {
@@ -42,20 +43,26 @@ public:
     void OnGameInit()
     {
         lua_getglobal(L, "OnGameInit");                  
-        lua_call(L, 0, 0);
+        lua_pcall(L, 0, 0, 0);
     }
 
     void OnGameUpdate(double dt)
     {
         lua_getglobal(L, "OnGameUpdate");                  
         lua_pushnumber(L, dt);                  
-        lua_call(L, 1, 0);
+        lua_pcall(L, 1, 0, 0);
     }
 
     void OnGameDraw()
     {
         lua_getglobal(L, "OnGameDraw");                  
-        lua_call(L, 0, 0);
+        lua_pcall(L, 0, 0, 0);
+    }
+
+    void CallSimpleFunc(std::string funcName)
+    {
+        lua_getglobal(L, funcName.c_str());                  
+        lua_pcall(L, 0, 0, 0);
     }
     
 private:
