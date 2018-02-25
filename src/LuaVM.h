@@ -15,4 +15,4 @@ public:
     
 private:
     static lua_State* m_State;
-}
+};

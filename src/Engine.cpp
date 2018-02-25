@@ -26,9 +26,9 @@ Engine::Engine()
 void Engine::Init()
 {
 	LuaVM::GetInstance()->Init();
-	luaL_dostring(LuaVM::get(),R"
-		print("hello world");
-	");
+	luaL_dostring(LuaVM::get(),R"(
+                  print("hello world");
+                  )" );
 	//mSence = new TestNetwork();
 	mSence = new AlphaSence();
 	// mSence = new Demo();
