@@ -25,3 +25,6 @@
 [submodule "external/freetype"]
 	path = external/freetype
 	url = git@github.com:oceancx/freetype.git
+[submodule "external/lua-cjson"]
+	path = external/lua-cjson
+	url = https://github.com/oceancx/lua-cjson
