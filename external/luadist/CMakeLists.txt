@@ -87,18 +87,18 @@ else ( )
   list ( APPEND LUA_SRC_LIB lua/src/loadlib.c )
 endif ( )
 
-add_library ( liblua ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
-target_link_libraries ( liblua  luasocket)
+add_library ( lua_static ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
+target_link_libraries ( lua_static  luasocket)
 
 add_executable ( lua ${LUA_SRC_LUA}  )
-target_link_libraries ( lua liblua )
+target_link_libraries ( lua lua_static )
 
 add_executable ( luac  ${LUA_SRC_LUAC} )
-target_link_libraries ( luac liblua)
+target_link_libraries ( luac lua_static)
 
 
 install ( FILES lua/src/lua.h lua/src/lualib.h lua/src/lauxlib.h lua/src/lua.hpp lua/src/luaconf.h DESTINATION include/lua)
-install ( TARGETS liblua  DESTINATION lib/lua)
+install ( TARGETS lua_static  DESTINATION lib/lua)
 install ( TARGETS lua  DESTINATION lib/lua)
 install ( TARGETS luac  DESTINATION lib/lua)
 

@@ -10,9 +10,9 @@ change into it and re-invoke cmake")
 endif() 
 
 
-find_library(LUA_LIBS liblua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_STATIC lua_static  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_SOCKET luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
-find_library(LUA_SOCKET_LIBS luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
 if(APPLE)
   find_package(BZip2 QUIET REQUIRED)
@@ -42,17 +42,14 @@ link_directories(
   ../external/lib
 )
 
-
-
-
 set(COMMON_LIBS 
   glfw3
   glewd 
   SOIL
   assimp
   freetyped
-  ${LUA_LIBS}
-  ${LUA_SOCKET_LIBS}
+  ${LUA_STATIC}
+  ${LUA_SOCKET}
 )
 
 if(WIN32)

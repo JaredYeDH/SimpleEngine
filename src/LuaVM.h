@@ -13,7 +13,6 @@ public:
     {
         L = luaL_newstate();
         luaL_openlibs(L);
-        luaopen_socket_core(L);
 
         int error = luaL_dofile(L,Environment::GetLuaPath("main.lua").c_str());
         if(error)
