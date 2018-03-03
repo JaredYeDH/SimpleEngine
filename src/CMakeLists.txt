@@ -10,12 +10,14 @@ change into it and re-invoke cmake")
 endif() 
 
 
-find_library(LUA_LIBS lua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_LIBS liblua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
 find_library(LUA_SOCKET_LIBS luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
-find_package(BZip2 QUIET REQUIRED)
-find_package(PNG QUIET REQUIRED)
+if(APPLE)
+  find_package(BZip2 QUIET REQUIRED)
+  find_package(PNG QUIET REQUIRED)
+endif(APPLE)
 
 add_definitions(
   -std=c++11

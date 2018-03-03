@@ -35,12 +35,6 @@ set ( LUA_SRC_SOCKET luasocket/src/luasocket.c luasocket/src/timeout.c luasocket
 set ( LUA_HEADER_SOCKET luasocket/src/luasocket.h luasocket/src/timeout.h luasocket/src/buffer.h luasocket/src/io.h luasocket/src/auxiliar.h 
   luasocket/src/options.h luasocket/src/inet.h luasocket/src/tcp.h luasocket/src/udp.h luasocket/src/except.h luasocket/src/select.h ${LUA_SOCKETC} )
 
-set ( LUA_SRC_UNIX_SOCKET luasocket/src/unix.c luasocket/src/io.c luasocket/src/auxiliar.c luasocket/src/timeout.c luasocket/src/options.c
-  luasocket/src/buffer.c ${LUA_SOCKETC} )
-
-set ( LUA_HEADER_UNIX_SOCKET luasocket/src/unix.h luasocket/src/io.h luasocket/src/auxiliar.h luasocket/src/timeout.h luasocket/src/options.h
-  luasocket/src/buffer.h  )
-
 if ( WIN32 AND NOT CYGWIN )
   set ( LUA_LIB_SOCKET ws2_32 )
 endif ()
@@ -93,26 +87,19 @@ else ( )
   list ( APPEND LUA_SRC_LIB lua/src/loadlib.c )
 endif ( )
 
-add_library ( lua ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
-target_link_libraries ( lua  luasocket)
+add_library ( liblua ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
+target_link_libraries ( liblua  luasocket)
+
+add_executable ( lua ${LUA_SRC_LUA}  )
+target_link_libraries ( lua liblua luasocket)
+
+add_executable ( luac ${LUA_SRC_CORE} ${LUA_SRC_LIB} ${LUA_SRC_LUAC} )
+target_link_libraries ( luac luasocket)
+
 
 install ( FILES lua/src/lua.h lua/src/lualib.h lua/src/lauxlib.h lua/src/lua.hpp lua/src/luaconf.h DESTINATION include/lua)
+install ( TARGETS liblua  DESTINATION lib/lua)
 install ( TARGETS lua  DESTINATION lib/lua)
+install ( TARGETS luac  DESTINATION lib/lua)
 
 #################lua end################
-
-
-
-#add_executable ( client_test  client_test.cpp)
-#target_link_libraries ( client_test liblua )
-#install (TARGETS client_test DESTINATION bin)
-
-
-
-#add_executable (  server_test server_test.cpp)
-#target_link_libraries ( server_test liblua )
-#install (TARGETS server_test DESTINATION bin)
-
-
-	
-

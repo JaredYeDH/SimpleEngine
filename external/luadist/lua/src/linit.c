@@ -37,7 +37,7 @@ static const luaL_Reg loadedlibs[] = {
   {LUA_BITLIBNAME, luaopen_bit32},
   {LUA_MATHLIBNAME, luaopen_math},
   {LUA_DBLIBNAME, luaopen_debug},
-    {"socket.core",luaopen_socket_core},
+  {"socket.core",luaopen_socket_core},
   {NULL, NULL}
 };
 
