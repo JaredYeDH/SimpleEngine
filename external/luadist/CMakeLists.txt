@@ -91,10 +91,10 @@ add_library ( liblua ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
 target_link_libraries ( liblua  luasocket)
 
 add_executable ( lua ${LUA_SRC_LUA}  )
-target_link_libraries ( lua liblua luasocket)
+target_link_libraries ( lua liblua )
 
-add_executable ( luac ${LUA_SRC_CORE} ${LUA_SRC_LIB} ${LUA_SRC_LUAC} )
-target_link_libraries ( luac luasocket)
+add_executable ( luac  ${LUA_SRC_LUAC} )
+target_link_libraries ( luac liblua)
 
 
 install ( FILES lua/src/lua.h lua/src/lualib.h lua/src/lauxlib.h lua/src/lua.hpp lua/src/luaconf.h DESTINATION include/lua)
