@@ -22,6 +22,7 @@
 #include "lauxlib.h"
 #include <luasocket.h>
 
+int luaopen_cjson(lua_State* l);
 /*
 ** these libs are loaded by lua.c and are readily available to any Lua
 ** program
@@ -38,6 +39,7 @@ static const luaL_Reg loadedlibs[] = {
   {LUA_MATHLIBNAME, luaopen_math},
   {LUA_DBLIBNAME, luaopen_debug},
   {"socket.core",luaopen_socket_core},
+  {"cjson",luaopen_cjson},
   {NULL, NULL}
 };
 

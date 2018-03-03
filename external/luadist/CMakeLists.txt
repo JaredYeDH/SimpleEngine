@@ -53,13 +53,12 @@ target_link_libraries ( luasocket ${LUA_LIB_SOCKET} )
 install (FILES ${LUA_HEADER_SOCKET} DESTINATION include/lua)
 install (FILES luasocket/src/socket.lua DESTINATION lib/lua)
 install (TARGETS luasocket DESTINATION lib/lua)
-
-
-install (FILES mobdebug/src/mobdebug.lua DESTINATION lib/lua)
-
-
-
 #################luasocket end################
+
+#################   mobdebug################
+install (FILES mobdebug/src/mobdebug.lua DESTINATION lib/lua)
+#################   mobdebug  ################
+
 
 
 #################lua start################
@@ -69,6 +68,7 @@ include_directories ( lua/src )
 
 include_directories ( luasocket/src )
 
+include_directories ( lua-cjson )
 
 
 set ( LUA_SRC_CORE lua/src/lapi.c lua/src/lcode.c lua/src/lctype.c lua/src/ldebug.c lua/src/ldo.c lua/src/ldump.c 
@@ -80,6 +80,8 @@ set ( LUA_SRC_LIB lua/src/lauxlib.c lua/src/lbaselib.c lua/src/lbitlib.c lua/src
 set ( LUA_SRC_LUA lua/src/lua.c )
 set ( LUA_SRC_LUAC lua/src/luac.c  )
 
+set ( LUA_CJSON_SRC lua-cjson/lua_cjson.c  lua-cjson/strbuf.c )
+
 if ( LUA_USE_RELATIVE_LOADLIB )
   # Use modified loadlib
   list ( APPEND LUA_SRC_LIB lua/src/loadlib_rel.c )
@@ -87,7 +89,7 @@ else ( )
   list ( APPEND LUA_SRC_LIB lua/src/loadlib.c )
 endif ( )
 
-add_library ( lua_static ${LUA_SRC_CORE}  ${LUA_SRC_LIB} )
+add_library ( lua_static ${LUA_SRC_CORE}  ${LUA_SRC_LIB}  ${LUA_CJSON_SRC})
 target_link_libraries ( lua_static  luasocket)
 
 add_executable ( lua ${LUA_SRC_LUA}  )
