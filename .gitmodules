@@ -28,3 +28,6 @@
 [submodule "external/lua-cjson"]
 	path = external/lua-cjson
 	url = https://github.com/oceancx/lua-cjson
+[submodule "external/luadist/lua-cjson"]
+	path = external/luadist/lua-cjson
+	url = git@github.com:oceancx/lua-cjson.git
