@@ -3,9 +3,9 @@
 #include "../InputManager.h"
 #include <iostream>
 
-#include "../TextRenderer.h"
+//#include "../TextRenderer.h"
 Image* img;
-TextRenderer* textRenderer;
+//TextRenderer* textRenderer;
 
 AlphaSence::AlphaSence()
 :m_Render()
@@ -17,7 +17,7 @@ AlphaSence::AlphaSence()
 	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	
 	//	);
 	//});
-	textRenderer = new TextRenderer();
+	//textRenderer = new TextRenderer();
     using string = std::string;
     printf("");
 
@@ -89,7 +89,7 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
-	textRenderer->Draw();
+	//textRenderer->Draw();
 	//m_Render.Render();
 }
 

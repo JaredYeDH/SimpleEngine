@@ -28,6 +28,9 @@ add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
 )
 
+if(WIN32)
+	add_definitions(-DZLIB_WINAPI)
+endif(WIN32)
 
 include_directories(
   .
@@ -246,6 +249,13 @@ if (PNG_FOUND)
   include_directories(${PNG_INCLUDE_DIRS})
   list(APPEND LIBS ${PNG_LIBRARIES}) 
 endif ()
+
+if (GZIP_FOUND)
+  add_definitions(${GZIP_DEFINITIONS})
+  include_directories(${GZIP_INCLUDE_DIRS})
+  list(APPEND LIBS ${GZIP_LIBRARIES}) 
+endif ()
+
 
 target_link_libraries(${PROJECT_NAME}
   ${LIBS}

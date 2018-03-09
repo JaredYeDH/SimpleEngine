@@ -14,8 +14,10 @@ find_library(LUA_LIBS lua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
 find_library(LUA_SOCKET_LIBS luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
-find_package(BZip2 QUIET REQUIRED)
-find_package(PNG QUIET REQUIRED)
+IF(APPLE)
+  find_package(BZip2 QUIET REQUIRED)
+  find_package(PNG QUIET REQUIRED)
+ENDIF(APPLE)
 
 add_definitions(
   -std=c++11
@@ -40,24 +42,29 @@ link_directories(
   ../external/lib
 )
 
-
-
+if(WIN32)
+  set(ASSIMP_LIB assimp-vc120-mt)
+  set(FREETYPE_LIB freetype)
+else()
+  set(ASSIMP_LIB assimp)
+  set(FREETYPE_LIB freetyped)
+endif(WIN32)
 
 set(COMMON_LIBS 
   glfw3
   glewd 
   SOIL
-  assimp
-  freetyped
+  ${ASSIMP_LIB}
+  ${FREETYPE_LIB}
   ${LUA_LIBS}
   ${LUA_SOCKET_LIBS}
 )
 
 if(WIN32)
-	find_package(OpenGL REQUIRED)
+  find_package(OpenGL REQUIRED)
   list(APPEND LIBS opengl32) 
   list(APPEND LIBS ${COMMON_LIBS}) 
-	list(APPEND LIBS ${OPENGL_LIBRARY}) 
+  list(APPEND LIBS ${OPENGL_LIBRARY}) 
 elseif(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
   find_package(OpenGL REQUIRED)
@@ -105,7 +112,6 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install)
 
 
 set(SRC_CPP_FILES 
-
 )
 
 add_executable(${PROJECT_NAME}
