@@ -49,6 +49,8 @@ while true do
         print(json.encode(rq))
     elseif rq.command == "launch" then
         rq.seq = rq.seq+1
+
+        dofile()
     elseif rq.command == "setBreakpoints" then
         rq.seq = rq.seq+1
         local event = {

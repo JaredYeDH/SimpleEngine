@@ -10,14 +10,14 @@ change into it and re-invoke cmake")
 endif() 
 
 
-find_library(LUA_LIBS lua  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_STATIC lua_static  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
+find_library(LUA_SOCKET luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
-find_library(LUA_SOCKET_LIBS luasocket  PATHS ${PROJECT_SOURCE_DIR}/external/lib/lua)
 
-IF(APPLE)
+if(APPLE)
   find_package(BZip2 QUIET REQUIRED)
   find_package(PNG QUIET REQUIRED)
-ENDIF(APPLE)
+endif(APPLE)
 
 add_definitions(
   -std=c++11
@@ -28,6 +28,9 @@ add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
 )
 
+if(WIN32)
+	add_definitions(-DZLIB_WINAPI)
+endif(WIN32)
 
 include_directories(
   .
@@ -42,29 +45,21 @@ link_directories(
   ../external/lib
 )
 
-if(WIN32)
-  set(ASSIMP_LIB assimp-vc120-mt)
-  set(FREETYPE_LIB freetype)
-else()
-  set(ASSIMP_LIB assimp)
-  set(FREETYPE_LIB freetyped)
-endif(WIN32)
-
 set(COMMON_LIBS 
   glfw3
   glewd 
   SOIL
-  ${ASSIMP_LIB}
-  ${FREETYPE_LIB}
-  ${LUA_LIBS}
-  ${LUA_SOCKET_LIBS}
+  assimp
+  freetyped
+  ${LUA_STATIC}
+  ${LUA_SOCKET}
 )
 
 if(WIN32)
-  find_package(OpenGL REQUIRED)
+	find_package(OpenGL REQUIRED)
   list(APPEND LIBS opengl32) 
   list(APPEND LIBS ${COMMON_LIBS}) 
-  list(APPEND LIBS ${OPENGL_LIBRARY}) 
+	list(APPEND LIBS ${OPENGL_LIBRARY}) 
 elseif(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
   find_package(OpenGL REQUIRED)
@@ -130,6 +125,13 @@ if (PNG_FOUND)
   include_directories(${PNG_INCLUDE_DIRS})
   list(APPEND LIBS ${PNG_LIBRARIES}) 
 endif ()
+
+if (GZIP_FOUND)
+  add_definitions(${GZIP_DEFINITIONS})
+  include_directories(${GZIP_INCLUDE_DIRS})
+  list(APPEND LIBS ${GZIP_LIBRARIES}) 
+endif ()
+
 
 target_link_libraries(${PROJECT_NAME}
   ${LIBS}
