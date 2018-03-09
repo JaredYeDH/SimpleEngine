@@ -4,9 +4,9 @@
 #include <vector>
 #include <map>
 using namespace std;
-#define  OCX_MAX_VERTEX_NUM 500
+#define OCX_MAX_VERTEX_NUM 500
 
-int min_int(int m,int n)
+int min_int(int m, int n)
 {
 	return m < n ? m : n;
 }
@@ -19,7 +19,7 @@ struct Node
 	int w;
 	int v;
 	int d[2];
-
+	int p;
 };
 
 struct Graph
@@ -28,15 +28,16 @@ struct Graph
 	{
 		PRINT_D,
 		PRINT_W,
+		PRINT_P
 	};
 	int vecNum;
 	vector<vector<Node>> g;
 	map<int, string> vecName;
 	int edgeNum;
 	int dIndexer;
-	void setDistanceIndexer(int d) { dIndexer = d; }; 
-		
-	vector<Node>& operator[](int i)
+	void setDistanceIndexer(int d) { dIndexer = d; };
+
+	vector<Node> &operator[](int i)
 	{
 		return g[i];
 	}
@@ -50,7 +51,7 @@ struct Graph
 			int v;
 			string name;
 			cin >> v >> name;
-			vecName[v-1] = name;
+			vecName[v - 1] = name;
 			g[i].resize(vecNum);
 			cout << v << ":" << name << endl;
 		}
@@ -71,9 +72,9 @@ struct Graph
 					g[i][j].d[0] = 0;
 					g[i][j].d[1] = 0;
 				}
+				g[i][j].p = -1;
 			}
 		}
-		
 	}
 	void print(int kind)
 	{
@@ -83,25 +84,35 @@ struct Graph
 			{
 				if (i == -1)
 				{
-					if (j != -1) cout << vecName[j]<< " " ;
-					else cout << "\t\t";
+					if (j != -1)
+						cout << vecName[j] << " ";
+					else
+						cout << "\t\t";
 				}
 				else
 				{
 					if (j == -1)
 					{
-						cout << vecName[i]<<"   \t" << (i + 1) << "|";
+						cout << vecName[i] << "   \t" << (i + 1) << "|";
 					}
 					else
 					{
-						if (kind == PRINT_W)
+						int res = 0;
+						switch (kind)
 						{
-							cout << g[i][j].w << '\t';
+						case PRINT_W:
+							res = g[i][j].w;
+							break;
+						case PRINT_D:
+							res = g[i][j].d[dIndexer];
+							break;
+						case PRINT_P:
+							res = g[i][j].p;
+							break;
+						default:
+							break;
 						}
-						else if (kind == PRINT_D)
-						{
-							cout << g[i][j].d[dIndexer] << '\t';
-						}
+						cout << res << '\t';
 					}
 				}
 			}
@@ -120,20 +131,19 @@ struct Graph
 			g[i - 1][j - 1].w = 1;
 		}
 	}
-	
+
 	void query(int u, int v)
 	{
-		cout << vecName[u] << " 到 " << vecName[v] 
-			<< " 最短距离："<< g[u][v].d[dIndexer] <<endl;
+		cout << vecName[u] << " 到 " << vecName[v]
+			 << " 最短距离：" << g[u][v].d[dIndexer] << endl;
 	}
 };
 
-
-void Floyd_Warshall(Graph& g)
+void Floyd_Warshall(Graph &g)
 {
 	g.print(Graph::PRINT_W);
 	int switcher = 0;
-	for (int k = -1; k < g.vecNum-1; k++)
+	for (int k = -1; k < g.vecNum - 1; k++)
 	{
 		int next = (switcher++) % 2;
 		int prev = (next + 1) % 2;
@@ -144,11 +154,27 @@ void Floyd_Warshall(Graph& g)
 				if (k == -1)
 				{
 					g[i][j].d[0] = g[i][j].w;
+					if (i == j)
+					{
+						g[i][j].p = -1;
+					}
+					else
+					{
+						g[i][j].p = i;
+					}
 					switcher = 1;
 				}
 				else
 				{
-					g[i][j].d[next] =  min_int(g[i][j].d[prev], g[i][k].d[prev] + g[k][j].d[prev]) ;
+					g[i][j].d[next] = min_int(g[i][j].d[prev], g[i][k].d[prev] + g[k][j].d[prev]);
+					if (g[i][j].d[prev] <= g[i][k].d[prev] + g[k][j].d[prev])
+					{
+						g[i][j].p = g[i][j].p;
+					}
+					else
+					{
+						g[i][j].p = g[k][j].p;
+					}
 					//cout << prev << '\t' << next << '\t' << g[i][j].d[next];
 				}
 			}
@@ -158,6 +184,7 @@ void Floyd_Warshall(Graph& g)
 	int next = (switcher + 1) % 2;
 	g.setDistanceIndexer(next);
 	g.print(Graph::PRINT_D);
+	g.print(Graph::PRINT_P);
 }
 
 int main()
@@ -174,12 +201,13 @@ int main()
 	Floyd_Warshall(g);
 
 	cin >> n;
-	for (auto i = 0; i < n;i++)
+	for (auto i = 0; i < n; i++)
 	{
 		int u, v;
 		cin >> u >> v;
-		g.query(u-1 , v-1);
+		g.query(u - 1, v - 1);
 	}
-	while (true);
+	while (true)
+		;
 	return 0;
 }
