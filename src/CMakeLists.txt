@@ -45,12 +45,20 @@ link_directories(
   ../external/lib
 )
 
+if(WIN32)
+  set(ASSIMP_LIB assimp-vc120-mt)
+  set(FREETYPE_LIB freetype)
+elseif(UNIX)
+  set(ASSIMP_LIB assimp)
+  set(FREETYPE_LIB freetyped)
+endif(WIN32)
+
 set(COMMON_LIBS 
   glfw3
   glewd 
   SOIL
-  assimp
-  freetyped
+  ${ASSIMP_LIB}
+  ${FREETYPE_LIB}
   ${LUA_STATIC}
   ${LUA_SOCKET}
 )

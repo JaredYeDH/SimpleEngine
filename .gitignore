@@ -11,3 +11,6 @@ external/.DS_Store
 external/include
 external/lib
 external/bin
+external/luadist/lua/src/luaconf.h
+src/precompile.h
+external/CMakeFiles
