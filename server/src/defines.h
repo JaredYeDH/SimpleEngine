@@ -1,5 +1,8 @@
 #pragma once
 #include <stdint.h>
+   
+#define WORK_DIR "D:/Github/SimpleEngine/server"
+   
 
 typedef int64_t 	int64;
 typedef int32_t 	int32;
@@ -31,6 +34,8 @@ typedef uint8_t   byte;
 #include <map>
 #include <deque>
 #include <set>
+
+#include <asio.hpp>
 
 extern "C" {
 #include <lua.h>

@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.1)
-project (server)
+project (test_client)
 
 
 SET(WORK_DIR  "${PROJECT_SOURCE_DIR}")  
