@@ -62,8 +62,8 @@ CubeBatch::~CubeBatch()
 
 void CubeBatch::Init()
 {
-	std::string vPath =  Environment::GetAbsPath("Shader/CubeVertexShader");
-	std::string fPath =  Environment::GetAbsPath("Shader/CubeFragmentShader");
+	std::string vPath =  Environment::GetAbsPath("Shader/CubeVertexShader.vs");
+	std::string fPath =  Environment::GetAbsPath("Shader/CubeFragmentShader.fs");
 
 	m_pShader = new Shader(vPath,fPath);
 	m_pShader->Bind();

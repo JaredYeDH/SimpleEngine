@@ -21,7 +21,7 @@ ResourceManager::ResourceManager()
 	m_ShapeWd3Ptr = new NetEase::WDF(config.GetWdfPath("shape.wd3"));
 
 	std::string vPath = Environment::GetAbsPath("Shader/sprite.vs");
-	std::string fPath = Environment::GetAbsPath("Shader/sprite.fg");
+	std::string fPath = Environment::GetAbsPath("Shader/sprite.fs");
 	std::cout << " vPath:" << vPath << std::endl;
 	std::cout << " fPath:" << fPath << std::endl;
 

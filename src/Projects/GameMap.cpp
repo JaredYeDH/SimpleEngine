@@ -25,8 +25,8 @@ GameMap::GameMap(uint32 mapId)
 	mWidth = mXyqMap->SliceWidth();
 	mHeight = mXyqMap->SliceHeight();
 	
-	mRow = mXyqMap->row();
-	mCol = mXyqMap->col();
+	mRow = mXyqMap->Row();
+	mCol = mXyqMap->Col();
 	printf("初始化GameMap %d %d ", mRow, mCol);
 
 	mMapTiles.clear();

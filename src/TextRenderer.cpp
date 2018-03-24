@@ -8,7 +8,7 @@ TextRenderer::TextRenderer()
 {
 	// Configure VAO/VBO for texture quads
 	std::string vShader(Environment::GetShaderPath("text.vs")),
-		fShader(Environment::GetShaderPath("text.fg"));
+		fShader(Environment::GetShaderPath("text.fs"));
 	shader = new Shader(vShader, fShader);
 	glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
 	shader->Bind();

@@ -18,7 +18,7 @@ Graphics2D::Graphics2D()
 {
     String  vPath, fPath;
     vPath = Environment::GetShaderPath("LineShader.vs");
-    fPath = Environment::GetShaderPath("LineShader.fg");
+    fPath = Environment::GetShaderPath("LineShader.fs");
     m_ShaderPtr = new Shader(vPath, fPath);
 
     int windowWidth = Window::GetWidth();
@@ -31,7 +31,7 @@ Graphics2D::Graphics2D()
 
     
     vPath = Environment::GetShaderPath("sprite.vs");
-    fPath = Environment::GetShaderPath("sprite.fg");
+    fPath = Environment::GetShaderPath("sprite.fs");
 
     m_SpriteShaderPtr = new Shader(vPath,fPath);
 

@@ -17,8 +17,8 @@ SpriteBatch::~SpriteBatch(void)
 
 void SpriteBatch::Init()
 {
-	std::string vPath =  Environment::GetAbsPath("Shader/MvpVertexShader");
-	std::string fPath =  Environment::GetAbsPath("Shader/MvpFragmentShader");
+	std::string vPath =  Environment::GetAbsPath("Shader/MvpVertexShader.vs");
+	std::string fPath =  Environment::GetAbsPath("Shader/MvpFragmentShader.fs");
 
 	m_pShader = new Shader(vPath,fPath);
 	m_pShader->Bind();

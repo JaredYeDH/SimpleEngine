@@ -76,6 +76,15 @@ namespace NetEase {
 	/*
 	地图读取类: xx.scene文件是一个大地图
 	大地图被分成了N个320x240的小切片
+	地图文件中的信息：
+
+	vec<MapUnit>
+	vec<MapMask>
+	Fullbitmap
+
+	类创建时，先读取数据信息，然后关闭文件句柄。
+	需要使用位图信息时，再重新打开文件，读取位图信息。
+
 	*/
 	class MAP
 	{
@@ -101,8 +110,8 @@ namespace NetEase {
 		int MapHeight() {return m_MapHeight;};
 		int SliceWidth() {return m_Width;};
 		int SliceHeight() {return m_Height;};
-		int row(){return m_RowCount;};
-		int col(){return m_ColCount;};
+		int Row(){return m_RowCount;};
+		int Col(){return m_ColCount;};
 		int UnitSize(){return m_UnitSize;};
 		int MaskSize(){return m_MaskSize;};
 
@@ -115,6 +124,7 @@ namespace NetEase {
 		uint32* GetMaskBitmap(int index) { return m_MaskInfos[index].Data;};
 		uint8* GetUnitBitmap(int index) { return m_MapUnits[index].BitmapRGB24;};
 		uint8* Bitmap(){return m_MapPixelsRGB24;};
+		
 		void Destroy()
 		{
 			delete[] m_MapPixelsRGB24;
@@ -128,7 +138,6 @@ private:
 		bool ReadCELL(ifstream &file, uint32 size, uint32 index);
 
 		bool ReadBRIG(ifstream &file, uint32 size, uint32 index);
-
 		
 		ifstream m_FileStream;
 		
