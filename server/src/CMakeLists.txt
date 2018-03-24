@@ -30,6 +30,10 @@ add_executable(${PROJECT_NAME}
 ${SRC_CPP_FILES}
 )
 
+if(WIN32)
+set(LUA_SOCKET_LINK_LIB ws2_32)
+endif(WIN32)
+
 target_link_libraries(${PROJECT_NAME}
-${LUA_SOCKET} ${LUA_STATIC}  ws2_32
+${LUA_SOCKET} ${LUA_STATIC}  ${LUA_SOCKET_LINK_LIB}
 )

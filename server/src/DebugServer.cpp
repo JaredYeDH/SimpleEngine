@@ -168,7 +168,7 @@ void DebugServer::run()
 		}
 		else
 		{
-			Sleep(30);
+			sleep(1);
 		}
 	}
 }

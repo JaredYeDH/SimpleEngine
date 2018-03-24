@@ -20,11 +20,7 @@ int main(int argc, char* argv[])
 	int port = 4711;
 	try
 	{
-		if (argc < 2)
-		{
-			std::cerr << "Usage: chat_server <port> [<port> ...]\n";
-			return 1;
-		}
+
 
 		DebugServer server(port);
 		server.run();
