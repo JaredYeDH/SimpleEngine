@@ -19,23 +19,23 @@ GameMap::GameMap(uint32 mapId)
 
 	mXyqMap = new NetEase::MAP(fileName);
 
-	mMapWidth = mXyqMap->m_MapWidth;
-	mMapHeight = mXyqMap->m_MapHeight;
+	mMapWidth = mXyqMap->MapWidth();
+	mMapHeight = mXyqMap->MapHeight();
 
-	mWidth = mXyqMap->m_Width;
-	mHeight = mXyqMap->m_Height;
+	mWidth = mXyqMap->SliceWidth();
+	mHeight = mXyqMap->SliceHeight();
 	
-	mRow = mXyqMap->m_RowCount;
-	mCol = mXyqMap->m_ColCount;
+	mRow = mXyqMap->row();
+	mCol = mXyqMap->col();
 	printf("初始化GameMap %d %d ", mRow, mCol);
 
 	mMapTiles.clear();
 	
-	for (int i = 0; i<mXyqMap->m_UnitSize; i++)
+	for (int i = 0; i<mXyqMap->UnitSize(); i++)
 	{
 		mXyqMap->ReadUnit(i);
 		
-		mMapTiles[i] = (new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[i].BitmapRGB24) );
+		mMapTiles[i] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(i));
 	//	 delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
 //		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
 	}
@@ -43,19 +43,18 @@ GameMap::GameMap(uint32 mapId)
 
 
 	mMaskTiles.clear();
-	for (int i = 0; i<mXyqMap->m_MaskSize; i++)
+	for (int i = 0; i<mXyqMap->MaskSize(); i++)
 	{
 		mXyqMap->ReadMask(i);
 
-		mMaskTiles.push_back(new Texture(mXyqMap->m_MaskInfos[i].Width,
-			mXyqMap->m_MaskInfos[i].Height,true, (uint8*)(mXyqMap->m_MaskInfos)[i].Data ));
+		mMaskTiles.push_back(new Texture(mXyqMap->GetMaskWidth(i),
+			mXyqMap->GetMaskHeight(i),true,(uint8*) mXyqMap->GetMaskBitmap(i) ));
 
 //		 delete[] mXyqMap->m_MaskInfos[i].Data;
 //		mXyqMap->m_MaskInfos[i].Data = nullptr;
 	}
+    mXyqMap->Destroy();
 
-	delete[] mXyqMap->m_MapPixelsRGB24;
-	mXyqMap->m_MapPixelsRGB24 = nullptr;
 	
 	mCellWidth = mCol * 16;
 	mCellHeight = mRow * 12;
@@ -76,7 +75,7 @@ GameMap::GameMap(uint32 mapId)
 				x = 16 * j;
 				for (q = 0; q < 16; q++)
 				{
-					mCell[x++][y] = (mXyqMap->m_MapUnits)[i*mCol + j].Cell[p * 16 + q];
+					mCell[x++][y] =mXyqMap->GetUnit(i*mCol + j).Cell[p * 16 + q];
 				}
 				y++;
 			}
@@ -293,8 +292,7 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
 
-                mMapTiles[unit] = new Texture(320,240, false,(uint8*)(mXyqMap->m_MapUnits)[unit].BitmapRGB24);
-                mXyqMap->m_MapUnits[unit].BitmapRGB24 = nullptr;
+                mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
             }
 
 			renderer->DrawSprite(mMapTiles[i*mCol + j],
@@ -359,9 +357,9 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 	mapOffsetY = GMath::Clamp(mapOffsetY, -mHeight + screenHeight, 0);
 
 
-	for (int m = 0; m < mXyqMap->m_MaskSize; m++)
+    for (int m = 0; m < mXyqMap->MaskSize(); m++)
 	{
-		NetEase::MaskInfo& info = mXyqMap->m_MaskInfos[m];
+		NetEase::MaskInfo& info = mXyqMap->GetMask(m);
 		renderer->DrawSprite(
 			mMaskTiles[m],
 			glm::vec2(info.StartX + mapOffsetX,
