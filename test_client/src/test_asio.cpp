@@ -47,6 +47,7 @@ public:
 
 	void write(std::string msg)
 	{
+
 		asio::async_write(socket_,
 			asio::buffer(msg.c_str(),
 			msg.length()),
@@ -155,21 +156,28 @@ int main(int argc, char* argv[])
 		tcp::resolver resolver(io_context);
 		auto endpoints = resolver.resolve(argv[1], argv[2]);
 		chat_client c(io_context, endpoints);
-
 		std::thread t([&io_context](){ io_context.run(); });
 
+		
 		std::string x;
+		std::string s;
+		s=s+R"(Content-Length: 310)" + "\r\n\r\n" + R"({"command":"initialize", "arguments" : {"clientID":"vscode", "adapterID" : "mock", "pathFormat" : "path", "linesStartAt1" : true, "columnsStartAt1" : true, "supportsVariableType" : true, "supportsVariablePaging" : true, "supportsRunInTerminalRequest" : true, "locale" : "zh-cn"}, "type" : "request", "seq" : 1})";
+
+		std::string s1("hello");
+		int index = 0;
 		while (std::cin >> x)
 		{
 			std::cout << x << std::endl;
-			std::string  s(R"(Content-Length: 277
-
-			{"command":"initialize", "arguments" : {"clientID":"vscode", "adapterID" : "mock", "pathFormat" : "path", "linesStartAt1" : true, "columnsStartAt1" : true, "supportsVariableType" : true, "supportsVariablePaging" : true, "supportsRunInTerminalRequest" : true, "locale" : "zh-cn"}, "type" : "request", "seq" : 1})");
-
-			c.write(s);
-
-
+			if (index == 0){
+				c.write(s);
+			}
+			else{
+				c.write(s);
+			}
+			index++;
+			
 		}
+		
 		
 		c.close();
 		t.join();

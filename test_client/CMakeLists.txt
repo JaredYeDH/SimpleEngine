@@ -26,6 +26,7 @@ include_directories(../external/asio/asio/include)
 include_directories(
 	.
 	${PROJECT_SOURCE_DIR}/../external/include/lua
+	${PROJECT_SOURCE_DIR}/../external/include
 )
 
 add_definitions(

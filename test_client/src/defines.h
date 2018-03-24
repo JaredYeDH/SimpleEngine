@@ -1,8 +1,8 @@
 #pragma once
 #include <stdint.h>
-   
+
 #define WORK_DIR "D:/Github/SimpleEngine/test_client"
-   
+
 
 typedef int64_t 	int64;
 typedef int32_t 	int32;
@@ -22,12 +22,18 @@ typedef uint8_t   byte;
 
 #include <cstdlib>
 #include <string>
+#include <regex>
 #include <sstream>
 #include <iostream>
 #include <fstream>
 
 #include <memory>
+#include <mutex>
+#include <thread>
 #include <utility>
+
+#include <functional>
+#include <chrono>
 
 #include <vector>
 #include <list>
@@ -40,16 +46,18 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 }
-
+#include <asio.hpp>
+#include <nlohmann/json.hpp>
 
 template <typename T>
 inline void SafeDelete(T * &pointer)
 {
-	if(pointer != nullptr)
+	if (pointer != nullptr)
 	{
 		delete pointer;
 		pointer = nullptr;
 	}
 }
+
 
 
