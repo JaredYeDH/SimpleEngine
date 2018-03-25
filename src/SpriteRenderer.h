@@ -26,7 +26,8 @@ public:
     void DrawSprite( glm::vec2 position, glm::vec2 size = glm::vec2(10, 10), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawMask(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(10, 10), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawFrameSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(10, 10), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
-    
+    void DrawMapSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(10, 10), GLfloat rotate = 0.0f, GLfloat alpha=0.0f);
+
 private:
     // Render state
     Shader* m_pShader;

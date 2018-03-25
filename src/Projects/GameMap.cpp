@@ -343,7 +343,6 @@ void GameMap::DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y)
 
 void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 {
-
 	int screenWidth = Demo::GetScreenWidth();
 	int screenHeight = Demo::GetScreenHeight();
 	int halfScreenWidth = screenWidth / 2;
@@ -355,7 +354,6 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 	mapOffsetX = GMath::Clamp(mapOffsetX, -mWidth + screenWidth, 0);
 	mapOffsetY = GMath::Clamp(mapOffsetY, -mHeight + screenHeight, 0);
 
-
     for (int m = 0; m < mXyqMap->MaskSize(); m++)
 	{
 		NetEase::MaskInfo& info = mXyqMap->GetMask(m);
@@ -365,6 +363,40 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 			info.StartY + mapOffsetY),
 			glm::vec2(info.Width, info.Height),
 			0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	}
+
+
+	int startRow , endRow,startCol,endCol ;
+    startRow = playerY/240-3;
+    startRow = startRow<0?0:startRow;
+    endRow = playerY/240+3;
+    endRow = endRow>mRow?mRow:endRow;
+
+    startCol = playerX/320-3;
+    startCol = startCol<0?0:startCol;
+    endCol = playerX/320+3;
+    endCol = endCol>mCol?mCol:endCol;
+
+
+	for (int i = startRow; i<endRow; i++) {
+		for (int j = startCol; j<endCol; j++) {
+            int unit = i*mCol+j;
+
+            if(mMapTiles.find(unit) == mMapTiles.end())
+            {
+            	mXyqMap->ReadUnit(unit);
+                //mXyqMap->SaveUnit(unit);
+
+                mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
+            }
+
+			renderer->DrawMapSprite(mMapTiles[i*mCol + j],
+				glm::vec2(j * 320 + mapOffsetX, i * 240 + mapOffsetY),
+				glm::vec2(320, 240),
+				0.0f,
+				0.5f
+			);
+		}
 	}
 }
 
