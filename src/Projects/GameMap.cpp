@@ -31,17 +31,15 @@ GameMap::GameMap(uint32 mapId)
 
 	mMapTiles.clear();
 	
-	for (int i = 0; i<mXyqMap->UnitSize(); i++)
-	{
-		mXyqMap->ReadUnit(i);
+// 	for (int i = 0; i<mXyqMap->UnitSize(); i++)
+// 	{
+// 		mXyqMap->ReadUnit(i);
 		
-		mMapTiles[i] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(i));
-	//	 delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
-//		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
-	}
+// 		mMapTiles[i] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(i));
+// 	//	 delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
+// //		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
+// 	}
 	
-
-
 	mMaskTiles.clear();
 	for (int i = 0; i<mXyqMap->MaskSize(); i++)
 	{
@@ -53,7 +51,7 @@ GameMap::GameMap(uint32 mapId)
 //		 delete[] mXyqMap->m_MaskInfos[i].Data;
 //		mXyqMap->m_MaskInfos[i].Data = nullptr;
 	}
-    mXyqMap->Destroy();
+
 
 	
 	mCellWidth = mCol * 16;
@@ -367,7 +365,6 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 
 	startX = GMath::Clamp(startCol*320,0, mMapWidth);
 	endX = GMath::Clamp(endCol*320,0, mMapWidth);
-	
 
 	
 	for (int m = 0; m < mXyqMap->MaskSize(); m++)

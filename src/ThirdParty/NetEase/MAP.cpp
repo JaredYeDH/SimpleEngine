@@ -61,7 +61,7 @@ namespace NetEase {
 		m_MapUnits.resize(m_UnitSize);	//vector更改size
 		m_MaskInfos.resize(m_MaskSize);
 
-		m_MapPixelsRGB24 = new uint8[m_RowCount*m_ColCount * 320 * 240 * 3];
+		// m_MapPixelsRGB24 = new uint8[m_RowCount*m_ColCount * 320 * 240 * 3];
 		m_MapWidth = m_ColCount * 320;
 		m_MapHeight = m_RowCount * 240;
 
