@@ -15,21 +15,21 @@
 //shape.wd3 72013AF5 F2FB1AFA 
 std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
 {
-	{ 1, { 0x49386FCE, 0x54F3FC94 } },
-	{ 11,{ 0xA16A06FF , 0x4FBA48B8 } }
+	{ 1, { 0x49386FCE, 0x54F3FC94, 0xA94FBD68,0x58A17D26} },
+	{ 11,{ 0xA16A06FF , 0x4FBA48B8 , 0xA16A06FF,0x4FBA48B8} }
 };
 
 std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimationTable =
 {
-	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A } } } },
-	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA } } } }
+	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A ,0x89352821,0x27080BB2} } } },
+	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA, 0x72013AF5,0xF2FB1AFA } } } }
 };
 
 
 Player::Player(int id ,int PlayerId,int WeaponId):
 m_Id(id),
-m_PlayerAnimation(2),
-m_WeapAnimation(2),
+m_PlayerAnimation(4),
+m_WeapAnimation(4),
 m_AnimationState(Idle),
 m_IsMove(false),
 m_MoveVelocity(400),
@@ -38,21 +38,20 @@ m_MoveList(),
 m_BackupMoveList(),
 m_MoveToCalled(false)
 {
-	m_PlayerAnimation[Idle] = new FrameAnimation(
-		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Idle])
+	for(int action=Idle ; action<= Caster1; action++)
+	{
+		m_PlayerAnimation[action] = new FrameAnimation(
+			ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][action])
 		);
-
-	m_PlayerAnimation[Moving] = new FrameAnimation(
-		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][Moving])
-		) ;
-
-	m_WeapAnimation[Idle] = new FrameAnimation(
-		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][Idle])
+		m_WeapAnimation[action] = new FrameAnimation(
+			ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][action])
 		);
-
-	m_WeapAnimation[Moving] = new FrameAnimation(
-		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][Moving])
-		);
+		if(action > Moving)
+		{
+			m_PlayerAnimation[action]->SetPlayLoop(false);
+			m_WeapAnimation[action]->SetPlayLoop(false);
+		}
+	}
 }
 
 Player::~Player()
@@ -127,6 +126,7 @@ void Player::OnUpdate(double dt)
 	m_WeapAnimation[m_AnimationState]->OnUpdate(dt);
     HandleMoveToCalled();
 }
+
 void Player::HandleMoveToCalled()
 {
     if(m_MoveToCalled)
@@ -171,6 +171,12 @@ void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 	
 }
 
+void Player::PlayAction(int action,int dir)
+{
+	SetAnimationState(action);
+	m_WeapAnimation[m_AnimationState]->ResetAnim(m_Dir);
+	m_PlayerAnimation[m_AnimationState]->ResetAnim(m_Dir);
+}
 
 void Player::SetPos(double x, double y)
 {
@@ -194,26 +200,35 @@ void Player::MoveTo(GameMap* gameMapPtr, int destBoxX, int destBoxY)
 
 void Player::ResetDirAll(int dir)
 {
-	m_WeapAnimation[Idle]->Reset(dir);
-	m_WeapAnimation[Moving]->Reset(dir);
-	m_PlayerAnimation[Idle]->Reset(dir);
-	m_PlayerAnimation[Moving]->Reset(dir);
+	for (auto& anim : m_WeapAnimation)
+		anim->Reset(dir);
+
+	for (auto& anim : m_PlayerAnimation)
+		anim->Reset(dir);
+
+	// m_Dir = dir;
 }
 
 void Player::ResetDir(int dir)
 {
-    m_WeapAnimation[Idle]->Reset(dir);
-    m_WeapAnimation[Moving]->Reset(dir);
-    m_PlayerAnimation[Idle]->Reset(dir);
-    m_PlayerAnimation[Moving]->Reset(dir);
+    for (auto& anim : m_WeapAnimation)
+		anim->Reset(dir);
+
+	for (auto& anim : m_PlayerAnimation)
+		anim->Reset(dir);
+
+	// m_Dir = dir;
 }
 
 void Player::SetDir(int dir)
 {
-    m_WeapAnimation[Idle]->SetCurrentGroup(dir);
-    m_WeapAnimation[Moving]->SetCurrentGroup(dir);
-    m_PlayerAnimation[Idle]->SetCurrentGroup(dir);
-    m_PlayerAnimation[Moving]->SetCurrentGroup(dir);
+  	for (auto& anim : m_WeapAnimation)
+		anim->SetCurrentGroup(dir);
+
+	for (auto& anim : m_PlayerAnimation)
+		anim->SetCurrentGroup(dir);
+
+	// m_Dir = dir;
 }
 
 

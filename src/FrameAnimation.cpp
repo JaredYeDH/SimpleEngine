@@ -27,6 +27,7 @@ FrameAnimation::FrameAnimation(Sprite2 sprite)
 		m_Textures.push_back(t);
 	}
 	m_bVisible = true;
+	m_bLoop = true;
 }
 
 FrameAnimation::~FrameAnimation()
@@ -52,14 +53,21 @@ void FrameAnimation::OnUpdate(double dt)
 	{
 		m_DeltaTime = 0;
 		m_CurrentFrame++;
-		if( m_CurrentFrame % m_GroupFrameCount == 0)
+		if( m_CurrentFrame % m_GroupFrameCount == 0 )
 		{
 			/*m_CurrentGroup++;
 			if (m_CurrentGroup >= 8)
 			{
 				m_CurrentGroup = 0;
 			}*/
-			m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
+			if (!m_bLoop)
+			{
+				m_CurrentFrame--;
+			}
+			else
+			{
+				m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
+			}
 		}
 	}
 }
@@ -68,8 +76,16 @@ void FrameAnimation::Reset(int group)
 {
 	SetCurrentGroup(group);
 	m_DeltaTime = 0;
+	
 }
 
+void FrameAnimation::ResetAnim(int group)
+{
+	m_CurrentFrame=0;
+	SetCurrentGroup(group);
+	m_DeltaTime = 0;	
+		// m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
+}
 
 void FrameAnimation::SetVisible(bool visible)
 {
@@ -79,8 +95,6 @@ void FrameAnimation::SetVisible(bool visible)
 
 void FrameAnimation::Draw(SpriteRenderer* renderer,int posX ,int posY)
 {
-
-	
 		m_PosX = posX;
 		m_PosY = posY;
 		

@@ -11,8 +11,12 @@ class Player
 public:
 	enum AnimationState : int 
 	{
-		Idle = 0,
-		Moving = 1
+		Idle = 0,		
+		Moving = 1,		
+		Attack1 = 2,
+		// Attack2 = 3,
+		Caster1 = 3,
+		// Caster2 = 5
 	};
 
 	static std::map<uint32, std::vector< uint32 >> s_PlayerAnimationTable;
@@ -44,6 +48,7 @@ public:
 	void TranslateX(double x) { m_Pos.x += x; }
 	void TranslateY(double y) { m_Pos.y += y; }
 	
+	void PlayAction(int action,int dir);
 
 	void MoveTo(GameMap* gameMapPtr, int param2, int param3);
 	void SetVelocity(int velocity) { m_MoveVelocity = velocity; };

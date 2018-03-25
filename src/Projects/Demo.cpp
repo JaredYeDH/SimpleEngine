@@ -202,11 +202,11 @@ void Demo::ProcessInput()
 	}
 
 
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_1)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
-	{
-		dir = static_cast<int>(FrameAnimation::Dir::S_W);
-		m_StriderPtr->SetDir(dir);
-	}
+	// if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_1)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
+	// {
+	// 	dir = static_cast<int>(FrameAnimation::Dir::S_W);
+	// 	m_StriderPtr->SetDir(dir);
+	// }
 
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_7)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_7))
 	{
@@ -223,11 +223,11 @@ void Demo::ProcessInput()
 	}
 
 
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_2)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_2))
-	{
-		dir = static_cast<int>(FrameAnimation::Dir::S);
-		m_StriderPtr->SetDir(dir);
-	}
+	// if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_2)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_2))
+	// {
+	// 	dir = static_cast<int>(FrameAnimation::Dir::S);
+	// 	m_StriderPtr->SetDir(dir);
+	// }
 
 
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_4)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_4))
@@ -248,6 +248,17 @@ void Demo::ProcessInput()
 	{
 		dir = static_cast<int>(FrameAnimation::Dir::E);
 		m_StriderPtr->SetDir(dir);
+	}
+
+	if ( InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
+	{
+		m_StriderPtr->PlayAction(Player::Attack1,dir);
+		
+	}
+
+	if ( InputManager::GetInstance()->IsKeyUp(GLFW_KEY_2))
+	{
+		m_StriderPtr->PlayAction(Player::Caster1,dir);
 	}
 
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_5) && !m_IsChangeState)

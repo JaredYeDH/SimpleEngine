@@ -46,8 +46,9 @@ public:
 	int GetHeight() { return m_Height; }
 
 	void Reset(int group );
-
-	 Texture* GetFrame() { return m_Textures[m_CurrentFrame];}
+	void ResetAnim(int group);
+	void SetPlayLoop(bool loop) {m_bLoop = loop;};
+	Texture* GetFrame() { return m_Textures[m_CurrentFrame];}
 
 	void OnUpdate(double dt);
 	void Draw(SpriteRenderer* renderer,int x, int y);
@@ -62,6 +63,7 @@ public:
 	int m_PosY;
 	int m_Width;
 	int m_Height;
+	bool m_bLoop;
 
 	double m_DeltaTime;
 	bool m_bVisible;
