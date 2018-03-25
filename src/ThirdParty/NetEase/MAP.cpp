@@ -599,7 +599,7 @@ namespace NetEase {
 							uint8 r = 0x00; //= m_MapPixelsRGB24[bmpIndex];
 							uint8 g = 0x00;//= m_MapPixelsRGB24[bmpIndex + 1];
 							uint8 b = 0x00;//= m_MapPixelsRGB24[bmpIndex + 2];
-							pOutMaskBmp[h*maskInfo.Width + w] = ( 0xFF << 24 )| (b<< 16)| (g << 8 )| r ;
+							pOutMaskBmp[h*maskInfo.Width + w] = ( 0x80 << 24 )| (b<< 16)| (g << 8 )| r ;
 						}
 						else {
 							uint8 r = 0x00; //= m_MapPixelsRGB24[bmpIndex];

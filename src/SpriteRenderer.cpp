@@ -94,7 +94,8 @@ void SpriteRenderer::DrawMask(Texture* texture, glm::vec2 position, glm::vec2 si
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
 
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -151,15 +152,17 @@ void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::ve
     
     // Render textured quad
     glUniform3f(glGetUniformLocation(m_pShader->GetProgramID(), "spriteColor"), 1.0f, 1.0f, 1.0f);
-    glUniform1f(glGetUniformLocation(m_pShader->GetProgramID(), "alpha"), alpha);
+    glUniform1f(glGetUniformLocation(m_pShader->GetProgramID(), "alpha"),alpha);
 
     glStencilFunc(GL_EQUAL, 1, 0xFF);
     glStencilMask(0x00);
-
-
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     
+    // glBlendFuncSeparate(GL_ONE,GL_ZERO, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glBlendFuncSeparate(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA ,GL_ZERO,GL_ONE);
+    glBlendFunc(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA);
 
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
