@@ -95,7 +95,8 @@ void SpriteRenderer::DrawMask(Texture* texture, glm::vec2 position, glm::vec2 si
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     
     //glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+    glBlendFuncSeparate(GL_ZERO,GL_ONE,GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+    //  glBlendFunc(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA);
 
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -162,7 +163,7 @@ void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::ve
     
     // glBlendFuncSeparate(GL_ONE,GL_ZERO, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glBlendFuncSeparate(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA ,GL_ZERO,GL_ONE);
-    glBlendFunc(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA);
+     glBlendFunc(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA);
 
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -79,7 +79,7 @@ Demo::Demo()
 	m_BlockTexturePtr = new Texture(blockPath);
 
 	m_StriderPtr = new Player(Demo::g_Id , Demo::g_Id, 120);
-	m_StriderPtr->SetPos(4547, 1264);
+	m_StriderPtr->SetPos(2100, 1500);
 	m_StriderPtr->SetBox();
 
 
