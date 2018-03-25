@@ -354,29 +354,36 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 	mapOffsetX = GMath::Clamp(mapOffsetX, -mWidth + screenWidth, 0);
 	mapOffsetY = GMath::Clamp(mapOffsetY, -mHeight + screenHeight, 0);
 
-    for (int m = 0; m < mXyqMap->MaskSize(); m++)
+	int startRow , endRow,startCol,endCol ;
+    startRow = GMath::Clamp(playerY/240-3, 0,mRow );
+    endRow = GMath::Clamp(playerY/240+3, 0,mRow );
+	startCol = GMath::Clamp(playerX/320-3, 0,mCol);
+    endCol = GMath::Clamp(playerX/320+3, 0,mCol );
+
+	int startX,startY, endX,endY;
+	
+	startY = GMath::Clamp(startRow*240,0, mMapHeight);
+	endY = GMath::Clamp(endRow*240,0, mMapHeight);
+
+	startX = GMath::Clamp(startCol*320,0, mMapWidth);
+	endX = GMath::Clamp(endCol*320,0, mMapWidth);
+	
+
+	
+	for (int m = 0; m < mXyqMap->MaskSize(); m++)
 	{
 		NetEase::MaskInfo& info = mXyqMap->GetMask(m);
+		int x = info.StartX;
+		int y = info.StartY;
+		int w = info.Width;
+		int h = info.Height;
+		if ( x+w < startX || x > endX || y+h < startY || y>endY)continue;
 		renderer->DrawMask(
-			mMaskTiles[m],
-			glm::vec2(info.StartX + mapOffsetX,
-			info.StartY + mapOffsetY),
-			glm::vec2(info.Width, info.Height),
-			0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		mMaskTiles[m],
+		glm::vec2(x+mapOffsetX,y+mapOffsetY),
+		glm::vec2(w,h),
+		0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
-
-
-	int startRow , endRow,startCol,endCol ;
-    startRow = playerY/240-3;
-    startRow = startRow<0?0:startRow;
-    endRow = playerY/240+3;
-    endRow = endRow>mRow?mRow:endRow;
-
-    startCol = playerX/320-3;
-    startCol = startCol<0?0:startCol;
-    endCol = playerX/320+3;
-    endCol = endCol>mCol?mCol:endCol;
-
 
 	for (int i = startRow; i<endRow; i++) {
 		for (int j = startCol; j<endCol; j++) {
@@ -386,7 +393,6 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
             {
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
-
                 mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
             }
 
