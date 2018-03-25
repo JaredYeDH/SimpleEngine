@@ -31,22 +31,13 @@ TextRenderer::~TextRenderer()
 
 }
 
-void TextRenderer::Draw()
+void TextRenderer::Draw(std::wstring text,GLfloat x, GLfloat y,glm::vec3 color)
 {
-
-
-	int y = 0;
-	int x = 0;
-
-	RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
-		x, y,
-		1,
-		glm::vec3(1.0f, 1.0f,0));
-
-	RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
-		200, 100,
-		1,
-		glm::vec3(199 / 255.0f, 1.0f, 137 / 255.0f));
+	// RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
+	// 	x, y,
+	// 	1,
+	// 	glm::vec3(1.0f, 1.0f,0));
+    TextRenderer::RenderText(text, x, y,1, color);
 }
 
 
@@ -74,7 +65,7 @@ void TextRenderer::RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat s
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 32);
+	FT_Set_Pixel_Sizes(face, 0, 28);
 
 	// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -129,6 +120,15 @@ void TextRenderer::RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat s
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
+		// GLfloat vertices[6][4] = {
+		// 	{ xpos,     ypos + h,   0.0,0.0 },
+		// 	{ xpos,     ypos,       0.0,1.0 },
+		// 	{ xpos + w, ypos,       1.0, 1.0 },
+		// 	{ xpos,     ypos + h,   0.0, 0.0 },
+		// 	{ xpos + w, ypos,       1.0, 1.0 },
+		// 	{ xpos + w, ypos + h,   1.0, 0.0 }
+		// };
+
 		GLfloat vertices[6][4] = {
 			{ xpos,     ypos + h,   0.0,0.0 },
 			{ xpos,     ypos,       0.0,1.0 },

@@ -73,6 +73,8 @@ Demo::Demo()
 	
 	m_RendererPtr = new SpriteRenderer();
 
+	m_TextRenderer = new TextRenderer();
+
 	m_GameMapPtr = new GameMap(0);
 
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
@@ -315,7 +317,8 @@ void Demo::Draw()
 	
 	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
 	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
-
+	
+	m_TextRenderer->RenderText(L"Ocean-藏心",px-20,py-32,0.5f,glm::vec3(115/255.0f,1.0f,137/255.0f));
 	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
 	
 

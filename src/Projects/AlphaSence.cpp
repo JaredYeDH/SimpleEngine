@@ -89,7 +89,7 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
-	textRenderer->Draw();
+	//textRenderer->Draw();
 	//m_Render.Render();
 }
 

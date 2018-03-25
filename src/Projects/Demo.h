@@ -20,6 +20,8 @@
 #include "Network/Client.h"
 #include "../core/Renderer.h"
 
+#include "../TextRenderer.h"
+
 class Demo : public IUpdateDraw, public IMouseEvent
 {
 public:
@@ -64,6 +66,7 @@ private:
 	Client* m_ClientPtr;
 
 	Renderer2D m_Render;
+	TextRenderer* m_TextRenderer;
 };
 
 

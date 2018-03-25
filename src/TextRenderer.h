@@ -22,7 +22,7 @@ public:
 	TextRenderer();
 	~TextRenderer();
 	void RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
-	void Draw();
+	void Draw(std::wstring text,GLfloat x, GLfloat y,glm::vec3 color);
 private:
 
 	std::map<wchar_t, Character> Characters;
