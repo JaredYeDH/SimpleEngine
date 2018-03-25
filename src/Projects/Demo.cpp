@@ -300,7 +300,9 @@ void Demo::Draw()
 	py = py < halfScreenHeight ? py :
 		(py> maxMapOffsetY ?
 		(screenHeight - (mapHeight - py)) : halfScreenHeight);
-
+	
+	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	
 	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
 	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
 
@@ -311,7 +313,7 @@ void Demo::Draw()
 		npc->OnDraw(m_RendererPtr, npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
 	}*/
 
-	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+
 	
 	
 	//m_Render.Render();

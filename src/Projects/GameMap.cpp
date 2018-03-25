@@ -286,7 +286,6 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 		for (int j = startCol; j<endCol; j++) {
             int unit = i*mCol+j;
 
-
             if(mMapTiles.find(unit) == mMapTiles.end())
             {
             	mXyqMap->ReadUnit(unit);
@@ -360,7 +359,7 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
     for (int m = 0; m < mXyqMap->MaskSize(); m++)
 	{
 		NetEase::MaskInfo& info = mXyqMap->GetMask(m);
-		renderer->DrawSprite(
+		renderer->DrawMask(
 			mMaskTiles[m],
 			glm::vec2(info.StartX + mapOffsetX,
 			info.StartY + mapOffsetY),
