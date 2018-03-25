@@ -525,7 +525,7 @@ namespace NetEase {
 				// SaveImageFile( tmp_filename,(char*)m_rgb);
 				break;
 			}
-							 // LLEC "4C 4C 45 43"
+				// CELL "4C 4C 45 43"
 			case 0x43454C4C:
 				ReadCELL(m_FileStream, pUnitHeader->Size, index);
 

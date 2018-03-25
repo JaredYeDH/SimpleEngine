@@ -27,10 +27,13 @@ public:
 	void Draw(SpriteRenderer* renderer, int playerX, int playerY);
 	void DrawMask(SpriteRenderer* renderer, int playerX, int playerY);
 	void DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y);
+
+	
 	int GetWidth(){return mWidth;}
 	int GetHeight(){return mHeight;}
 private:
 	bool CanArriveDirect(Pos src,Pos dest);
+	void UpdateCell();
 	std::map<int,Texture *> mMapTiles;
 	std::vector<Texture *> mMaskTiles;
 	 Texture* mCellPic;

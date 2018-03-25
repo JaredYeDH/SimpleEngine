@@ -120,6 +120,7 @@ namespace NetEase {
 		
 		MaskInfo& GetMask(int index) { return m_MaskInfos[index];};
 		MapUnit& GetUnit(int index) { return m_MapUnits[index];};
+		bool HasUnitLoad(int index) { return m_MapUnits[index].bHasLoad;};
 
 		uint32* GetMaskBitmap(int index) { return m_MaskInfos[index].Data;};
 		uint8* GetUnitBitmap(int index) { return m_MapUnits[index].BitmapRGB24;};

@@ -1,4 +1,4 @@
-        #include "GameMap.h"
+#include "GameMap.h"
 #include "Astar.h"
 #include <SOIL/SOIL.h>
 #include <random>
@@ -62,23 +62,6 @@ GameMap::GameMap(uint32 mapId)
 		mCell[i] = new int[mCellHeight];
 	}
 
-	int x = 0, y = 0 ,p,q;
-	for (int i = 0; i < mRow; i++)
-	{
-		for (int j = 0; j < mCol; j++)
-		{
-			y = 12 * i;
-			for (p = 0; p < 12; p++)
-			{
-				x = 16 * j;
-				for (q = 0; q < 16; q++)
-				{
-					mCell[x++][y] =mXyqMap->GetUnit(i*mCol + j).Cell[p * 16 + q];
-				}
-				y++;
-			}
-		}
-	}
 	//mAstar = new Astar(mCellWidth, mCellHeight, mCell);
 
 	// std::ofstream outfile("a.map");
@@ -162,6 +145,29 @@ bool GameMap::CanArriveDirect(Pos src,Pos dest)
 
 	return true;
 
+}
+void GameMap::UpdateCell()
+{
+	int x = 0, y = 0 ,p,q;
+	for (int i = 0; i < mRow; i++)
+	{
+		for (int j = 0; j < mCol; j++)
+		{
+			int index = i*mCol + j;
+			if(!mXyqMap->HasUnitLoad(index)) continue;
+
+			y = 12 * i;
+			for (p = 0; p < 12; p++)
+			{
+				x = 16 * j;
+				for (q = 0; q < 16; q++)
+				{
+					mCell[x++][y] =mXyqMap->GetUnit(i*mCol + j).Cell[p * 16 + q];
+				}
+				y++;
+			}
+		}
+	}
 }
 
 std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
@@ -290,6 +296,7 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
                 //mXyqMap->SaveUnit(unit);
 
                 mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
+				UpdateCell();
             }
 
 			renderer->DrawSprite(mMapTiles[i*mCol + j],
@@ -391,6 +398,7 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
                 mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
+				UpdateCell();
             }
 
 			renderer->DrawMapSprite(mMapTiles[i*mCol + j],
