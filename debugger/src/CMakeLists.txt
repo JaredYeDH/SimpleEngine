@@ -2,6 +2,8 @@ find_library(LUA_STATIC lua_static  PATHS ${PROJECT_SOURCE_DIR}/../external/lib/
 find_library(LUA_SOCKET luasocket  PATHS ${PROJECT_SOURCE_DIR}/../external/lib/lua)
 
 set(SRC_CPP_FILES 
+Debugger.cpp
+Debugger.h
 defines.h
 main.cpp
 test_asio.cpp

@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.1)
-project (test_client)
+project (debugger)
 
 
 SET(WORK_DIR  "${PROJECT_SOURCE_DIR}")  
@@ -21,6 +21,10 @@ add_definitions(-DASIO_HAS_STD_CHRONO)
 add_definitions(-DASIO_HAS_CSTDINT)
 add_definitions(-DASIO_HAS_STD_TYPE_TRAITS)
 include_directories(../external/asio/asio/include)
+
+# adding imgui
+include_directories(SYSTEM external/imgui)
+
 
 
 include_directories(
