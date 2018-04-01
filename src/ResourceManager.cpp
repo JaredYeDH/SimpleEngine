@@ -15,7 +15,7 @@
 ResourceManager::ResourceManager()
 	:Singleton<ResourceManager>()
 {
-	Config config(Environment::GetAbsPath("Resource/Table/config.txt"));
+	Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
 
 	m_ShapeWdfPtr = new NetEase::WDF(config.GetWdfPath("shape.wdf"));
 	m_ShapeWd3Ptr = new NetEase::WDF(config.GetWdfPath("shape.wd3"));

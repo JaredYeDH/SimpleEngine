@@ -13,7 +13,7 @@
 
 GameMap::GameMap(uint32 mapId)
 { 	/*读取配置*/
-	Config config(Environment::GetAbsPath("Resource/Table/config.txt"));
+	Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
 	config.Print();
 	std::string fileName = config.GetMapPath(config.mDict["map"][mapId]);
 

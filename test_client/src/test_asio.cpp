@@ -141,47 +141,47 @@ private:
 	chat_message_queue write_msgs_;
 };
 
-int main(int argc, char* argv[])
-{
-	try
-	{
+// int main(int argc, char* argv[])
+// {
+// 	try
+// 	{
 	
 
-		asio::io_context io_context;
+// 		asio::io_context io_context;
 
-		tcp::resolver resolver(io_context);
-		auto endpoints = resolver.resolve("127.0.0.1","4711");
-		chat_client c(io_context, endpoints);
-		std::thread t([&io_context](){ io_context.run(); });
+// 		tcp::resolver resolver(io_context);
+// 		auto endpoints = resolver.resolve("127.0.0.1","4711");
+// 		chat_client c(io_context, endpoints);
+// 		std::thread t([&io_context](){ io_context.run(); });
 
 		
-		std::string x;
-		std::string s;
-		s=s+R"(Content-Length: 310)" + "\r\n\r\n" + R"({"command":"initialize", "arguments" : {"clientID":"vscode", "adapterID" : "mock", "pathFormat" : "path", "linesStartAt1" : true, "columnsStartAt1" : true, "supportsVariableType" : true, "supportsVariablePaging" : true, "supportsRunInTerminalRequest" : true, "locale" : "zh-cn"}, "type" : "request", "seq" : 1})";
+// 		std::string x;
+// 		std::string s;
+// 		s=s+R"(Content-Length: 310)" + "\r\n\r\n" + R"({"command":"initialize", "arguments" : {"clientID":"vscode", "adapterID" : "mock", "pathFormat" : "path", "linesStartAt1" : true, "columnsStartAt1" : true, "supportsVariableType" : true, "supportsVariablePaging" : true, "supportsRunInTerminalRequest" : true, "locale" : "zh-cn"}, "type" : "request", "seq" : 1})";
 
-		std::string s1("hello");
-		int index = 0;
-		while (std::cin >> x)
-		{
-			std::cout << x << std::endl;
-			if (index == 0){
-				c.write(s);
-			}
-			else{
-				c.write(s);
-			}
-			index++;
+// 		std::string s1("hello");
+// 		int index = 0;
+// 		while (std::cin >> x)
+// 		{
+// 			std::cout << x << std::endl;
+// 			if (index == 0){
+// 				c.write(s);
+// 			}
+// 			else{
+// 				c.write(s);
+// 			}
+// 			index++;
 			
-		}
+// 		}
 		
 		
-		c.close();
-		t.join();
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << "Exception: " << e.what() << "\n";
-	}
+// 		c.close();
+// 		t.join();
+// 	}
+// 	catch (std::exception& e)
+// 	{
+// 		std::cerr << "Exception: " << e.what() << "\n";
+// 	}
 
-	return 0;
-}
+// 	return 0;
+// }

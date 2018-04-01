@@ -9,10 +9,7 @@
 #include <utility>
 #include "asio.hpp"
 #include "DebugServer.h"
-
-
 #include "server.hpp"
-
 
 
 int main(int argc, char* argv[])
@@ -20,19 +17,13 @@ int main(int argc, char* argv[])
 	int port = 4711;
 	try
 	{
-
-
 		DebugServer server(port);
 		server.run();
-
-
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << "Exception: " << e.what() << "\n";
 	}
-
-
 	//try
 	//{
 	//	// Check command line arguments.
