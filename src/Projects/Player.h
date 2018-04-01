@@ -57,6 +57,9 @@ public:
 	int GetId() { return m_Id; }
 	void HandleMoveToCalled();
 	void SaveFrame(int index);
+
+	
+
 private:
 	std::vector<FrameAnimation*> m_WeapAnimation;
 	std::vector<FrameAnimation*> m_PlayerAnimation;
@@ -71,5 +74,13 @@ private:
 	bool m_IsMove;
 	int m_Id;
 	double m_MoveVelocity;
+
+	int m_RoleId;
+	int m_ActionId;
+	int m_ActionWeaponId;
+	int m_WeaponId;
+
+	
+
 };
 

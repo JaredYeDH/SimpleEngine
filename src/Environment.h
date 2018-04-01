@@ -1,8 +1,14 @@
 #pragma once
 
 #include "defines.h"
+#include "defineTypes.h"
 #include "precompile.h"
 
+#ifdef WIN32
+#define LINE_SAPARATOR '\r\n'
+#else
+#define LINE_SAPARATOR '\n'
+#endif
 class Environment
 {
 public:
@@ -12,6 +18,11 @@ public:
 	static std::string GetPath()
 	{
 		return WORK_DIR;
+	}
+
+	static String GetTsvPath(String name)
+	{
+		return GetPath()+"/Resource/tables/"+name+".tsv";
 	}
 
 	static std::string GetAbsPath(std::string localPath)

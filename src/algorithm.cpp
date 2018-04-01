@@ -187,27 +187,27 @@ void Floyd_Warshall(Graph &g)
 	g.print(Graph::PRINT_P);
 }
 
-int main()
-{
-	freopen("C:/Users/wangfang/Desktop/DevLog/test.map", "r", stdin);
-	int n;
-	cin >> n;
-	cout << "VecNumber:" << n << endl;
-	Graph g;
-	g.init(n);
+// int main()
+// {
+// 	freopen("C:/Users/wangfang/Desktop/DevLog/test.map", "r", stdin);
+// 	int n;
+// 	cin >> n;
+// 	cout << "VecNumber:" << n << endl;
+// 	Graph g;
+// 	g.init(n);
 
-	cin >> n;
-	g.initEdge(n);
-	Floyd_Warshall(g);
+// 	cin >> n;
+// 	g.initEdge(n);
+// 	Floyd_Warshall(g);
 
-	cin >> n;
-	for (auto i = 0; i < n; i++)
-	{
-		int u, v;
-		cin >> u >> v;
-		g.query(u - 1, v - 1);
-	}
-	while (true)
-		;
-	return 0;
-}
+// 	cin >> n;
+// 	for (auto i = 0; i < n; i++)
+// 	{
+// 		int u, v;
+// 		cin >> u >> v;
+// 		g.query(u - 1, v - 1);
+// 	}
+// 	while (true)
+// 		;
+// 	return 0;
+// }

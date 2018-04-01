@@ -114,9 +114,10 @@ endif()
 set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install)
 
 
-set(SRC_CPP_FILES 
+set(SRC_CPP_FILES
 Actor.cpp
 Actor.h
+algorithm.cpp
 Astar/include/InputHandler.h
 Astar/include/Node.h
 Astar/include/SquareGraph.h
@@ -183,6 +184,7 @@ precompile.h
 program.cpp
 Projects/AlphaSence.cpp
 Projects/AlphaSence.h
+Projects/animation_database.h
 Projects/Astar.cpp
 Projects/Astar.h
 Projects/Config.cpp
@@ -236,9 +238,9 @@ Time/Timer.cpp
 Time/Timer.h
 Time/TimerManager.cpp
 Time/TimerManager.h
+tsv.h
 Window.cpp
 Window.h
-
 )
 
 add_executable(${PROJECT_NAME}

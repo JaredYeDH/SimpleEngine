@@ -2,7 +2,6 @@
 cmake_minimum_required (VERSION 3.1)
 project (server)
 
-
 SET(WORK_DIR  "${PROJECT_SOURCE_DIR}")  
 configure_file (  
   "${PROJECT_SOURCE_DIR}/src/defines.h.in"  
@@ -21,7 +20,6 @@ add_definitions(-DASIO_HAS_STD_CHRONO)
 add_definitions(-DASIO_HAS_CSTDINT)
 add_definitions(-DASIO_HAS_STD_TYPE_TRAITS)
 include_directories(../external/asio/asio/include)
-
 
 include_directories(
 	.

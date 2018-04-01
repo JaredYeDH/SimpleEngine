@@ -4,6 +4,10 @@
 #include <iostream>
 
 #include "../TextRenderer.h"
+
+#include "../tsv.h"
+
+#include "animation_database.h"
 Image* img;
 TextRenderer* textRenderer;
 
@@ -17,9 +21,10 @@ AlphaSence::AlphaSence()
 	//		[](){DrawCircle(250, 150, 100, Vec4(0, 1, 0, 1), false);}	
 	//	);
 	//});
-	textRenderer = new TextRenderer();
-    using string = std::string;
-    printf("");
+	// textRenderer = new TextRenderer();
+	// utils::AnimDB db;
+	// std::cout <<  db.query(3,10,3,-1)  << std::endl;
+	
 
 	// Line* l=new Line(Vec2(222,222),Vec2(111,111));
 	// l->Color() = Vec4(1,0.5,0,1);
