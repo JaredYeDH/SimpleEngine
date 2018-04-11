@@ -67,6 +67,7 @@ namespace utils
 		}
 		String val(int row,int col) 
 		{
+            if(row <0 || row >= rows.size() || col < 0 || col >= titles.size())return "";
 			return cols[row][col];
 		}
         std::map<int,std::vector<String>> cols;

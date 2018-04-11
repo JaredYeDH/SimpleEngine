@@ -5,9 +5,9 @@
 
 #include "../TextRenderer.h"
 
-#include "../tsv.h"
+// #include "../tsv.h"
 
-#include "animation_database.h"
+// #include "animation_database.h"
 Image* img;
 TextRenderer* textRenderer;
 
@@ -42,6 +42,22 @@ AlphaSence::AlphaSence()
 	// img = new Image("/Users/oceancx/Documents/照片/湖工大-IMG_20130623_202050.jpg",Vec2(200,200),Vec2(400,300));
 	// // c->Color() = Vec4(1,0.5,0.2,1);
 	// m_Render.AddObject(img);
+
+
+	// utils::AnimDB db;
+	
+	// for(int i=1;i<=20;i++)
+	// {
+	// 	int64 was_id = db.query(3,i,7,90);
+	// 	// m_PlayerAnimation[i] = was_id;
+	// 	// m_WeapAnimation[i] = wad_id;
+	// 	if (was_id != -1){
+	// 		std::cout << std::hex << was_id << std::endl;
+	// 		db.printInfo(db.getRowWas( was_id));
+	// 	}
+       		
+	// }
+
 
 
 }
