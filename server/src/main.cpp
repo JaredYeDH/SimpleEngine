@@ -10,6 +10,60 @@
 #include "asio.hpp"
 #include "DebugServer.h"
 #include "server.hpp"
+#include <mutex>
+#include <thread>
+
+struct Message
+{
+
+};
+std::deque<Message> g_ReadQueue;
+std::deque<Message> g_WriteQueue;
+
+std::mutex g_ReadQueueMutex;
+std::mutex g_WriteQueueMutex;
+
+class MessageDispatcher
+{
+public:
+	void Dispatch(const Message& msg) 
+	{
+		
+	}
+};
+
+class MessageHandler
+{
+public:
+	MessageHandler()
+	{}
+
+	~MessageHandler()
+	{}
+
+	void Loop()
+	{
+		while (!g_ReadQueue.empty())
+		{
+			g_ReadQueueMutex.lock();
+			auto& msg = g_ReadQueue.front();
+			g_ReadQueue.pop_front();
+			g_ReadQueueMutex.unlock();
+			m_Dispatcher.Dispatch(msg);
+		}
+	}
+
+	void Send(const Message& msg)
+	{
+		g_WriteQueueMutex.lock();
+		g_WriteQueue.push_back(msg);
+		g_WriteQueueMutex.unlock();
+	}
+
+private:
+	MessageDispatcher m_Dispatcher;
+};
+
 
 void runLua()
 {
