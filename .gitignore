@@ -1,4 +1,6 @@
 .vscode/
+server/src/defines.h
+test_client/src/defines.h
 src/SimpleEngine
 Data/
 build/

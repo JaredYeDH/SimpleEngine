@@ -44,9 +44,20 @@ class DebugServer;
 
 class Dispatcher
 {
+public:	
+	void handleMessage(DebugServer* server, String msg);
+};
+
+
+class DebugServer
+{
 public:
+	DebugServer(int port);
+
+	~DebugServer();
+	
 	int _sequence = 1;
-	String wrapMsg(String type,json message)
+	String wrapMsg(String type, json message)
 	{
 		message["type"] = type;
 		message["seq"] = _sequence++;
@@ -56,22 +67,17 @@ public:
 
 		int len = msg.length();
 		String wrapped("");
-		wrapped= wrapped + "Content-Length: " + std::to_string(len) 
+		wrapped = wrapped + "Content-Length: " + std::to_string(len)
 			+ "\r\n\r\n" + msg;
 		return wrapped;
 	}
 
-	void handleMessage(DebugServer* server, String msg);
-};
+	bool sendEvent(json& msg);
 
+	bool sendResponse(json& msg);
 
-class DebugServer
-{
-public:
+	bool sendRequest(json& msg);
 
-	DebugServer(int port);
-
-	~DebugServer();
 	void doRead()
 	{
 		asio::async_read(*m_Socket, asio::buffer(c, 1),
@@ -154,9 +160,29 @@ private:
 	std::mutex io_mutex;
 	char msg[4096];
 	std::deque<std::string> mMsgQueue;
-	Dispatcher d;
+	Dispatcher m_Dispatcher;
 };
 
+//
+//class RuntimeSession
+//{
+//public:
+//	RuntimeSession();
+//	~RuntimeSession();
+//
+//private:
+//
+//};
+//
+//RuntimeSession::RuntimeSession()
+//{
+//
+//}
+//
+//RuntimeSession::~RuntimeSession()
+//{
+//
+//}
 
 
 #define  RAWBUFF_LENGTH 1024

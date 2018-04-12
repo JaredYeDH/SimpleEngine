@@ -11,6 +11,16 @@
 #include "DebugServer.h"
 #include "server.hpp"
 
+void runLua()
+{
+	lua_State *L;
+	L = luaL_newstate();
+	luaL_openlibs(L);
+
+	luaL_dofile(L, "D:/Github/mobdebug/examples/server.lua");
+	std::cout << "block me" << std::endl;
+	std::cout << "server end" << std::endl;
+}
 
 int main(int argc, char* argv[])
 {
@@ -19,11 +29,15 @@ int main(int argc, char* argv[])
 	{
 		DebugServer server(port);
 		server.run();
+		
+		//std::thread t(runLua);
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << "Exception: " << e.what() << "\n";
 	}
+
+	
 	//try
 	//{
 	//	// Check command line arguments.

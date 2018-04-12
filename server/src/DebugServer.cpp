@@ -9,6 +9,9 @@ DebugSession::DebugSession()
 DebugSession::~DebugSession()
 {
 }
+
+
+
 void Dispatcher::handleMessage(DebugServer* server, String msg)
 {
 	json request = json::parse(msg);
@@ -21,29 +24,29 @@ void Dispatcher::handleMessage(DebugServer* server, String msg)
 	{
 		String command = request["command"];
 		std::cout << command << std::endl;
-
 		if (command == "initialize") {
-			
 			newResponse["body"] =
 			{
 				{ "supportsConfigurationDoneRequest",true },
 				{ "supportsEvaluateForHovers",true },
 				{ "supportsStepBack",true }
 			};
-			
-			server->doWrite(wrapMsg("response",newResponse));
-			
+			server->sendResponse(newResponse);
 			json initMsg = json::parse("{}");
 			initMsg["event"] = "initialized";
-			server->doWrite(wrapMsg("event", initMsg));
-
+			server->sendEvent(initMsg);
 		}
 		else if (command == "launch") {
-			
-			server->doWrite(wrapMsg("response",newResponse));
+			/*
+			start runtime
+			start server to listen runtime
+			runtime should call mobdebug.start to connect runtime server
+			when runtime server is received start command
+			*/   
+			server->sendResponse(newResponse);
 			json _event = json::parse("{}");
 			_event["event"] = "stopOnEntry";
-			server->doWrite(wrapMsg("event",_event));
+			server->sendEvent(_event);
 		}
 		else if (command == "attach") {
 
@@ -142,6 +145,7 @@ void Dispatcher::handleMessage(DebugServer* server, String msg)
 
 DebugServer::DebugServer(int port)
 {
+	_sequence = 1;
 	asio::ip::tcp::endpoint localhost(asio::ip::tcp::v4(), port);
 	m_Acceptor = new asio::ip::tcp::acceptor(m_IOContext, localhost);
 	mReadBuffCurrentIndex = 0;
@@ -163,13 +167,34 @@ void DebugServer::run()
 			mMsgQueue.pop_front();
 
 			std::cout <<"popMsg:" <<endl<< msg << std::endl;
-			d.handleMessage(this, msg);
+			m_Dispatcher.handleMessage(this, msg);
 
 		}
 		else
 		{
+#if WIN32
+			Sleep(1);
+#else
 			sleep(1);
+#endif
 		}
 	}
 }
 
+bool DebugServer::sendEvent( json& msg)
+{
+	doWrite(wrapMsg("event", msg));
+	return true;
+}
+
+bool DebugServer::sendResponse( json& msg)
+{
+	doWrite(wrapMsg("response", msg));
+	return true;
+}
+
+bool DebugServer::sendRequest(json& msg)
+{
+	doWrite(wrapMsg("request", msg));
+	return true;
+}
