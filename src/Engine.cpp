@@ -32,7 +32,7 @@ void Engine::Init()
     //               )" );
 	
 	//mSence = new TestNetwork();
-	// mSence = new AlphaSence();
+	//mSence = new AlphaSence();
 	mSence = new Demo();
     InputManager::GetInstance()->SetKeyCallback();
     InputManager::GetInstance()->SetScrollCallback();

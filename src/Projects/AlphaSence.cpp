@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../TextRenderer.h"
+#include "../Bitmap.h"
 
 // #include "../tsv.h"
 
@@ -58,6 +59,10 @@ AlphaSence::AlphaSence()
        		
 	// }
 
+	Bitmap bitmap;
+	bitmap.CreateBitmapFile(201 ,201, 8, "D:\\a.bmp");
+	BitmapFile f;
+	bitmap.Load("D:\\a.bmp",f);
 
 
 }

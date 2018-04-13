@@ -124,6 +124,8 @@ Astar/include/SquareGraph.h
 Astar/InputHandler.cpp
 Astar/Node.cpp
 Astar/SquareGraph.cpp
+Bitmap.cpp
+Bitmap.h
 Components/BaseComponent.cpp
 Components/BaseComponent.h
 Components/TransformComponent.cpp
