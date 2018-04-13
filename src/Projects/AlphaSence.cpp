@@ -60,10 +60,10 @@ AlphaSence::AlphaSence()
 	// }
 
 	Bitmap bitmap;
-	bitmap.CreateBitmapFile(201 ,201, 8, "D:\\a.bmp");
+	//bitmap.CreateBitmapFile(201 ,201, 8, "D:\\a.bmp");
 	BitmapFile f;
-	bitmap.Load("D:\\a.bmp",f);
-
+	bitmap.Load("F:\\svn\\misc\\2d_logicmap\\2\\areas_0_-43916_18934_85194_47922",f);
+	bitmap.Save("D:\\a.bmp", f);
 
 }
 

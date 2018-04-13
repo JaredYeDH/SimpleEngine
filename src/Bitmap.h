@@ -48,8 +48,11 @@ class Bitmap
 public:
 	Bitmap();
 	~Bitmap();
+	
 	static bool CreateBitmapFile(int w, int h, int colorBitCount ,std::string path);
+
 	static bool Load(std::string path, BitmapFile& bitmapFile);
+	static bool Save(std::string path, const BitmapFile& bitmapFile);
 	
 
 };

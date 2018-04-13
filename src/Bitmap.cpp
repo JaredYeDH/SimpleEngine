@@ -10,43 +10,6 @@ Bitmap::~Bitmap()
 {
 }
 
-bool Bitmap::Load(std::string path,BitmapFile& bitmapFile)
-{
-	using std::cout;
-	using std::endl;
-	
-	std::fstream f(path, std::ios::in | std::ios::binary);
-	if (f.rdstate() == f.failbit)
-	{
-		cout << "open file error!" << endl;
-		return false;
-	}
-
-	f.read((char*)&bitmapFile.header, sizeof(BitmapFileHeader)) ;
-	if (bitmapFile.header.bfType != BITMAPFILE_ID)
-	{
-		f.close();
-		return false;
-	}
-
-	f.read((char*)&bitmapFile.infoHeader, sizeof(BitmapInfoHeader));
-
-	if (bitmapFile.infoHeader.biBitCount == 8)
-	{
-		memset(bitmapFile.palettes, 0, sizeof(bitmapFile.palettes));
-		f.read((char*)bitmapFile.palettes, BITMAPFILE_PAL_SIZE * sizeof(uint32));
-	}
-	
-
-	f.seekg(bitmapFile.header.bfOffBits, std::ios::beg);
-
-	bitmapFile.imageData = new uint8[bitmapFile.infoHeader.biSizeImage];
-	memset(bitmapFile.imageData, 0, bitmapFile.infoHeader.biSizeImage);
-	f.read((char*)bitmapFile.imageData, bitmapFile.infoHeader.biSizeImage);
-	f.close();
-	
-	return true;
-}
 
 bool Bitmap::CreateBitmapFile(int w,int h,int colorBitCount,std::string path)
 {
@@ -75,6 +38,57 @@ bool Bitmap::CreateBitmapFile(int w,int h,int colorBitCount,std::string path)
 	file.header.bfSize = headSize + patSize + dataSize;
 	file.header.bfOffBits = headSize + patSize;
 
+	memset(file.palettes, 0xff, sizeof(file.palettes));
+	file.imageData = new uint8[file.infoHeader.biSizeImage];
+	memset(file.imageData, 0xff, file.infoHeader.biSizeImage);
+	bool ok  = Save(path, file);
+	delete file.imageData;
+	file.imageData = nullptr;
+
+	return ok;
+}
+
+
+bool Bitmap::Load(std::string path, BitmapFile& bitmapFile)
+{
+	using std::cout;
+	using std::endl;
+
+	std::fstream f(path, std::ios::in | std::ios::binary);
+	if (f.rdstate() == f.failbit)
+	{
+		cout << "open file error!" << endl;
+		return false;
+	}
+
+	f.read((char*)&bitmapFile.header, sizeof(BitmapFileHeader));
+	if (bitmapFile.header.bfType != BITMAPFILE_ID)
+	{
+		f.close();
+		return false;
+	}
+
+	f.read((char*)&bitmapFile.infoHeader, sizeof(BitmapInfoHeader));
+
+	if (bitmapFile.infoHeader.biBitCount == 8)
+	{
+		memset(bitmapFile.palettes, 0, sizeof(bitmapFile.palettes));
+		f.read((char*)bitmapFile.palettes, BITMAPFILE_PAL_SIZE * sizeof(uint32));
+	}
+
+
+	f.seekg(bitmapFile.header.bfOffBits, std::ios::beg);
+
+	bitmapFile.imageData = new uint8[bitmapFile.infoHeader.biSizeImage];
+	memset(bitmapFile.imageData, 0, bitmapFile.infoHeader.biSizeImage);
+	f.read((char*)bitmapFile.imageData, bitmapFile.infoHeader.biSizeImage);
+	f.close();
+
+	return true;
+}
+
+bool Bitmap::Save(std::string path,const BitmapFile& file)
+{
 	std::fstream f(path, std::ios::out | std::ios::binary);
 	if (f.rdstate() == f.failbit)
 	{
@@ -87,20 +101,19 @@ bool Bitmap::CreateBitmapFile(int w,int h,int colorBitCount,std::string path)
 
 	if (file.infoHeader.biBitCount == 8)
 	{
-		memset(file.palettes, 0xff, sizeof(file.palettes));
+		
 		f.write((char*)file.palettes, BITMAPFILE_PAL_SIZE * sizeof(uint32));
 	}
 
 	f.seekp(file.header.bfOffBits, std::ios::beg);
-	file.imageData = new uint8[file.infoHeader.biSizeImage];
-	memset(file.imageData, 0xff, file.infoHeader.biSizeImage);
+	
+	
 	f.write((char*)file.imageData, file.infoHeader.biSizeImage);
-	delete file.imageData;
-	file.imageData = nullptr;
+	
 
 	f.close();
-	
+
 	return true;
-	
+
 }
 
