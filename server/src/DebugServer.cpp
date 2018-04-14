@@ -1,19 +1,58 @@
 #include "DebugServer.h"
-using std::cout;
-using std::endl;
 
-DebugSession::DebugSession()
+
+using json = nlohmann::json;
+using String = std::string;
+
+std::deque<Message> g_ReadQueue;
+std::deque<Message> g_WriteQueue;
+
+std::mutex g_ReadQueueMutex;
+std::mutex g_WriteQueueMutex;
+
+// loop lock 架子已经搭好 坐等整合thread跟asio 实现thread跟readQ writeQ的关系
+int g_MsgIdGen = 0;
+
+//DebugServer* g_Server = nullptr;
+
+
+Message::Message(std::string msg, int type)
 {
+	this->content = msg;
+	this->id = g_MsgIdGen++;
+	this->type = type;
 }
 
-DebugSession::~DebugSession()
+void Message::log()
 {
+	std::cout << "msg id:" << id << std::endl
+		<< " type:" << type << std::endl
+		<< " content:" << content << std::endl;
+}
+
+String Message::wrapMsg(String type, json message)
+{
+	message["type"] = type;
+	message["seq"] = g_MsgIdGen++;
+	String msg = message.dump();
+	std::cout << "readyToSend:" << std::endl
+		<< msg << std::endl;
+
+	int len = msg.length();
+	String wrapped("");
+	wrapped = wrapped + "Content-Length: " + std::to_string(len)
+		+ "\r\n\r\n" + msg;
+	return wrapped;
 }
 
 
-
-void Dispatcher::handleMessage(DebugServer* server, String msg)
+void MessageDispatcher::Dispatch(Message _msg, MessageHandler* handler)
 {
+	//call(msg);
+	std::cout << "Dispatch : " << std::endl;
+	_msg.log();
+	//handler->Send(_msg);
+	String msg = _msg.content;
 	json request = json::parse(msg);
 	json newResponse = json::parse("{}");
 	newResponse["request_seq"] = request["seq"];
@@ -31,10 +70,11 @@ void Dispatcher::handleMessage(DebugServer* server, String msg)
 				{ "supportsEvaluateForHovers",true },
 				{ "supportsStepBack",true }
 			};
-			server->sendResponse(newResponse);
+			handler->SendResponse(newResponse);
+			
 			json initMsg = json::parse("{}");
 			initMsg["event"] = "initialized";
-			server->sendEvent(initMsg);
+			handler->SendEvent(initMsg);
 		}
 		else if (command == "launch") {
 			/*
@@ -42,11 +82,11 @@ void Dispatcher::handleMessage(DebugServer* server, String msg)
 			start server to listen runtime
 			runtime should call mobdebug.start to connect runtime server
 			when runtime server is received start command
-			*/   
-			server->sendResponse(newResponse);
+			*/
+			handler->SendResponse(newResponse);
 			json _event = json::parse("{}");
 			_event["event"] = "stopOnEntry";
-			server->sendEvent(_event);
+			handler->SendEvent(_event);
 		}
 		else if (command == "attach") {
 
@@ -143,58 +183,272 @@ void Dispatcher::handleMessage(DebugServer* server, String msg)
 	}
 }
 
-DebugServer::DebugServer(int port)
+
+MessageHandler::MessageHandler() 
 {
-	_sequence = 1;
-	asio::ip::tcp::endpoint localhost(asio::ip::tcp::v4(), port);
-	m_Acceptor = new asio::ip::tcp::acceptor(m_IOContext, localhost);
+	m_Dispatcher = new MessageDispatcher();
+}
+
+MessageHandler::~MessageHandler()
+{
+	delete m_Dispatcher;
+}
+
+void MessageHandler::Loop()
+{
+	std::cout << " do MessageHandler::Loop()" << std::endl;
+	while (true)
+	{
+		if (g_ReadQueue.empty() || g_WriteQueue.empty())
+		{
+			Sleep(100);
+		}
+		if (!g_ReadQueue.empty())
+		{
+			g_ReadQueueMutex.lock();
+			auto msg = g_ReadQueue.front();
+			g_ReadQueue.pop_front();
+			g_ReadQueueMutex.unlock();
+			m_Dispatcher->Dispatch(msg, this);
+		}
+		if (!g_WriteQueue.empty())
+		{
+			g_WriteQueueMutex.lock();
+			auto msg = g_WriteQueue.front();
+			g_WriteQueue.pop_front();
+			g_WriteQueueMutex.unlock();
+			if (m_Session)
+				m_Session->Write(msg);
+			
+		}
+		
+		
+	}
+}
+
+void MessageHandler::Send(Message msg)
+{
+	g_WriteQueueMutex.lock();
+	g_WriteQueue.push_back(msg);
+	g_WriteQueueMutex.unlock();
+}
+
+bool MessageHandler::SendEvent(json& msgjson)
+{
+	Message msg("");
+	msg.content = msg.wrapMsg("event",msgjson);
+	Send(msg);
+	return true;
+}
+
+bool MessageHandler::SendResponse(json& msgjson)
+{
+	Message msg("");
+	msg.content = msg.wrapMsg("response", msgjson);
+	Send(msg);
+	return true;
+}
+
+bool MessageHandler::SendRequest(json& msgjson)
+{
+	Message msg("");
+	msg.content = msg.wrapMsg("request", msgjson);
+	Send(msg);
+	return true;
+}
+
+
+
+DebugSession::DebugSession(int id,asio::ip::tcp::socket& socket)
+{
+	m_ID = id;
+	m_Socket = new asio::ip::tcp::socket(std::move(socket));
 	mReadBuffCurrentIndex = 0;
 	mReadBuff.resize(4096);
+	//m_Handler = new MessageHandler();
+}
+
+DebugSession::~DebugSession()
+{
+//	delete m_Handler;
+}
+
+void DebugSession::DoRead()
+{
+	std::cout << "DebugSession::DoRead()" << std::endl;
+	asio::async_read(*m_Socket, asio::buffer(m_OneByte, 1),
+		[this](std::error_code ec, std::size_t len)
+	{
+		if (!ec)
+		{
+			mReadBuff[mReadBuffCurrentIndex++] = m_OneByte[0];
+			std::string s(mReadBuff.begin(), mReadBuff.begin() + mReadBuffCurrentIndex);
+			std::regex regex_match_txt("Content-Length: ([0-9]+)\r\n\r\n");
+			std::smatch base_match;
+			if (std::regex_match(s, base_match, regex_match_txt))
+			{
+				if (base_match.size() == 2)
+				{
+					std::ssub_match lenstr = base_match[1];
+					int len = std::stoi(lenstr.str());
+					asio::async_read(*m_Socket, asio::buffer(m_MsgBuff, len),
+						[this](std::error_code ec, std::size_t len)
+					{
+						if (!ec)
+						{
+							mReadBuffCurrentIndex = 0;
+							for (int i = 0; i < len; i++)
+							{
+								mReadBuff[mReadBuffCurrentIndex++] = m_MsgBuff[i];
+							}
+							auto msgstr = std::string(mReadBuff.begin(), mReadBuff.begin() + mReadBuffCurrentIndex);
+							mReadBuffCurrentIndex = 0;
+							EnReadQueue(msgstr);
+						}
+						else
+						{
+							std::cout << ec.message() << std::endl;
+						}
+					});
+				}
+			}
+		}
+		else
+		{
+			std::cout << ec.message() << std::endl;
+		}
+		DoRead();
+	});
+}
+
+void DebugSession::DoReadRunable()
+{
+	DoRead();
+}
+
+void DebugSession::EnReadQueue(const std::string& msgstr)
+{
+	g_ReadQueueMutex.lock();
+	g_ReadQueue.push_back(Message(msgstr));
+	g_ReadQueueMutex.unlock();
+}
+
+void DebugSession::DoWriteRunable()
+{
+	
+}
+
+void DebugSession::Write(Message msg)
+{
+	msg.log();
+	asio::async_write(*m_Socket,
+		asio::buffer(msg.content.c_str(),
+			msg.content.length()),
+		[this](std::error_code ec, std::size_t /*length*/)
+	{
+
+	});
+}
+
+void DebugSession::Start()
+{
+	std::cout << "Session start!" << std::endl;
+	//std::thread readThread(std::bind(&DebugSession::DoReadRunable, this));
+	
+	DoReadRunable();
+	
+	DoWriteRunable();
+	
+	//std::thread writeThread(std::bind(&DebugSession::DoWriteRunable, this));
+}
+
+
+DebugServer::DebugServer(int port,asio::io_context& context, std::map<int, DebugSession*>& sessions)
+	:m_IOContext(context),
+	m_Sessions(sessions)
+{	
+	m_Port = port;
+	m_Session = nullptr;
+	m_SessionIdGen = 0;
+	asio::ip::tcp::endpoint localhost(asio::ip::tcp::v4(), port);
+	m_Acceptor = new asio::ip::tcp::acceptor(m_IOContext, localhost);
+	m_Handler = new MessageHandler();
+	m_Sessions.clear();
 }
 
 DebugServer::~DebugServer()
 {
-
-}
-
-void DebugServer::run()
-{
-	std::thread t(std::bind(&DebugServer::backThread, this));
-	while (true) {
-		if (!mMsgQueue.empty())
-		{
-			std::string msg = mMsgQueue.front();
-			mMsgQueue.pop_front();
-
-			std::cout <<"popMsg:" <<endl<< msg << std::endl;
-			m_Dispatcher.handleMessage(this, msg);
-
-		}
-		else
-		{
-#if WIN32
-			Sleep(1);
-#else
-			sleep(1);
-#endif
-		}
+	delete m_Acceptor;
+	for (auto& sessionEntry : m_Sessions)
+	{
+		delete sessionEntry.second;
 	}
 }
 
-bool DebugServer::sendEvent( json& msg)
+void DebugServer::RunSession()
 {
-	doWrite(wrapMsg("event", msg));
-	return true;
+//	std::thread(std::bind(&DebugServer::RunLooper, this));
+	//RunSession(socket);
+	
+	auto& socket_ptr = m_Sockets[m_SessionIdGen];
+	DebugSession* session = new DebugSession(m_SessionIdGen, *socket_ptr);
+	m_Sockets.erase(m_SessionIdGen);
+
+	std::cout << " new connection:" << m_SessionIdGen << std::endl;
+
+	m_SessionIdGen++;
+
+	session->Start();
+	//m_Sessions.insert(std::make_pair(m_SessionIdGen, session));		
+	
+//	auto& sessionIter = m_Sessions.find(m_SessionIdGen);
+//	sessionIter->second->Start();
+	
+
 }
 
-bool DebugServer::sendResponse( json& msg)
+
+DebugSession* DebugServer::GetSession(int id)
 {
-	doWrite(wrapMsg("response", msg));
-	return true;
+	return m_Session;
+
 }
 
-bool DebugServer::sendRequest(json& msg)
+void DebugServer::Listen()
 {
-	doWrite(wrapMsg("request", msg));
-	return true;
+	std::cout << " server Listen! port:" << m_Port << std::endl;
+	m_Acceptor->async_accept(
+		[this](std::error_code ec, asio::ip::tcp::socket socket)
+	{
+		if (!ec)
+		{
+
+			m_Session = new DebugSession(m_SessionIdGen, socket);
+			session_mutext.lock();
+			// m_Sessions.insert(std::make_pair(m_SessionIdGen, session));
+		//	session_mutext.unlock();
+			m_SessionIdGen++;
+			m_Session->Start();
+
+			//std::thread(std::bind(&DebugServer::RunSession, this));
+		}
+		else 
+		{
+			std::cout << "m_Acceptor->async_accept error : " << ec.message() << std::endl;
+		} 
+
+		//session->Start();
+		Listen();		
+	});
+
 }
+
+void DebugServer::Run()
+{
+	m_IOContext.run();
+
+	
+
+}
+
+
