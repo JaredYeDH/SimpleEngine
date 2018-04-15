@@ -10,7 +10,7 @@ std::deque<Message> g_WriteQueue;
 std::mutex g_ReadQueueMutex;
 std::mutex g_WriteQueueMutex;
 
-// loop lock ¼Ü×ÓÒÑ¾­´îºÃ ×øµÈÕûºÏthread¸úasio ÊµÏÖthread¸úreadQ writeQµÄ¹ØÏµ
+// loop lock ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½threadï¿½ï¿½asio Êµï¿½ï¿½threadï¿½ï¿½readQ writeQï¿½Ä¹ï¿½Ïµ
 int g_MsgIdGen = 0;
 
 //DebugServer* g_Server = nullptr;
@@ -184,7 +184,8 @@ void MessageDispatcher::Dispatch(Message _msg, MessageHandler* handler)
 }
 
 
-MessageHandler::MessageHandler() 
+MessageHandler::MessageHandler(DebugServer* server) 
+:m_Server(server)
 {
 	m_Dispatcher = new MessageDispatcher();
 }
@@ -201,7 +202,11 @@ void MessageHandler::Loop()
 	{
 		if (g_ReadQueue.empty() || g_WriteQueue.empty())
 		{
+#ifdef WIN32
 			Sleep(100);
+#else
+            sleep(1);
+#endif
 		}
 		if (!g_ReadQueue.empty())
 		{
@@ -217,11 +222,8 @@ void MessageHandler::Loop()
 			auto msg = g_WriteQueue.front();
 			g_WriteQueue.pop_front();
 			g_WriteQueueMutex.unlock();
-			if (m_Session)
-				m_Session->Write(msg);
-			
+			m_Server->Write(msg);
 		}
-		
 		
 	}
 }
@@ -275,7 +277,7 @@ DebugSession::~DebugSession()
 
 void DebugSession::DoRead()
 {
-	std::cout << "DebugSession::DoRead()" << std::endl;
+
 	asio::async_read(*m_Socket, asio::buffer(m_OneByte, 1),
 		[this](std::error_code ec, std::size_t len)
 	{
@@ -328,6 +330,7 @@ void DebugSession::DoReadRunable()
 
 void DebugSession::EnReadQueue(const std::string& msgstr)
 {
+
 	g_ReadQueueMutex.lock();
 	g_ReadQueue.push_back(Message(msgstr));
 	g_ReadQueueMutex.unlock();
@@ -340,6 +343,7 @@ void DebugSession::DoWriteRunable()
 
 void DebugSession::Write(Message msg)
 {
+    std::cout << " DebugSession::Write(Message msg)" << std::endl;
 	msg.log();
 	asio::async_write(*m_Socket,
 		asio::buffer(msg.content.c_str(),
@@ -363,26 +367,19 @@ void DebugSession::Start()
 }
 
 
-DebugServer::DebugServer(int port,asio::io_context& context, std::map<int, DebugSession*>& sessions)
-	:m_IOContext(context),
-	m_Sessions(sessions)
+DebugServer::DebugServer(int port)
 {	
 	m_Port = port;
 	m_Session = nullptr;
 	m_SessionIdGen = 0;
 	asio::ip::tcp::endpoint localhost(asio::ip::tcp::v4(), port);
 	m_Acceptor = new asio::ip::tcp::acceptor(m_IOContext, localhost);
-	m_Handler = new MessageHandler();
-	m_Sessions.clear();
+//	m_Handler = new MessageHandler();
 }
 
 DebugServer::~DebugServer()
 {
 	delete m_Acceptor;
-	for (auto& sessionEntry : m_Sessions)
-	{
-		delete sessionEntry.second;
-	}
 }
 
 void DebugServer::RunSession()
@@ -390,27 +387,20 @@ void DebugServer::RunSession()
 //	std::thread(std::bind(&DebugServer::RunLooper, this));
 	//RunSession(socket);
 	
-	auto& socket_ptr = m_Sockets[m_SessionIdGen];
-	DebugSession* session = new DebugSession(m_SessionIdGen, *socket_ptr);
-	m_Sockets.erase(m_SessionIdGen);
+	// auto& socket_ptr = m_Sockets[m_SessionIdGen];
+	// DebugSession* session = new DebugSession(m_SessionIdGen, *socket_ptr);
+	// m_Sockets.erase(m_SessionIdGen);
 
-	std::cout << " new connection:" << m_SessionIdGen << std::endl;
+	// std::cout << " new connection:" << m_SessionIdGen << std::endl;
 
-	m_SessionIdGen++;
+	// m_SessionIdGen++;
 
-	session->Start();
+	// session->Start();
 	//m_Sessions.insert(std::make_pair(m_SessionIdGen, session));		
 	
 //	auto& sessionIter = m_Sessions.find(m_SessionIdGen);
 //	sessionIter->second->Start();
 	
-
-}
-
-
-DebugSession* DebugServer::GetSession(int id)
-{
-	return m_Session;
 
 }
 
@@ -422,14 +412,11 @@ void DebugServer::Listen()
 	{
 		if (!ec)
 		{
-
 			m_Session = new DebugSession(m_SessionIdGen, socket);
-			session_mutext.lock();
+		//	session_mutext.lock();
 			// m_Sessions.insert(std::make_pair(m_SessionIdGen, session));
 		//	session_mutext.unlock();
-			m_SessionIdGen++;
 			m_Session->Start();
-
 			//std::thread(std::bind(&DebugServer::RunSession, this));
 		}
 		else 
@@ -438,7 +425,7 @@ void DebugServer::Listen()
 		} 
 
 		//session->Start();
-		Listen();		
+//		Listen();		
 	});
 
 }
@@ -446,9 +433,17 @@ void DebugServer::Listen()
 void DebugServer::Run()
 {
 	m_IOContext.run();
+}
 
-	
-
+void DebugServer::Write(Message msg)
+{
+	std::cout << "server send post" << std::endl;
+	asio::post(m_IOContext,
+        [this, msg]()
+        {
+			std::cout << "server send" << std::endl;
+			m_Session->Write(msg);
+        });
 }
 
 

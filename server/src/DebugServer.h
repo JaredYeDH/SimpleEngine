@@ -4,7 +4,6 @@
 using String = std::string;
 
 class DebugServer;
-static DebugServer* g_Server;
 
 struct Message
 {
@@ -31,7 +30,7 @@ public:
 class MessageHandler
 {
 public:
-	MessageHandler();
+	MessageHandler(DebugServer* server);
 
 	~MessageHandler();
 
@@ -44,8 +43,9 @@ public:
 	bool SendRequest(nlohmann::json& msg);
 
 	void Send(Message msg);
-	DebugSession* m_Session;
+	
 private:
+	DebugServer* m_Server;
 	MessageDispatcher* m_Dispatcher;
 	
 };
@@ -77,25 +77,24 @@ private:
 class DebugServer
 {
 public:
-	DebugServer(int port,asio::io_context& context  , std::map<int, DebugSession*>& sessions);
+	DebugServer(int port);
 	
 	~DebugServer();
 	
 	void Listen();
+
 	void Run();
+
 	void RunSession();
-	DebugSession* GetSession(int id);
+
+	void Write(Message msg);
 	
 private:
-	std::mutex session_mutext;
-	std::map<int, asio::ip::tcp::socket*> m_Sockets;
-	asio::ip::tcp::socket* m_CurrenSock;
 	DebugSession* m_Session;
 	asio::ip::tcp::acceptor* m_Acceptor;
-	std::map<int, DebugSession*>& m_Sessions;
-	int m_SessionIdGen;
-	asio::io_context& m_IOContext;
-	MessageHandler* m_Handler;
+	asio::io_context m_IOContext;
+//	MessageHandler* m_Handler;
+	int m_SessionIdGen = 0;
 	int m_Port;
 };
 
