@@ -1,6 +1,6 @@
 #pragma once
 #include "defines.h"
-
+#include "DebugProtocol.h"
 using String = std::string;
 
 class DebugServer;
@@ -24,7 +24,7 @@ class DebugSession;
 class MessageDispatcher
 {
 public:
-	void Dispatch(Message msg, MessageHandler* handler);
+	void Dispatch(lua_State* L,Message msg, MessageHandler* handler);
 };
 
 class MessageHandler
@@ -34,7 +34,7 @@ public:
 
 	~MessageHandler();
 
-	void Loop();
+	void Loop(lua_State*L);
 
 	bool SendEvent(nlohmann::json& msg);
 
@@ -98,34 +98,6 @@ private:
 	int m_Port;
 };
 
-
-using String = std::string;
-class VSPotocol
-{
-	int seq;
-	String type;		//request response event
-};
-
-class VSRequest :public VSPotocol
-{
-	String command;
-	nlohmann::json arguments;
-};
-
-class VSEvent : public VSPotocol
-{
-	String event;
-	nlohmann::json body;
-};
-
-class VSResponse : public VSPotocol
-{
-	int request_seq;
-	bool success;
-	String command;
-	String message;
-	nlohmann::json body;
-};
 
 
 //
