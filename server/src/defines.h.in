@@ -49,6 +49,13 @@ extern "C" {
 #include <asio.hpp>
 #include <nlohmann/json.hpp>
 
+using String = std::string;
+using Json = nlohmann::json;
+inline void echo(String msg)
+{
+	std::cout << msg << std::endl;
+}
+
 template <typename T>
 inline void SafeDelete(T * &pointer)
 {

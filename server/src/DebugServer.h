@@ -1,7 +1,5 @@
 #pragma once
 #include "defines.h"
-#include "DebugProtocol.h"
-using String = std::string;
 
 class DebugServer;
 
