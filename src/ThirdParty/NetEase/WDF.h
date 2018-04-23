@@ -34,14 +34,14 @@ namespace NetEase {
 		void DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen);
 		void Init();
 		// Sprite LoadSprite(int id);
-		WAS GetWAS(int id);
-		Sprite2 LoadSprite(int id);
+		WAS GetWAS(uint32 id);
+		Sprite2 LoadSprite(uint32 id);
 		~WDF();
 
 	public:
 		Header mHeader;
 		Index* mIndencies;
-		map<int, int> mIdToPos;
+		map<uint32, uint32> mIdToPos;
 		fstream mFile;
 		uint16 palette16[256];
 		string mFilePath;

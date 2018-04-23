@@ -23,6 +23,8 @@ public:
 	};
 
 	FrameAnimation(Sprite2 sprite);
+	FrameAnimation();
+	FrameAnimation& operator=(const FrameAnimation& rhs);
 	~FrameAnimation();
 
 	int GetCurrentFrame() { return m_CurrentFrame;}

@@ -34,8 +34,9 @@ public:
     // bool IsKeyDown(int keyCode) { return s_KeyStates[keyCode] == GLFW_PRESS; }
     // bool IsKeyUp(int keyCode) { return s_KeyStates[keyCode] == GLFW_RELEASE; }
 
-	 bool IsKeyDown(int keyCode) { return s_Keys[keyCode]; }
+	bool IsKeyDown(int keyCode) { return s_Keys[keyCode]; }
     bool IsKeyUp(int keyCode) { return s_Keys[keyCode]; }
+	
 
 	int GetKeyState(int keyCode) { return s_KeyStates[keyCode]; }
 	//void BindKey(int keyCode, const std::function<void(int key,Object2D& )> & func  );
@@ -45,7 +46,7 @@ public:
 
     void SetMouseEvent(IMouseEvent* event){ s_IMouseEvent = event; }
 
-
+	void RegisterOnKeyClickEvent(int keyCode,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
 private:
 	InputManager();
 	~InputManager();
@@ -63,6 +64,6 @@ private:
 	static MousePos s_MousePos;
 
 	static IMouseEvent * s_IMouseEvent;
-
+	static std::map<int,std::function<void()>> s_ClickEvents;
 };
 

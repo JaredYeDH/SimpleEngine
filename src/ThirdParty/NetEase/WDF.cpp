@@ -47,14 +47,14 @@ namespace NetEase {
 	/**
 	????Sprite2
 	*/
-	WAS WDF::GetWAS(int id)
+	WAS WDF::GetWAS(uint32 id)
 	{
 		Index index = mIndencies[mIdToPos[id]];
 		return WAS(mFilePath, index.offset, index.size);
 	}
 
 
-	Sprite2 WDF::LoadSprite(int id)
+	Sprite2 WDF::LoadSprite(uint32 id)
 	{
 		WAS::Header header;
 		Sprite2 sprite;

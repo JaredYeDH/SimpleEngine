@@ -66,18 +66,18 @@ void ResourceManager::Clear()
         // glDeleteTextures(1, &(iter.second.GetTextureID()));
 }
 
-Sprite2 ResourceManager::LoadWdfSprite(int wasId)
+Sprite2 ResourceManager::LoadWdfSprite(uint32 wasId)
 {
 
 	return m_ShapeWdfPtr->LoadSprite(wasId);
 }
 
-void ResourceManager::SaveWdfSprite(int wasId)
+void ResourceManager::SaveWdfSprite(uint32 wasId)
 {
     m_ShapeWdfPtr->LoadSprite(wasId).SaveImage(0);
 }
 
-Sprite2 ResourceManager::LoadWd3Sprite(int wasId)
+Sprite2 ResourceManager::LoadWd3Sprite(uint32 wasId)
 {
 	return m_ShapeWd3Ptr->LoadSprite(wasId);
 }

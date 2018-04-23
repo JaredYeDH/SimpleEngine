@@ -2,7 +2,6 @@
 #include "ResourceManager.h"
 #include "Demo.h"
 #include "Logger.h"
-
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94
@@ -27,7 +26,14 @@ std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimati
 
 
 Player::Player(int id ,int PlayerId,int WeaponId):
-m_Id(id),
+m_ID(id),
+m_RoleID(1),
+m_WeaponID(1),
+m_ActionID(1),
+m_HasWeapon(false),
+m_RoleTSV(Environment::GetTsvPath("role")),
+m_WeaponTSV(Environment::GetTsvPath("weapon")),
+m_ActionTSV(Environment::GetTsvPath("action")),
 m_PlayerAnimation(4),
 m_WeapAnimation(4),
 m_AnimationState(Idle),
@@ -36,27 +42,108 @@ m_MoveVelocity(400),
 m_UpdateDelta(0),
 m_MoveList(),
 m_BackupMoveList(),
-m_MoveToCalled(false)
+m_MoveToCalled(false),
+m_AnimDB()
 {
-	for(int action=Idle ; action<= Caster1; action++)
+	LogInfo();
+	// for(int action=Idle ; action<= Caster1; action++)
+	// {
+	// 	m_PlayerAnimation[action] = new FrameAnimation(
+	// 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][action])
+	// 	);
+	// 	m_WeapAnimation[action] = new FrameAnimation(
+	// 		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][action])
+	// 	);
+	// 	if(action > Moving)
+	// 	{
+	// 		m_PlayerAnimation[action]->SetPlayLoop(false);
+	// 		m_WeapAnimation[action]->SetPlayLoop(false);
+	// 	}
+	// }
+	m_RoleID = 3;
+	m_WeaponID = 7;
+	m_ActionID = Player::Idle;
+	
+	m_PlayerFrames.clear();
+	for(int actionID=1;actionID<20;actionID++)
 	{
-		m_PlayerAnimation[action] = new FrameAnimation(
-			ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][action])
-		);
-		m_WeapAnimation[action] = new FrameAnimation(
-			ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][action])
-		);
-		if(action > Moving)
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		if(wasID != -1)
 		{
-			m_PlayerAnimation[action]->SetPlayLoop(false);
-			m_WeapAnimation[action]->SetPlayLoop(false);
+			m_AnimDB.printInfo(wasID);
+            auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
+			m_PlayerFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
 		}
 	}
+	m_WeaponFrames.clear();
+	for(int actionID=1;actionID<20;actionID++)
+	{
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_WeaponID,90);
+		if(wasID != -1)
+		{
+			m_AnimDB.printInfo(wasID);
+            auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
+			m_WeaponFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
+		}
+	}
+//	ChangeAction();
+	
 }
+
+
+Player::Player()
+:Player(0,0,0)
+{
+
+};
 
 Player::~Player()
 {
 
+}
+
+void Player::ChangeRole()
+{
+	m_PlayerFrames.clear();
+	for(int actionID=1;actionID<20;actionID++)
+	{
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		if(wasID != -1)
+		{
+			m_AnimDB.printInfo(wasID);
+            auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
+			m_PlayerFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
+		}
+	}
+
+	m_RoleID= m_RoleID == 3 ? 4: 3;
+
+}
+
+void Player::ChangeWeapon()
+{
+	m_WeaponFrames.clear();
+	for(int actionID=1;actionID<20;actionID++)
+	{
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_WeaponID,90);
+		if(wasID != -1)
+		{
+			m_AnimDB.printInfo(wasID);
+            auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
+			m_WeaponFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
+		}
+	}
+
+	m_WeaponID = m_RoleID == 3 ? 7 : 3;
+	
+	
+}
+
+void Player::ChangeAction()
+{
+	m_ActionID++;
+	if(m_ActionID > 20)m_ActionID = 1;
+	
 }
 
 void Player::SaveFrame(int index)
@@ -110,7 +197,7 @@ void Player::OnUpdate(double dt)
 			else
 			{
 				m_IsMove = false;
-				SetAnimationState(Player::Idle);
+				SetActionID(Player::Idle);
 				//SetDir(m_Dir);
 				m_Box.x = GetBoxX();
 				m_Box.y = GetBoxY();
@@ -122,8 +209,16 @@ void Player::OnUpdate(double dt)
 
 	}
 
-	m_PlayerAnimation[m_AnimationState]->OnUpdate(dt);
-	m_WeapAnimation[m_AnimationState]->OnUpdate(dt);
+
+	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	{
+		m_PlayerFrames[m_ActionID].OnUpdate(dt);
+		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		{
+			m_WeaponFrames[m_ActionID].OnUpdate(dt);
+		}
+	}
+	
     HandleMoveToCalled();
 }
 
@@ -139,7 +234,7 @@ void Player::HandleMoveToCalled()
 
             SetX(d.x * 20 + 10);
             SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Moving);
+            SetActionID(Player::Moving);
         }
         else
         {
@@ -149,7 +244,7 @@ void Player::HandleMoveToCalled()
 
             SetX(d.x * 20 + 10);
             SetY(d.y * 20 + 10);
-            SetAnimationState(Player::Idle);
+            SetActionID(Player::Idle);
         }
         m_MoveToCalled=false;
     }
@@ -158,24 +253,37 @@ void Player::HandleMoveToCalled()
 
 
 void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
-{
-	px = px - m_PlayerAnimation[m_AnimationState]->GetWidth() / 2 + 10;
-	py = py - m_PlayerAnimation[m_AnimationState]->GetHeight() + 20;
+{	
+	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	{
+		auto& player = m_PlayerFrames[m_ActionID];
+		px = px - player.GetWidth() / 2 + 10;
+		py = py - player.GetHeight() + 20;
+		player.Draw(renderer,px,py);
+		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		{
+			auto& weapon = m_WeaponFrames[m_ActionID];
+			int px2 = px - (weapon.GetKeyX() - player.GetKeyX());
+			int py2 = py - (weapon.GetKeyY() - player.GetKeyY());
 
-	m_PlayerAnimation[m_AnimationState]->Draw(renderer, px, py);
+			weapon.Draw(renderer,px2,py2);
+		}
+	}
 
-	int px2 = px - (m_WeapAnimation[m_AnimationState]->GetKeyX() - m_PlayerAnimation[m_AnimationState]->GetKeyX());
-	int py2 = py - (m_WeapAnimation[m_AnimationState]->GetKeyY() - m_PlayerAnimation[m_AnimationState]->GetKeyY());
-
-	m_WeapAnimation[m_AnimationState]->Draw(renderer, px2, py2);
 	
 }
 
 void Player::PlayAction(int action,int dir)
 {
-	SetAnimationState(action);
-	m_WeapAnimation[m_AnimationState]->ResetAnim(m_Dir);
-	m_PlayerAnimation[m_AnimationState]->ResetAnim(m_Dir);
+	SetActionID(action);
+	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	{
+		m_PlayerFrames[m_ActionID].ResetAnim(m_Dir);
+		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		{
+			m_WeaponFrames[m_ActionID].ResetAnim(m_Dir);
+		}	
+	}
 }
 
 void Player::SetPos(double x, double y)
@@ -200,33 +308,31 @@ void Player::MoveTo(GameMap* gameMapPtr, int destBoxX, int destBoxY)
 
 void Player::ResetDirAll(int dir)
 {
-	for (auto& anim : m_WeapAnimation)
-		anim->Reset(dir);
+	for (auto& playerIt : m_PlayerFrames)
+		playerIt.second.Reset(dir);
 
-	for (auto& anim : m_PlayerAnimation)
-		anim->Reset(dir);
-
+	for (auto& weaponIt : m_WeaponFrames)
+		weaponIt.second.Reset(dir);
 	// m_Dir = dir;
 }
 
 void Player::ResetDir(int dir)
 {
-    for (auto& anim : m_WeapAnimation)
-		anim->Reset(dir);
+	for (auto& playerIt : m_PlayerFrames)
+		playerIt.second.Reset(dir);
 
-	for (auto& anim : m_PlayerAnimation)
-		anim->Reset(dir);
-
+	for (auto& weaponIt : m_WeaponFrames)
+		weaponIt.second.Reset(dir);	
 	// m_Dir = dir;
 }
 
 void Player::SetDir(int dir)
 {
-  	for (auto& anim : m_WeapAnimation)
-		anim->SetCurrentGroup(dir);
+	for (auto& playerIt : m_PlayerFrames)
+		playerIt.second.SetCurrentGroup(dir);
 
-	for (auto& anim : m_PlayerAnimation)
-		anim->SetCurrentGroup(dir);
+	for (auto& weaponIt : m_WeaponFrames)
+		weaponIt.second.SetCurrentGroup(dir);	
 
 	// m_Dir = dir;
 }

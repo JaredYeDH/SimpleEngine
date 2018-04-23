@@ -202,7 +202,7 @@ void Demo::ProcessInput()
 		dir = static_cast<int>(FrameAnimation::Dir::S_E);
 		m_StriderPtr->SetDir(dir);
 	}
-
+	
 
 	// if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_1)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
 	// {
@@ -252,28 +252,37 @@ void Demo::ProcessInput()
 		m_StriderPtr->SetDir(dir);
 	}
 
-	if ( InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
-	{
-		m_StriderPtr->PlayAction(Player::Attack1,dir);
-		
-	}
 
-	if ( InputManager::GetInstance()->IsKeyUp(GLFW_KEY_2))
-	{
-		m_StriderPtr->PlayAction(Player::Caster1,dir);
-	}
+
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1,
+		[this](){
+			m_StriderPtr->ChangeAction();
+		}
+	);
+
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_2,
+		[this](){
+			m_StriderPtr->ChangeRole();
+		}
+	);
+
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_3,
+		[this](){
+			m_StriderPtr->ChangeWeapon();
+		}
+	);
 
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_5) && !m_IsChangeState)
 	{
 		m_IsChangeState = true;
 		
-		if ( m_StriderPtr->GetAnimationState() == Player::Moving)
+		if ( m_StriderPtr->GetActionID() == Player::Moving)
 		{
-			m_StriderPtr->SetAnimationState(Player::Idle);
+			m_StriderPtr->SetActionID(Player::Idle);
 		}
 		else
 		{
-			m_StriderPtr->SetAnimationState(Player::Moving);
+			m_StriderPtr->SetActionID(Player::Moving);
 		}
 		m_StriderPtr->ResetDir(dir);
 	}

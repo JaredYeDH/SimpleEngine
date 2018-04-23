@@ -19,7 +19,7 @@ namespace utils
 	class AnimDB
 	{
 	public:
-		int64 query(int role_id,int action_id  ,int action_weapon_id,int weapon_id)
+		uint32 query(int role_id,int action_id  ,int action_weapon_id,int weapon_id)
 		{
             for(int i=0;i<role_wasTSV.rows.size()-1;i++)
             {
@@ -34,7 +34,7 @@ namespace utils
                 if (role_id == _role_id && weapon_id == _weapon_id && action_id == _action_id
                     &&action_weapon_id  == _action_weapon_id)
 				{
-                    int64 num = std::stol(_was_id, 0, 16);
+                    uint32 num = std::stoul(_was_id, 0, 16);
                     return num;	
 				}
 				
@@ -42,7 +42,7 @@ namespace utils
             return -1;
         };
 		
-		RowWasRow* getRowWas(int64 was_id)
+		RowWasRow* getRowWas(uint32 was_id)
 		{
 			if (was_id == -1) return nullptr;
 			for(auto& row : m_Data)
@@ -63,6 +63,9 @@ namespace utils
 			
 		}
 
+		void printInfo(uint32 was_id){
+			printInfo(getRowWas(was_id));
+		}
 
 		AnimDB()
 		:playerTSV(Environment::GetTsvPath("player")),

@@ -27,9 +27,9 @@ public:
 
 	friend Singleton<ResourceManager>;
 
-	Sprite2 LoadWdfSprite(int wasId);
-	Sprite2 LoadWd3Sprite(int wasId);
-	void SaveWdfSprite(int wasId);
+	Sprite2 LoadWdfSprite(uint32 wasId);
+	Sprite2 LoadWd3Sprite(uint32 wasId);
+	void SaveWdfSprite(uint32 wasId);
 
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     void LoadShader(const std::string vShaderFile, const std::string fShaderFile, const std::string gShaderFile, std::string name);

@@ -9,6 +9,8 @@ MousePos InputManager::s_MousePos(0,0);
 
 IMouseEvent* InputManager::s_IMouseEvent(nullptr);
 
+std::map<int,std::function<void()>> InputManager::s_ClickEvents = {};
+
 void InputManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if(s_IMouseEvent != nullptr)
@@ -30,10 +32,20 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
     //     s_KeyStates[key]=action;
     // }
     
-  if(action == GLFW_PRESS)
+    if(action == GLFW_PRESS){
         s_Keys[key] = true;
-    else if(action == GLFW_RELEASE)
+    }
+    
+    if(action == GLFW_RELEASE)
+    {   
+        if(s_Keys[key] && s_ClickEvents.find(key)!=s_ClickEvents.end())
+        {
+            s_ClickEvents[key]();
+            s_ClickEvents.erase(key);
+        }
         s_Keys[key] = false;	
+    }
+    
 }
 
 void InputManager::ScrollCallbackFunc(GLFWwindow* window, double xoffset, double yoffset)

@@ -1,6 +1,24 @@
 #include "FrameAnimation.h"
 
+
+FrameAnimation::FrameAnimation()
+:m_PosX(0),
+m_PosY(0)
+{
+	m_CurrentFrame = 0;
+	m_CurrentGroup = 0;
+	m_GroupFrameCount = 0;
+	m_FrameCount = 0;
+	m_DeltaTime = 0;
+	
+	m_bVisible = false;
+	m_bLoop = false;
+	m_Sprites.clear();
+}
+
 FrameAnimation::FrameAnimation(Sprite2 sprite)
+:m_PosX(0),
+m_PosY(0)
 {
 	m_CurrentFrame = 0;
 	m_CurrentGroup = 0;
@@ -38,6 +56,25 @@ FrameAnimation::FrameAnimation(Sprite2 sprite)
 	m_bLoop = true;
 }
 
+FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
+{
+	this->m_CurrentFrame = rhs.m_CurrentFrame;
+	this->m_CurrentGroup = rhs.m_CurrentGroup;
+	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
+	this->m_FrameCount = rhs.m_FrameCount;
+	this->m_DeltaTime = rhs.m_DeltaTime;
+	
+	this->m_KeyX = rhs.m_KeyX;
+	this->m_KeyY = rhs.m_KeyY;
+	this->m_Width = rhs.m_Width;
+	this->m_Height = rhs.m_Height;
+	
+	this->m_Sprites = rhs.m_Sprites;
+	this->m_bVisible = rhs.m_bVisible;
+	this->m_bLoop = rhs.m_bLoop;
+	this->m_PosX = rhs.m_PosX;
+	this->m_PosY = rhs.m_PosY;
+}
 
 
 FrameAnimation::~FrameAnimation()
