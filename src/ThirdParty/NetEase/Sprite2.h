@@ -1,9 +1,10 @@
 #ifndef SPRITE2_H
 #define SPRITE2_H 
 #include "../../defines.h"
+#include "../../defineTypes.h"
 #include <vector>
 /*
-Ò»¸ö¶¯»­ÐòÁÐ×é
+Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 
 
@@ -24,13 +25,14 @@ public:
 		uint32* src;
 	};
 
-	int mGroupSize;		//·½ÏòÊý
-	int mFrameSize;		//Ö¡Êý
-	int mWidth;			//¿í¶È
-	int mHeight;		//¸ß¶È
-	int mKeyX;			//¹Ø¼üÖ¡X
-	int mKeyY;			//¹Ø¼üÖ¡Y
-
+	int mGroupSize;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int mFrameSize;		//Ö¡ï¿½ï¿½
+	int mWidth;			//ï¿½ï¿½ï¿½
+	int mHeight;		//ï¿½ß¶ï¿½
+	int mKeyX;			//ï¿½Ø¼ï¿½Ö¡X
+	int mKeyY;			//ï¿½Ø¼ï¿½Ö¡Y
+	String mID;
+	String mPath;
 	Sequence** mFrames;
 	void SaveImage(int index);
 };

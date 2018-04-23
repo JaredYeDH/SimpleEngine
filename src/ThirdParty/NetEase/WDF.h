@@ -15,22 +15,22 @@ namespace NetEase {
 	{
 		struct Header
 		{
-			uint32 flag; // °ü¹üµÄ±êÇ©
-			uint32 number; // °ü¹üÖÐµÄÎÄ¼þÊýÁ¿
-			uint32 offset; // °ü¹üÖÐµÄÎÄ¼þÁÐ±íÆ«ÒÆÎ»ÖÃ
+			uint32 flag; // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½Ç©
+			uint32 number; // ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+			uint32 offset; // ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ä¼ï¿½ï¿½Ð±ï¿½Æ«ï¿½ï¿½Î»ï¿½ï¿½
 		};
 
 		struct Index
 		{
-			uint32 hash; // ÎÄ¼þµÄÃû×ÖÉ¢ÁÐ
-			uint32 offset; // ÎÄ¼þµÄÆ«ÒÆ
-			uint32 size; // ÎÄ¼þµÄ´óÐ¡
-			uint32 spaces; // ÎÄ¼þµÄ¿Õ¼ä
+			uint32 hash; // ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¢ï¿½ï¿½
+			uint32 offset; // ï¿½Ä¼ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
+			uint32 size; // ï¿½Ä¼ï¿½ï¿½Ä´ï¿½Ð¡
+			uint32 spaces; // ï¿½Ä¼ï¿½ï¿½Ä¿Õ¼ï¿½
 		};
 
 	public:
 		WDF();
-		WDF(std::string filename) :mFilename(filename) { Init(); }
+		WDF(std::string path) :mFilePath(path) { Init(); }
 		void DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen);
 		void Init();
 		// Sprite LoadSprite(int id);
@@ -39,14 +39,14 @@ namespace NetEase {
 		~WDF();
 
 	public:
-		// std::string mFilename;
 		Header mHeader;
 		Index* mIndencies;
 		map<int, int> mIdToPos;
 		fstream mFile;
 		uint16 palette16[256];
-		string mFilename;
+		string mFilePath;
 		uint32 m_Palette32[256];
+		string mFileName;
 
 	};
 }

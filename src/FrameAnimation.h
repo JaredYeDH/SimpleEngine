@@ -2,6 +2,7 @@
 
 #include "ThirdParty/NetEase/Sprite2.h"
 #include "core/Texture.h"
+#include "TextureManager.h"
 #include <vector>
 #include "SpriteRenderer.h"
 
@@ -48,7 +49,7 @@ public:
 	void Reset(int group );
 	void ResetAnim(int group);
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
-	Texture* GetFrame() { return m_Textures[m_CurrentFrame];}
+	Texture* GetFrame(); 
 
 	void OnUpdate(double dt);
 	void Draw(SpriteRenderer* renderer,int x, int y);
@@ -68,5 +69,5 @@ public:
 	double m_DeltaTime;
 	bool m_bVisible;
 
-	std::vector<Texture*> m_Textures;
+	std::vector<String> m_Sprites;
 };

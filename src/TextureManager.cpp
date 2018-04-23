@@ -10,6 +10,19 @@ TextureManager::~TextureManager()
 
 }
 
+Texture* TextureManager::LoadTexture(String path,int w,int h,bool alpha,uint8* imageData)
+{
+    if(m_Textures.find(path) == m_Textures.end())
+    {
+        m_Textures[path] = new Texture(w,h,alpha,imageData);
+        return m_Textures[path];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 void TextureManager::LoadTexture(String path)
 {
     if(m_Textures.find(path) == m_Textures.end())

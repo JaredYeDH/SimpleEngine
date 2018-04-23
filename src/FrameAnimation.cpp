@@ -13,29 +13,45 @@ FrameAnimation::FrameAnimation(Sprite2 sprite)
 	m_Width = sprite.mWidth;
 	m_Height = sprite.mHeight;
 	
+	m_Sprites.clear();
+
 	for (int i = 0; i< m_FrameCount ; i++) {
 		int gpos = i / m_GroupFrameCount;
 		int cpos = i % m_GroupFrameCount;
+		
+		String tPath = sprite.mPath+"/"+std::to_string(i);
+		Texture* t = TextureManager::GetInstance()->LoadTexture(
+			tPath,
+			sprite.mWidth,sprite.mHeight,true,(uint8*)&(sprite.mFrames[gpos][cpos].src[0])
+			);
 
-		Texture * t= new Texture(
-				sprite.mWidth,
-				sprite.mHeight,
-				true, 
-				(uint8*)&(sprite.mFrames[gpos][cpos].src[0]) 
-				);
+		// Texture * t= new Texture(
+		// 		sprite.mWidth,
+		// 		sprite.mHeight,
+		// 		true, 
+		// 		(uint8*)&(sprite.mFrames[gpos][cpos].src[0]) 
+		// 		);
 
-		m_Textures.push_back(t);
+		m_Sprites.push_back(tPath);
 	}
 	m_bVisible = true;
 	m_bLoop = true;
 }
 
+
+
 FrameAnimation::~FrameAnimation()
 {
-	for (auto p_texture: m_Textures)
-	{
-		delete p_texture;
-	}
+	// for (auto p_texture: m_Textures)
+	// {
+	// 	delete p_texture;
+	// }
+}
+
+Texture* FrameAnimation::GetFrame()
+{ 
+	auto path =  m_Sprites[m_CurrentFrame];		
+	return TextureManager::GetInstance()->GetTexture(path);
 }
 
 void FrameAnimation::SetCurrentGroup(int group)
@@ -98,13 +114,11 @@ void FrameAnimation::Draw(SpriteRenderer* renderer,int posX ,int posY)
 		m_PosX = posX;
 		m_PosY = posY;
 		
-		if (m_CurrentFrame >= m_Textures.size()) return;
+		if (m_CurrentFrame >= m_Sprites.size()) return;
 
-		Texture* t = m_Textures[m_CurrentFrame];
+		auto path = m_Sprites[m_CurrentFrame];
+		auto* t = TextureManager::GetInstance()->GetTexture(path);
 		renderer->DrawFrameSprite(t,
 			glm::vec2(m_PosX, m_PosY),
 			glm::vec2(t->GetWidth(), t->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	
-	
-	
 }

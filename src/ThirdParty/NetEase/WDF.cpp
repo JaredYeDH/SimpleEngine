@@ -12,11 +12,11 @@ namespace NetEase {
 	}
 	void WDF::Init()
 	{
-		mFile.open(mFilename, ios::in | ios::binary);
-		std::cout << "InitWDF:" << mFilename << std::endl;
-
+		mFile.open(mFilePath, ios::in | ios::binary);
+		std::cout << "InitWDF:" << mFilePath << std::endl;
+		mFileName = mFilePath.substr(mFilePath.find_last_of("/")+1);
 		if (!mFile) {
-			cout << "文件打开失败:" << endl;//path<<endl;
+			cout << "????????:" << endl;//path<<endl;
 			return;
 		}
 		mFile.read((char*)&mHeader, sizeof(Header));
@@ -45,12 +45,12 @@ namespace NetEase {
 	}
 
 	/**
-	返回Sprite2
+	????Sprite2
 	*/
 	WAS WDF::GetWAS(int id)
 	{
 		Index index = mIndencies[mIdToPos[id]];
-		return WAS(mFilename, index.offset, index.size);
+		return WAS(mFilePath, index.offset, index.size);
 	}
 
 
@@ -71,6 +71,8 @@ namespace NetEase {
 
 		mFile.seekg(wasOffset, ios::beg);
 		mFile.read((char*)&header, sizeof(header));
+		sprite.mID = std::to_string(id);
+		sprite.mPath = mFileName+"/"+sprite.mID;
 		sprite.mGroupSize = header.group;
 		sprite.mFrameSize = header.frame;
 		sprite.mWidth = header.width;
@@ -91,22 +93,22 @@ namespace NetEase {
 			exit(EXIT_FAILURE);
 		}
 
-		// 判断精灵文件头长度是否为12
+		// ?ж????????????????12
 		if (header.len != 12)
 		{
-			// 读取附加文件头数据
+			// ???????????????
 			int AddonHeadLen = header.len - 12;
-			uint8* m_AddonHead = new uint8[AddonHeadLen]; // 分配附加文件头的空间
-			mFile.read((char*)m_AddonHead, AddonHeadLen); // 读取附加文件头
+			uint8* m_AddonHead = new uint8[AddonHeadLen]; // ???丽??????????
+			mFile.read((char*)m_AddonHead, AddonHeadLen); // ???????????
 		}
 
 
-		// 读取调色板数据
-		mFile.read((char*)&palette16[0], 256 * 2); // Palette[0]不使用
+		// ????????????
+		mFile.read((char*)&palette16[0], 256 * 2); // Palette[0]?????
 
 		for (int k = 0; k < 256; k++)
 		{
-			m_Palette32[k] = WAS::RGB565to888(palette16[k], 0xff); // 16to32调色板转换
+			m_Palette32[k] = WAS::RGB565to888(palette16[k], 0xff); // 16to32????????
 		}
 
 		int frameTotalSize = header.group * header.frame;
@@ -118,11 +120,11 @@ namespace NetEase {
 
 		int frameHeadOffset = 2 + 2 + header.len;
 
-		uint32* frameLine = new uint32[header.height]; // 分配行引索列表的空间
-		uint8* lineData = new uint8[header.width * 4]; // 分配行数据的空间
+		uint32* frameLine = new uint32[header.height]; // ???????????б????
+		uint8* lineData = new uint8[header.width * 4]; // ?????????????
 
-		int x = 0; // 动作组号
-		int z = 0; // 动作帧数
+		int x = 0; // ???????
+		int z = 0; // ???????
 
 
 		for (int i = 0; i<frameTotalSize; i++)
@@ -143,7 +145,7 @@ namespace NetEase {
 			frame.src = new uint32[pixels];
 			memset(frame.src, 0, pixels * 4);
 
-			// 读取帧数据块的引索
+			// ??????????????
 			mFile.read((char*)frameLine, tempFreamHeader.height * 4);
 
 			uint32* pBmpStart = frame.src;//=frame.src+pixels*3;
@@ -154,7 +156,7 @@ namespace NetEase {
 				int lineDataLen = 0;
 				if (j < tempFreamHeader.height - 1)
 				{
-					lineDataLen = frameLine[j + 1] - frameLine[j]; // 得到行数据的大小
+					lineDataLen = frameLine[j + 1] - frameLine[j]; // ???????????С
 				}
 				else
 				{
@@ -194,43 +196,43 @@ namespace NetEase {
 		uint32 PixelLen = pixelLen;
 		uint16 AlphaPixel = 0;
 
-		while (*pData != 0) // {00000000} 表示像素行结束，如有剩余像素用透明色代替
+		while (*pData != 0) // {00000000} ????????н??????????????????????????
 		{
 			uint8 style = 0;
-			uint8 Level = 0; // Alpha层数
-			uint8 Repeat = 0; // 重复次数
-			style = (*pData & 0xc0) >> 6; // 取字节的前两个比特
+			uint8 Level = 0; // Alpha????
+			uint8 Repeat = 0; // ???????
+			style = (*pData & 0xc0) >> 6; // ??????????????
 			switch (style)
 			{
 			case 0: // {00******}
-				if (*pData & 0x20) // {001*****} 表示带有Alpha通道的单个像素
+				if (*pData & 0x20) // {001*****} ???????Alpha????????????
 				{
-					// {001 +5bit Alpha}+{1Byte Index}, 表示带有Alpha通道的单个像素。
-					// {001 +0~31层Alpha通道}+{1~255个调色板引索}
-					Level = (*pData) & 0x1f; // 0x1f=(11111) 获得Alpha通道的值
-					pData++; // 下一个字节
+					// {001 +5bit Alpha}+{1Byte Index}, ???????Alpha?????????????
+					// {001 +0~31??Alpha???}+{1~255???????????}
+					Level = (*pData) & 0x1f; // 0x1f=(11111) ???Alpha??????
+					pData++; // ????????
 					if (Pixels < PixelLen)
 					{
-						AlphaPixel = WAS::Alpha565(palette16[(uint8)(*pData)], 0, Level); // 混合
+						AlphaPixel = WAS::Alpha565(palette16[(uint8)(*pData)], 0, Level); // ???
 						*pBmpStart++ = WAS::RGB565to888(AlphaPixel, Level * 8);
 						Pixels++;
 						pData++;
 					}
 				}
-				else // {000*****} 表示重复n次带有Alpha通道的像素
+				else // {000*****} ??????n?δ???Alpha?????????
 				{
-					// {000 +5bit Times}+{1Byte Alpha}+{1Byte Index}, 表示重复n次带有Alpha通道的像素。
-					// {000 +重复1~31次}+{0~255层Alpha通道}+{1~255个调色板引索}
-					// 注: 这里的{00000000} 保留给像素行结束使用，所以只可以重复1~31次。
-					Repeat = (*pData) & 0x1f; // 获得重复的次数
+					// {000 +5bit Times}+{1Byte Alpha}+{1Byte Index}, ??????n?δ???Alpha??????????
+					// {000 +???1~31??}+{0~255??Alpha???}+{1~255???????????}
+					// ?: ?????{00000000} ??????????н???????????????????1~31?Ρ?
+					Repeat = (*pData) & 0x1f; // ???????????
 					pData++;
-					Level = *pData; // 获得Alpha通道值
+					Level = *pData; // ???Alpha????
 					pData++;
 					for (int i = 1; i <= Repeat; i++)
 					{
 						if (Pixels < PixelLen)
 						{
-							AlphaPixel = WAS::Alpha565(palette16[(uint8)*pData], 0, Level); // 混合
+							AlphaPixel = WAS::Alpha565(palette16[(uint8)*pData], 0, Level); // ???
 							*pBmpStart++ = WAS::RGB565to888(AlphaPixel, Level * 8);
 							Pixels++;
 						}
@@ -238,10 +240,10 @@ namespace NetEase {
 					pData++;
 				}
 				break;
-			case 1: // {01******} 表示不带Alpha通道不重复的n个像素组成的数据段
-					// {01  +6bit Times}+{nByte Datas},表示不带Alpha通道不重复的n个像素组成的数据段。
-					// {01  +1~63个长度}+{n个字节的数据},{01000000}保留。
-				Repeat = (*pData) & 0x3f; // 获得数据组中的长度
+			case 1: // {01******} ???????Alpha??????????n???????????????
+					// {01  +6bit Times}+{nByte Datas},???????Alpha??????????n??????????????Ρ?
+					// {01  +1~63??????}+{n??????????},{01000000}????
+				Repeat = (*pData) & 0x3f; // ??????????е????
 				pData++;
 				for (int i = 1; i <= Repeat; i++)
 				{
@@ -253,10 +255,10 @@ namespace NetEase {
 					}
 				}
 				break;
-			case 2: // {10******} 表示重复n次像素
-					// {10  +6bit Times}+{1Byte Index}, 表示重复n次像素。
-					// {10  +重复1~63次}+{0~255个调色板引索},{10000000}保留。
-				Repeat = (*pData) & 0x3f; // 获得重复的次数
+			case 2: // {10******} ??????n??????
+					// {10  +6bit Times}+{1Byte Index}, ??????n???????
+					// {10  +???1~63??}+{0~255???????????},{10000000}????
+				Repeat = (*pData) & 0x3f; // ???????????
 				pData++;
 				for (int i = 1; i <= Repeat; i++)
 				{
@@ -268,10 +270,10 @@ namespace NetEase {
 				}
 				pData++;
 				break;
-			case 3: // {11******} 表示跳过n个像素，跳过的像素用透明色代替
-					// {11  +6bit Times}, 表示跳过n个像素，跳过的像素用透明色代替。
-					// {11  +跳过1~63个像素},{11000000}保留。
-				Repeat = (*pData) & 0x3f; // 获得重复次数
+			case 3: // {11******} ???????n???????????????????????????
+					// {11  +6bit Times}, ???????n??????????????????????????档
+					// {11  +????1~63??????},{11000000}????
+				Repeat = (*pData) & 0x3f; // ??????????
 				for (int i = 1; i <= Repeat; i++)
 				{
 					if (Pixels < PixelLen)
@@ -282,7 +284,7 @@ namespace NetEase {
 				}
 				pData++;
 				break;
-			default: // 一般不存在这种情况
+			default: // ??????????????
 				cerr << "Error!" << endl;
 				exit(EXIT_FAILURE);
 				break;

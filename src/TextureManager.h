@@ -13,6 +13,7 @@ using Map=std::unordered_map<String,Texture*>;
     TextureManager();
     ~TextureManager();
     void LoadTexture(String path);
+    Texture* LoadTexture(String path,int w,int h,bool alpha,uint8* imageData);
     void UnloadTexture(String path);
     Texture* GetTexture(String path) ;
 
