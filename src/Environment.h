@@ -4,11 +4,7 @@
 #include "defineTypes.h"
 #include "precompile.h"
 
-#ifdef WIN32
-#define LINE_SAPARATOR '\r\n'
-#else
 #define LINE_SAPARATOR '\n'
-#endif
 class Environment
 {
 public:

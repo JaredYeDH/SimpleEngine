@@ -12,9 +12,26 @@
 Image* img;
 TextRenderer* textRenderer;
 
+struct Test1
+{
+	int a;
+};
+struct Test2
+{
+	Test1 dd;
+	int b;
+};
+
+
 AlphaSence::AlphaSence()
 :m_Render()
 {
+	Test2 t2;
+	std::cout << "t2:" << std::hex << &t2
+		<< "\t t2.dd" << &t2.dd
+		<< "\t t2.b" << &t2.b
+		<< "\t t2.dd.a" << &t2.dd.a << std::endl;
+
 	//TestTimer
 	//TimerManager::GetInstance()->CreateTimer("Deda2", 1000, true, false, [this](){
 	//	printf("void AlphaSence::Update(4000)\n");

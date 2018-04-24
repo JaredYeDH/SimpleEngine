@@ -74,6 +74,7 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_bLoop = rhs.m_bLoop;
 	this->m_PosX = rhs.m_PosX;
 	this->m_PosY = rhs.m_PosY;
+	return *this;
 }
 
 

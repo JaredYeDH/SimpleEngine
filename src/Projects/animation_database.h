@@ -11,7 +11,7 @@ namespace utils
 		int	action_id;
 		int	action_weapon_id;
 		int	weapon_id;
-		int64 was_id;
+		uint32 was_id;
 
 
 
@@ -89,7 +89,7 @@ namespace utils
                 rowData.action_weapon_id =  atoi( row[3].c_str());
                 rowData.weapon_id =  atoi( row[4].c_str());
                 auto _was_id =   row[5];
-				rowData.was_id= std::stol(_was_id, 0, 16);
+				rowData.was_id= std::stoul(_was_id, 0, 16);
 				
 				m_Data.push_back(rowData);
             }
