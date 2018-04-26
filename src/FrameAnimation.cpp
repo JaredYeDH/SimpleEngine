@@ -54,8 +54,14 @@ m_PosY(0)
 	}
 	m_bVisible = true;
 	m_bLoop = true;
+	
+	m_FrameTime = 1.0 / 60 * 4 ;
 }
-
+void FrameAnimation::ResetFrameTime(int groupCount)
+{
+	m_FrameTime = 1.0 / 60 * 4 * groupCount/ m_GroupFrameCount;
+	
+}
 FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 {
 	this->m_CurrentFrame = rhs.m_CurrentFrame;
@@ -74,6 +80,7 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_bLoop = rhs.m_bLoop;
 	this->m_PosX = rhs.m_PosX;
 	this->m_PosY = rhs.m_PosY;
+	this->m_FrameTime = rhs.m_FrameTime;
 	return *this;
 }
 
@@ -103,7 +110,7 @@ void FrameAnimation::SetCurrentGroup(int group)
 void FrameAnimation::OnUpdate(double dt)
 {
 	m_DeltaTime += dt;
-	if( m_DeltaTime  >= 4*dt)
+	if( m_DeltaTime  >= m_FrameTime)
 	{
 		m_DeltaTime = 0;
 		m_CurrentFrame++;
@@ -131,6 +138,13 @@ void FrameAnimation::Reset(int group)
 	SetCurrentGroup(group);
 	m_DeltaTime = 0;
 	
+}
+
+void FrameAnimation::ResetAll()
+{
+	m_CurrentFrame = 0;
+	m_CurrentGroup = 0;
+	m_DeltaTime = 0;
 }
 
 void FrameAnimation::ResetAnim(int group)

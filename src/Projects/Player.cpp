@@ -104,6 +104,7 @@ Player::~Player()
 
 void Player::ChangeRole()
 {
+	m_RoleID = m_RoleID == 3 ? 4: 3;
 	m_PlayerFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
@@ -112,16 +113,23 @@ void Player::ChangeRole()
 		{
 			m_AnimDB.printInfo(wasID);
             auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
-			m_PlayerFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
+			FrameAnimation frame(sprite);
+			frame.ResetAll();
+			m_PlayerFrames.insert(std::make_pair(actionID,frame));
+			if(m_WeaponFrames.find(actionID) != m_WeaponFrames.end())
+			{
+				m_WeaponFrames[actionID].ResetAll();
+				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
+			}
 		}
 	}
 
-	m_RoleID= m_RoleID == 3 ? 4: 3;
 
 }
 
 void Player::ChangeWeapon()
 {
+	m_WeaponID = m_RoleID == 3 ? 7 : 3;
 	m_WeaponFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
@@ -130,11 +138,17 @@ void Player::ChangeWeapon()
 		{
 			m_AnimDB.printInfo(wasID);
             auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
-			m_WeaponFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
+			FrameAnimation frame(sprite);
+			frame.ResetAll();
+			m_WeaponFrames.insert(std::make_pair(actionID,frame));
+			if(m_PlayerFrames.find(actionID) != m_PlayerFrames.end())
+			{
+				m_PlayerFrames[actionID].ResetAll();
+				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
+			}
 		}
 	}
 
-	m_WeaponID = m_RoleID == 3 ? 7 : 3;
 	
 	
 }

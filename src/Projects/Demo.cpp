@@ -263,6 +263,7 @@ void Demo::ProcessInput()
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_2,
 		[this](){
 			m_StriderPtr->ChangeRole();
+			
 		}
 	);
 

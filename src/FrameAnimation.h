@@ -48,8 +48,10 @@ public:
 	int GetWidth() { return m_Width; }
 	int GetHeight() { return m_Height; }
 
+	void ResetAll();
 	void Reset(int group );
 	void ResetAnim(int group);
+	void ResetFrameTime(int groupCount);
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
 	Texture* GetFrame(); 
 
@@ -71,5 +73,7 @@ public:
 	double m_DeltaTime;
 	bool m_bVisible;
 
+
+	double m_FrameTime;
 	std::vector<String> m_Sprites;
 };
