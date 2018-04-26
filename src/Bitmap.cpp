@@ -11,13 +11,13 @@ Bitmap::~Bitmap()
 }
 
 
-bool Bitmap::CreateBitmapFile(int w,int h,int colorBitCount,std::string path)
+bool Bitmap::CreateBitmapFile(std::string path, int w,int h,uint32 color = 0xffffffff,int colorBitCount = 32)
 {
 	
 	BitmapFile file;
 	memset(&file, 0, sizeof(BitmapFile));
 	
-	int lineSize = (w*colorBitCount/8 + 3) / 4 * 4;
+	int lineSize =  (w*colorBitCount + 31 )/32*4 ;
 	int dataSize = h * lineSize;
 	int size1 = sizeof(BitmapFileHeader);
 	int size2 = sizeof(BitmapInfoHeader);
@@ -36,11 +36,27 @@ bool Bitmap::CreateBitmapFile(int w,int h,int colorBitCount,std::string path)
 	
 	file.header.bfType = BITMAPFILE_ID;
 	file.header.bfSize = headSize + patSize + dataSize;
-	file.header.bfOffBits = headSize + patSize;
+	file.header.bfOffBits = (headSize + patSize +3)/4*4;
 
 	memset(file.palettes, 0xff, sizeof(file.palettes));
 	file.imageData = new uint8[file.infoHeader.biSizeImage];
 	memset(file.imageData, 0xff, file.infoHeader.biSizeImage);
+	
+	int pixbytes = colorBitCount / 8;
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int dst = i*lineSize+ j*pixbytes;
+			uint32 tmpc = color;
+			for (int p = 0; p < pixbytes; p++)
+			{
+				file.imageData[dst + p] = (tmpc & 0xff);
+				tmpc = tmpc >> 8;
+			}
+		}
+	}
+
 	bool ok  = Save(path, file);
 	delete file.imageData;
 	file.imageData = nullptr;
