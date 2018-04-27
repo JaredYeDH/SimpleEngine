@@ -93,10 +93,17 @@ FrameAnimation::~FrameAnimation()
 	// }
 }
 
-Texture* FrameAnimation::GetFrame()
+Texture* FrameAnimation::GetFrame(int index = -1)
 { 
-	auto path =  m_Sprites[m_CurrentFrame];		
+	if ( index  < 0 ) index = m_CurrentFrame;
+	auto path =  m_Sprites[index];		
 	return TextureManager::GetInstance()->GetTexture(path);
+}
+
+String FrameAnimation::GetFramePath(int index = -1)
+{ 
+	if ( index  < 0 ) index = m_CurrentFrame;
+	return  m_Sprites[index];		
 }
 
 void FrameAnimation::SetCurrentGroup(int group)

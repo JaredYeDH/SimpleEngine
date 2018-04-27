@@ -24,11 +24,21 @@
 class ResourceManager final : public Singleton<ResourceManager>
 {
 public:
+	enum PackFile
+	{
+		ShapeWDF,
+		ShapeWD3,
+		AddonWDF,
+		MiscWDF
+	};
 
 	friend Singleton<ResourceManager>;
 
 	Sprite2 LoadWdfSprite(uint32 wasId);
 	Sprite2 LoadWd3Sprite(uint32 wasId);
+	
+	Sprite2 LoadWASSprite(int pack,uint32 wasId);
+
 	void SaveWdfSprite(uint32 wasId);
 
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader

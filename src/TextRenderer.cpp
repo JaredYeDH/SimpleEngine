@@ -1,6 +1,7 @@
 #include "TextRenderer.h"
 #include "Environment.h"
 #include <freetype2/ft2build.h>
+#include "global.h"
 #include FT_FREETYPE_H
 
 
@@ -10,7 +11,7 @@ TextRenderer::TextRenderer()
 	std::string vShader(Environment::GetShaderPath("text.vs")),
 		fShader(Environment::GetShaderPath("text.fs"));
 	shader = new Shader(vShader, fShader);
-	glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH * 1.0f, 0.0f, SCREEN_HEIGHT * 1.0f, -1.0f, 1.0f);
 	shader->Bind();
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)&projection);
 

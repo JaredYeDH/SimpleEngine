@@ -164,8 +164,6 @@ void Graphics2D::DrawCircle(const Circle& circle )
 void Graphics2D::DrawImage(const Image& image) 
 {
     m_SpriteShaderPtr->Bind();
-      //  glEnable(GL_BLEND);
-	  //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Vec3 pos = image.T().pos;
         Vec2 size = image.T().size;
         Vec3 rotation = image.T().rotation;
@@ -180,19 +178,15 @@ void Graphics2D::DrawImage(const Image& image)
         
         const Texture* texture = TextureManager::GetInstance()->GetTexture(image.path);
         glUniformMatrix4fv(glGetUniformLocation(m_SpriteShaderPtr->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*) (&model));
-        glUniform3f(glGetUniformLocation(m_SpriteShaderPtr->GetProgramID(), "spriteColor"), 1.0, 1.0, 1.0);
+        glUniform3f(glGetUniformLocation(m_SpriteShaderPtr->GetProgramID(), "spriteColor"), 1.0, 1.0,  1.0);
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D,  texture->GetTextureID());
 
         RENDER_VERTEX_ARRAY_SCOPE(m_SpriteVBO, m_SpriteVAO,
         {
-            
-
             glDrawArrays(GL_TRIANGLES, 0, 6);
         });
-        //glDisable(GL_BLEND);
     m_SpriteShaderPtr->Unbind();
-   // m_ShaderPtr->Bind();
 }
 

@@ -12,7 +12,7 @@
 class Player 
 {
 public:
-	enum AnimationState : int 
+	enum ActionName : int 
 	{
 		Idle = 15,		
 		Moving = 9,		
@@ -21,11 +21,8 @@ public:
 		Caster1 = 3,
 		// Caster2 = 5
 	};
-
-	static std::map<uint32, std::vector< uint32 >> s_PlayerAnimationTable;
-	static std::map<uint32, std::map<uint32, std::vector<uint32>> > s_WeaponAnimationTable;
 	
-	Player(int id, int PlayerAnimationId,int WeapAnimationId);
+	Player(int id, int PlayerAnimationId);
 	Player();
 	~Player();
 	void OnUpdate(double dt);
@@ -33,9 +30,6 @@ public:
 	void ResetDirAll(int dir);
 	void ResetDir(int dir);
 	void SetDir(int dir);
-
-	void SetAnimationState(int state) { m_AnimationState = state; };
-	int GetAnimationState(){ return m_AnimationState; }
 	
 	void SetActionID(int state) { m_ActionID = state; };
 	int GetActionID(){ return m_ActionID; }
@@ -68,8 +62,6 @@ public:
 	void ChangeWeapon();
 	void ChangeAction();
 private:
-	std::vector<FrameAnimation*> m_WeapAnimation;
-	std::vector<FrameAnimation*> m_PlayerAnimation;
 
 	std::map<int,FrameAnimation> m_PlayerFrames;
 	std::map<int,FrameAnimation> m_WeaponFrames;

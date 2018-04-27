@@ -8,6 +8,7 @@
  ******************************************************************/
 #include "SpriteRenderer.h"
 #include "ResourceManager.h"
+#include "global.h"
 
 
 SpriteRenderer::SpriteRenderer()
@@ -21,7 +22,7 @@ SpriteRenderer::SpriteRenderer()
     glStencilMask(0);
 
 	// Configure shaders
-	glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH*1.0f, SCREEN_HEIGHT*1.0f, 0.0f, -1.0f, 1.0f);
 	m_pShader = ResourceManager::GetInstance()->GetShader("sprite");
 	m_pShader->Bind();
 

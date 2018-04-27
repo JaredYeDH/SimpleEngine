@@ -11,31 +11,18 @@
 // WeaponId : 0-160
 
 //shape.wdf A16A06FF 4FBA48B8 
-//shape.wd3 72013AF5 F2FB1AFA 
-std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
-{
-	{ 1, { 0x49386FCE, 0x54F3FC94, 0xA94FBD68,0x58A17D26} },
-	{ 11,{ 0xA16A06FF , 0x4FBA48B8 , 0xA16A06FF,0x4FBA48B8} }
-};
-
-std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimationTable =
-{
-	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A ,0x89352821,0x27080BB2} } } },
-	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA, 0x72013AF5,0xF2FB1AFA } } } }
-};
+//shape.wd3 72013AF5 F2FB1AFA
 
 
-Player::Player(int id ,int PlayerId,int WeaponId):
+Player::Player(int id ,int RoleID):
 m_ID(id),
-m_RoleID(1),
+m_RoleID(RoleID),
 m_WeaponID(1),
 m_ActionID(1),
 m_HasWeapon(false),
 m_RoleTSV(Environment::GetTsvPath("role")),
 m_WeaponTSV(Environment::GetTsvPath("weapon")),
 m_ActionTSV(Environment::GetTsvPath("action")),
-m_PlayerAnimation(4),
-m_WeapAnimation(4),
 m_AnimationState(Idle),
 m_IsMove(false),
 m_MoveVelocity(400),
@@ -46,20 +33,12 @@ m_MoveToCalled(false),
 m_AnimDB()
 {
 	LogInfo();
-	// for(int action=Idle ; action<= Caster1; action++)
-	// {
-	// 	m_PlayerAnimation[action] = new FrameAnimation(
-	// 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][action])
-	// 	);
-	// 	m_WeapAnimation[action] = new FrameAnimation(
-	// 		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][action])
-	// 	);
-	// 	if(action > Moving)
-	// 	{
-	// 		m_PlayerAnimation[action]->SetPlayLoop(false);
-	// 		m_WeapAnimation[action]->SetPlayLoop(false);
-	// 	}
-	// }
+}
+
+
+Player::Player()
+:Player(0,0)
+{
 	m_RoleID = 3;
 	m_WeaponID = 7;
 	m_ActionID = Player::Idle;
@@ -86,15 +65,6 @@ m_AnimDB()
 			m_WeaponFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
 		}
 	}
-//	ChangeAction();
-	
-}
-
-
-Player::Player()
-:Player(0,0,0)
-{
-
 };
 
 Player::~Player()

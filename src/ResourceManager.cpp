@@ -72,6 +72,24 @@ Sprite2 ResourceManager::LoadWdfSprite(uint32 wasId)
 	return m_ShapeWdfPtr->LoadSprite(wasId);
 }
 
+Sprite2 ResourceManager::LoadWASSprite(int pack, uint32 wasId)
+{
+    switch(pack)
+    {
+        case AddonWDF: 
+        {
+            Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
+
+            static auto* s_AddonWDFPtr = new NetEase::WDF(config.GetWdfPath("addon.wdf"));
+            return s_AddonWDFPtr->LoadSprite(wasId);
+        }
+        break;
+    }
+    return {};
+	
+}
+
+
 void ResourceManager::SaveWdfSprite(uint32 wasId)
 {
     m_ShapeWdfPtr->LoadSprite(wasId).SaveImage(0);

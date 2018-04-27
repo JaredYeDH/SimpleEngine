@@ -44,6 +44,9 @@ private:
 	int mCellWidth;
 	int mCellHeight;
 	int** mCell;
+	int mMapTileWidth;
+	int mMapTileHeight;
+	int mMapTileCoef;
 	int mRow;
 	int mCol;
 	NetEase::MAP* mXyqMap;

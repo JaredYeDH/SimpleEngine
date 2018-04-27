@@ -5,11 +5,13 @@
 #include "Random.h"
 #include <asio.hpp>
 #include <thread>
+#include "../core/Renderer.h"
+#include "../global.h"
 
-float Demo::s_ScreenWidth = 800.0f;
-float Demo::s_ScreenHeight = 600.0f;
+float Demo::s_ScreenWidth = SCREEN_WIDTH;
+float Demo::s_ScreenHeight = SCREEN_HEIGHT;
 bool g_IsTest = false;
-
+Renderer2D * s_Renderer2D= nullptr;
 void Demo::OnEvent(int button, int action, int mods) 
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -72,6 +74,7 @@ Demo::Demo()
 	InputManager::GetInstance()->SetMouseEvent(this);
 	
 	m_RendererPtr = new SpriteRenderer();
+	s_Renderer2D = new Renderer2D();
 
 	m_TextRenderer = new TextRenderer();
 
@@ -80,12 +83,12 @@ Demo::Demo()
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
 	m_BlockTexturePtr = new Texture(blockPath);
 
-	m_StriderPtr = new Player(Demo::g_Id , Demo::g_Id, 120);
-	m_StriderPtr->SetPos(2100, 1500);
+	m_StriderPtr = new Player(Demo::g_Id , 3);
+	m_StriderPtr->SetPos(2300, 1700);
 	m_StriderPtr->SetBox();
 
 
-	m_OtherPtr = new Player(-1, Demo::g_Id2, 120);
+	m_OtherPtr = new Player(-1, 4);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
@@ -93,29 +96,12 @@ Demo::Demo()
 	l->Color() = Vec4(1,0.5,0,1);
 	m_Render.AddObject(l);
 
-	int birthPos[10][2] = 
-	{
-		{ 780, 700},
-		{ 600, 900 },
-		{ 1550, 300 },
-		{ 600, 1900 },
-		{ 400, 2000 },
-		{ 2600, 400 },
-		{ 3400, 800 },
-		{ 4600, 900 },
-		{ 2400, 300 },
-		{ 600, 900 },
-	};
 
-	for (int i = 0; i < 10; i++)
-	{
-		Player* player = new Player(2+i ,1, 120);
-		player->SetPos(birthPos[i][0], birthPos[i][1]);
-       // player->SetBox();
-		player->ResetDirAll(i % 8);
-		m_NPCs.push_back(player);
-		i++;
-	}
+	Sprite2 sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
+	FrameAnimation combatBG(sp);
+	s_Renderer2D->AddObject(new Image(
+		combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
+		);
 
 	//TestServer();
 }
@@ -294,11 +280,11 @@ ImVec4 clear_color = ImColor(114, 144, 154);
 bool show_test_window = true;
 bool show_another_window = false;
 void Demo::Draw()
-{
-	
-	m_GameMapPtr->Draw(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+{	
 
-	
+	m_GameMapPtr->Draw(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	s_Renderer2D->Render();
+
 	int screenWidth = Demo::GetScreenWidth();
 	int screenHeight = Demo::GetScreenHeight();
 	int halfScreenWidth = screenWidth / 2;

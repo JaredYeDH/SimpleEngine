@@ -125,6 +125,7 @@ public:
 	String path;
 	Image(String path,Vec2 pos,Vec2 size);
 	~Image(){};
+	void SetPath(String newPath) { path =newPath;};
 	int type(){return Object2D::Image;}
 	void Draw(Graphics2D& g2d);
 };
