@@ -9,10 +9,13 @@ class CombatSystem
 public:
 	CombatSystem();
 	~CombatSystem();
-	void Init(Player* self,Player* enemy);
+	
+	void AddEnemy(int pos,Player* enemy);
+	void AddSelf(int pos,Player* self);
+	void ProcessInput();
 	void Update();
 	void Draw();
 private:
-	Player* m_Self;
-	Player* m_Enemy;
+	std::vector<Player*> m_Ourselves;
+	std::vector<Player*> m_Enemies;
 };

@@ -66,6 +66,8 @@ void Demo::OnMove(MoveMessage msg)
 
 Player* Demo::m_OtherPtr  = nullptr;
 Player* Demo::m_StriderPtr = nullptr;
+
+
 CombatSystem* s_CombatSystem;
 bool s_IsCombat = true;
 Demo::Demo()
@@ -80,12 +82,13 @@ Demo::Demo()
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
 	m_BlockTexturePtr = new Texture(blockPath);
 
-	m_StriderPtr = new Player(Demo::g_Id , 3);
+	m_StriderPtr = new Player(3);
 	m_StriderPtr->SetPos(2300, 1700);
 	m_StriderPtr->SetBox();
 	m_StriderPtr->SetNickName(L"Ocean-藏心");
+	m_StriderPtr->SetActionID(15);
 
-	m_OtherPtr = new Player(-1, 4);
+	m_OtherPtr = new Player(4);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
@@ -97,8 +100,38 @@ Demo::Demo()
 		);
 
 	//TestServer();
-	s_CombatSystem= new CombatSystem();
-	s_CombatSystem->Init(m_StriderPtr,m_OtherPtr);
+
+	s_CombatSystem = new CombatSystem();
+	auto f = [](int role_id,double x,double y,std::wstring nickname)
+	{
+		Player* p = new Player(role_id);
+		p->SetActionID(15);
+		p->SetCombatPos(x,y);
+		p->SetNickName(nickname);
+		return p;
+	};
+	s_CombatSystem->AddSelf(0,f(3,415.0f,275.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(1,f(3,355.0f,305.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(2,f(3,475.0f,245.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(3,f(3,295.0f,335.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(4,f(3,535.0f,215.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(5,f(3,465.0f,315.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(6,f(3,405.0f,345.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(7,f(3,525.0f,285.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(8,f(3,345.0f,375.0f,L"己方组"));  		
+	s_CombatSystem->AddSelf(9,f(3,585.0f,255.0f,L"己方组"));  		
+
+	s_CombatSystem->AddEnemy(0,f(3,175.0f,170.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(1,f(3,115.0f,200.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(2,f(3,235.0f,140.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(3,f(3,55.0f,230.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(4,f(3,295.0f,110.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(5,f(3,220.0f,210.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(6,f(3,160.0f,240.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(7,f(3,280.0f,180.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(8,f(3,100.0f,270.0f,L"敌方组"));  		
+	s_CombatSystem->AddEnemy(9,f(3,340.0f,150.0f,L"敌方组"));  
+
 }
 
 Demo::~Demo()
