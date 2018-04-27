@@ -7,11 +7,11 @@
 #include <thread>
 #include "../core/Renderer.h"
 #include "../global.h"
+#include "Combat.h"
 
 float Demo::s_ScreenWidth = SCREEN_WIDTH;
 float Demo::s_ScreenHeight = SCREEN_HEIGHT;
-bool g_IsTest = false;
-Renderer2D * s_Renderer2D= nullptr;
+
 void Demo::OnEvent(int button, int action, int mods) 
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -66,6 +66,8 @@ void Demo::OnMove(MoveMessage msg)
 
 Player* Demo::m_OtherPtr  = nullptr;
 Player* Demo::m_StriderPtr = nullptr;
+CombatSystem* s_CombatSystem;
+bool s_IsCombat = true;
 Demo::Demo()
 	:m_IsTestNpc0(true)
 {
@@ -73,11 +75,6 @@ Demo::Demo()
     m_IsTestNpc0 =false;
 	InputManager::GetInstance()->SetMouseEvent(this);
 	
-	m_RendererPtr = new SpriteRenderer();
-	s_Renderer2D = new Renderer2D();
-
-	m_TextRenderer = new TextRenderer();
-
 	m_GameMapPtr = new GameMap(0);
 
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
@@ -86,24 +83,22 @@ Demo::Demo()
 	m_StriderPtr = new Player(Demo::g_Id , 3);
 	m_StriderPtr->SetPos(2300, 1700);
 	m_StriderPtr->SetBox();
-
+	m_StriderPtr->SetNickName(L"Ocean-藏心");
 
 	m_OtherPtr = new Player(-1, 4);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
-	Line *l = new Line(Vec2(3,3),Vec2(5,5));
-	l->Color() = Vec4(1,0.5,0,1);
-	m_Render.AddObject(l);
-
 
 	Sprite2 sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
 	FrameAnimation combatBG(sp);
-	s_Renderer2D->AddObject(new Image(
+	Renderer2D::GetInstance()->AddObject(new Image(
 		combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
 		);
 
 	//TestServer();
+	s_CombatSystem= new CombatSystem();
+	s_CombatSystem->Init(m_StriderPtr,m_OtherPtr);
 }
 
 Demo::~Demo()
@@ -113,26 +108,33 @@ Demo::~Demo()
 
 void Demo::Update()
 {
-	double dt = Engine::GetInstance()->GetDeltaTime(); 
-	
-	m_StriderPtr->OnUpdate(dt);
-	m_OtherPtr->OnUpdate(dt);
-	for (Player* npc : m_NPCs)
+	if(s_IsCombat)
 	{
-		npc->OnUpdate(dt);
+		s_CombatSystem->Update();
 	}
-	
-	ProcessInput();
-
-	if (m_IsChangeState) 
+	else
 	{
-		m_ChangeStateTimeInterval += dt;
-		if (m_ChangeStateTimeInterval >= 20 * dt )
+		double dt = Engine::GetInstance()->GetDeltaTime(); 
+		m_StriderPtr->OnUpdate(dt);
+		m_OtherPtr->OnUpdate(dt);
+		for (Player* npc : m_NPCs)
 		{
-			m_IsChangeState = false;
-			m_ChangeStateTimeInterval = 0;
+			npc->OnUpdate(dt);
+		}
+		
+		ProcessInput();
+
+		if (m_IsChangeState) 
+		{
+			m_ChangeStateTimeInterval += dt;
+			if (m_ChangeStateTimeInterval >= 20 * dt )
+			{
+				m_IsChangeState = false;
+				m_ChangeStateTimeInterval = 0;
+			}
 		}
 	}
+	
 }
 
 void Demo::ProcessInput()
@@ -281,47 +283,53 @@ bool show_test_window = true;
 bool show_another_window = false;
 void Demo::Draw()
 {	
+	m_GameMapPtr->Draw(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	Renderer2D::GetInstance()->Render();
 
-	m_GameMapPtr->Draw(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	s_Renderer2D->Render();
+	if(s_IsCombat)
+	{
+		s_CombatSystem->Draw();
+	}
+	else
+	{
+		int screenWidth = Demo::GetScreenWidth();
+		int screenHeight = Demo::GetScreenHeight();
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2;
+		int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
+		int mapOffsetY = halfScreenHeight - m_StriderPtr->GetY();
+		int mapWidth = m_GameMapPtr->GetWidth();
+		int mapHeight = m_GameMapPtr->GetHeight();
+		
+		int px = m_StriderPtr->GetX();
+		int py = m_StriderPtr->GetY();
 
-	int screenWidth = Demo::GetScreenWidth();
-	int screenHeight = Demo::GetScreenHeight();
-	int halfScreenWidth = screenWidth / 2;
-	int halfScreenHeight = screenHeight / 2;
-	int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
-	int mapOffsetY = halfScreenHeight - m_StriderPtr->GetY();
-	int mapWidth = m_GameMapPtr->GetWidth();
-	int mapHeight = m_GameMapPtr->GetHeight();
-	
-	int px = m_StriderPtr->GetX();
-	int py = m_StriderPtr->GetY();
+		mapOffsetX = GMath::Clamp(mapOffsetX, -mapWidth + screenWidth, 0);
+		mapOffsetY = GMath::Clamp(mapOffsetY, -mapHeight + screenHeight, 0);
+		
+		int maxMapOffsetX = mapWidth - halfScreenWidth;
+		int maxMapOffsetY = mapHeight - halfScreenHeight;
+		
+		px = px < halfScreenWidth ? px :
+			(px  > maxMapOffsetX ?
+			(screenWidth - (mapWidth - px)) : halfScreenWidth);
+		py = py < halfScreenHeight ? py :
+			(py> maxMapOffsetY ?
+			(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
-	mapOffsetX = GMath::Clamp(mapOffsetX, -mapWidth + screenWidth, 0);
-	mapOffsetY = GMath::Clamp(mapOffsetY, -mapHeight + screenHeight, 0);
+		
+		//m_GameMapPtr->DrawCell(SpriteRenderer::GetInstance(), mapOffsetX, mapOffsetY);
+		m_StriderPtr->OnDraw(SpriteRenderer::GetInstance(),px,py);
+		
+		m_OtherPtr->OnDraw(SpriteRenderer::GetInstance(), m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
+		
+		m_GameMapPtr->DrawMask(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	}
 	
-	int maxMapOffsetX = mapWidth - halfScreenWidth;
-	int maxMapOffsetY = mapHeight - halfScreenHeight;
 	
-	px = px < halfScreenWidth ? px :
-		(px  > maxMapOffsetX ?
-		(screenWidth - (mapWidth - px)) : halfScreenWidth);
-	py = py < halfScreenHeight ? py :
-		(py> maxMapOffsetY ?
-		(screenHeight - (mapHeight - py)) : halfScreenHeight);
-
-	
-	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
-	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
-	
-	m_TextRenderer->RenderText(L"Ocean-藏心",px-20,py-32,0.5f,glm::vec3(115/255.0f,1.0f,137/255.0f));
-	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
-	
-
-	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	/*for (Player* npc : m_NPCs)
 	{
-		npc->OnDraw(m_RendererPtr, npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
+		npc->OnDraw(SpriteRenderer::GetInstance(), npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
 	}*/
 
 

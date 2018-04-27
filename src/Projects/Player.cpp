@@ -241,20 +241,25 @@ void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 	{
 		auto& player = m_PlayerFrames[m_ActionID];
-		px = px - player.GetWidth() / 2 + 10;
-		py = py - player.GetHeight() + 20;
-		player.Draw(renderer,px,py);
+		int _px = px - player.GetWidth() / 2 + 10;
+		int _py = py - player.GetHeight() + 20;
+		player.Draw(renderer,_px,_py);
+		
 		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
 		{
 			auto& weapon = m_WeaponFrames[m_ActionID];
-			int px2 = px - (weapon.GetKeyX() - player.GetKeyX());
-			int py2 = py - (weapon.GetKeyY() - player.GetKeyY());
+			int px2 = _px - (weapon.GetKeyX() - player.GetKeyX());
+			int py2 = _py - (weapon.GetKeyY() - player.GetKeyY());
 
 			weapon.Draw(renderer,px2,py2);
 		}
-	}
 
-	
+        if(!m_NickName.empty())
+		{
+			auto green = glm::vec3(115/255.0f,1.0f,137/255.0f);
+			TextRenderer::GetInstance()->RenderText(m_NickName,px-20,py-32,0.5f,green);
+		}
+	}
 }
 
 void Player::PlayAction(int action,int dir)

@@ -189,6 +189,8 @@ Projects/AlphaSence.h
 Projects/animation_database.h
 Projects/Astar.cpp
 Projects/Astar.h
+Projects/Combat.cpp
+Projects/Combat.h
 Projects/Config.cpp
 Projects/Config.h
 Projects/Demo.cpp

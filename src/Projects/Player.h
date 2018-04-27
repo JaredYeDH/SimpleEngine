@@ -61,12 +61,14 @@ public:
 	void ChangeRole();
 	void ChangeWeapon();
 	void ChangeAction();
+
+	void SetNickName(std::wstring name) { m_NickName= name ;};
 private:
 
 	std::map<int,FrameAnimation> m_PlayerFrames;
 	std::map<int,FrameAnimation> m_WeaponFrames;
 	
-
+	std::wstring m_NickName;
 	int m_AnimationState;
 	int m_Dir;
 	Pos m_Pos;
