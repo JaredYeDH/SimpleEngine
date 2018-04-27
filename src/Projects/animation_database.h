@@ -32,11 +32,12 @@ namespace utils
                 int _weapon_id =  atoi( row[4].c_str());
                 auto _was_id =   row[5];
                 if (role_id == _role_id && weapon_id == _weapon_id && action_id == _action_id
-                    &&action_weapon_id  == _action_weapon_id)
+                    &&(action_weapon_id  == _action_weapon_id || _action_weapon_id == -1))
 				{
                     uint32 num = std::stoul(_was_id, 0, 16);
                     return num;	
 				}
+				
 				
             }
             return -1;

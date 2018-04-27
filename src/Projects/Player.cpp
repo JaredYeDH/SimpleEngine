@@ -67,7 +67,7 @@ m_AnimDB()
 	m_PlayerFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
-		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_RoleID == 3?7:3,-1);
 		if(wasID != -1)
 		{
 			m_AnimDB.printInfo(wasID);
@@ -108,7 +108,7 @@ void Player::ChangeRole()
 	m_PlayerFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
-		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_RoleID == 3?7:3,-1);
 		if(wasID != -1)
 		{
 			m_AnimDB.printInfo(wasID);

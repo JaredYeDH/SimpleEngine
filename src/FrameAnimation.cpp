@@ -112,7 +112,7 @@ void FrameAnimation::OnUpdate(double dt)
 	m_DeltaTime += dt;
 	if( m_DeltaTime  >= m_FrameTime)
 	{
-		m_DeltaTime = 0;
+		m_DeltaTime = m_DeltaTime - m_FrameTime;
 		m_CurrentFrame++;
 		if( m_CurrentFrame % m_GroupFrameCount == 0 )
 		{
