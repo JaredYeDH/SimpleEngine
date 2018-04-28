@@ -72,7 +72,7 @@ mHeight(height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, mFormat, GL_UNSIGNED_BYTE, lImageBuffer);
 
-	delete[] lImageBuffer;
+	// delete[] lImageBuffer;
 }
 
 Texture::~Texture()

@@ -30,6 +30,7 @@ public:
 	void ResetDirAll(int dir);
 	void ResetDir(int dir);
 	void SetDir(int dir);
+	void ReverseDir();
 	
 	void SetActionID(int state) { m_ActionID = state; };
 	int GetActionID(){ return m_ActionID; }
@@ -37,6 +38,7 @@ public:
 	void OnDraw(SpriteRenderer * renderer, int px,int py);
 	void SetPos(double x, double y);
 	void SetCombatPos(double x, double y) {m_CombatPos.x=x;m_CombatPos.y=y;};
+	void SetCombatPos(Pos pos){m_CombatPos = pos;};
 	Pos GetCombatPos(){ return m_CombatPos;};
 
 	void SetBox();
@@ -62,11 +64,17 @@ public:
 	void HandleMoveToCalled();
 	void SaveFrame(int index);
 	void ChangeRole();
+	void ChangeRole(int roleID);
 	void ChangeWeapon();
+	void ChangeWeapon(int WeaponID);
 	void ChangeAction();
+	void ChangeAction(int actionID);
+	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos;};
+	
+	
 
 	void SetNickName(std::wstring name) { m_NickName= name ;};
-	
+	void SetIsCombat(bool bcombat){ m_bInCombat = bcombat;}
 private:
 
 	std::map<int,FrameAnimation> m_PlayerFrames;
@@ -77,6 +85,7 @@ private:
 	int m_Dir;
 	Pos m_Pos;
 	Pos m_CombatPos;
+	Pos m_CombatTargetPos;
     BoxPos m_Box;
 	std::list<Pos> m_MoveList;
     std::list<Pos> m_BackupMoveList;
@@ -85,6 +94,7 @@ private:
 	bool m_IsMove;
 	int m_ID;
 	double m_MoveVelocity;
+	bool m_bInCombat;
 
 	int m_RoleID;				//current role
 	int m_ActionID;				//current action

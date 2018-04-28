@@ -105,32 +105,35 @@ Demo::Demo()
 	auto f = [](int role_id,double x,double y,std::wstring nickname)
 	{
 		Player* p = new Player(role_id);
-		p->SetActionID(15);
+		p->SetActionID(4);
 		p->SetCombatPos(x,y);
+        p->SetCombatTargetPos({x*1.0f,y*1.0f});
+        p->SetIsCombat(true);
 		p->SetNickName(nickname);
+		p->ChangeWeapon();
 		return p;
 	};
-	s_CombatSystem->AddSelf(0,f(3,415.0f,275.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(1,f(3,355.0f,305.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(2,f(3,475.0f,245.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(3,f(3,295.0f,335.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(4,f(3,535.0f,215.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(5,f(3,465.0f,315.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(6,f(3,405.0f,345.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(7,f(3,525.0f,285.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(8,f(3,345.0f,375.0f,L"己方组"));  		
-	s_CombatSystem->AddSelf(9,f(3,585.0f,255.0f,L"己方组"));  		
+    s_CombatSystem->AddSelf(0,f(3,415.0f / 640 * SCREEN_WIDTH,275.0f / 480 * SCREEN_HEIGHT,L"己方组0"));
+    s_CombatSystem->AddSelf(1,f(3,355.0f / 640 * SCREEN_WIDTH,305.0f / 480 * SCREEN_HEIGHT,L"己方组1"));
+    s_CombatSystem->AddSelf(2,f(3,475.0f / 640 * SCREEN_WIDTH,245.0f / 480 * SCREEN_HEIGHT,L"己方组2"));
+    s_CombatSystem->AddSelf(3,f(3,295.0f / 640 * SCREEN_WIDTH,335.0f / 480 * SCREEN_HEIGHT,L"己方组3"));
+    s_CombatSystem->AddSelf(4,f(3,535.0f / 640 * SCREEN_WIDTH,215.0f / 480 * SCREEN_HEIGHT,L"己方组4"));
+    s_CombatSystem->AddSelf(5,f(3,465.0f / 640 * SCREEN_WIDTH,315.0f / 480 * SCREEN_HEIGHT,L"己方组5"));
+    s_CombatSystem->AddSelf(6,f(3,405.0f / 640 * SCREEN_WIDTH,345.0f / 480 * SCREEN_HEIGHT,L"己方组6"));
+    s_CombatSystem->AddSelf(7,f(3,525.0f / 640 * SCREEN_WIDTH,285.0f / 480 * SCREEN_HEIGHT,L"己方组7"));
+    s_CombatSystem->AddSelf(8,f(3,345.0f / 640 * SCREEN_WIDTH,375.0f / 480 * SCREEN_HEIGHT,L"己方组8"));
+    s_CombatSystem->AddSelf(9,f(3,585.0f / 640 * SCREEN_WIDTH,255.0f / 480 * SCREEN_HEIGHT,L"己方组9"));
 
-	s_CombatSystem->AddEnemy(0,f(3,175.0f,170.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(1,f(3,115.0f,200.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(2,f(3,235.0f,140.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(3,f(3,55.0f,230.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(4,f(3,295.0f,110.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(5,f(3,220.0f,210.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(6,f(3,160.0f,240.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(7,f(3,280.0f,180.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(8,f(3,100.0f,270.0f,L"敌方组"));  		
-	s_CombatSystem->AddEnemy(9,f(3,340.0f,150.0f,L"敌方组"));  
+    s_CombatSystem->AddEnemy(0,f(4,175.0f / 640 * SCREEN_WIDTH,170.0f / 480 * SCREEN_HEIGHT,L"敌方组0"));
+    s_CombatSystem->AddEnemy(1,f(4,115.0f / 640 * SCREEN_WIDTH,200.0f / 480 * SCREEN_HEIGHT,L"敌方组1"));
+    s_CombatSystem->AddEnemy(2,f(4,235.0f / 640 * SCREEN_WIDTH,140.0f / 480 * SCREEN_HEIGHT,L"敌方组2"));
+    s_CombatSystem->AddEnemy(3,f(4,55.0f / 640 * SCREEN_WIDTH,230.0f / 480 * SCREEN_HEIGHT,L"敌方组3"));
+    s_CombatSystem->AddEnemy(4,f(4,295.0f / 640 * SCREEN_WIDTH,110.0f / 480 * SCREEN_HEIGHT,L"敌方组4"));
+    s_CombatSystem->AddEnemy(5,f(4,220.0f / 640 * SCREEN_WIDTH,210.0f / 480 * SCREEN_HEIGHT,L"敌方组5"));
+    s_CombatSystem->AddEnemy(6,f(4,160.0f / 640 * SCREEN_WIDTH,240.0f / 480 * SCREEN_HEIGHT,L"敌方组6"));
+    s_CombatSystem->AddEnemy(7,f(4,280.0f / 640 * SCREEN_WIDTH,180.0f / 480 * SCREEN_HEIGHT,L"敌方组7"));
+    s_CombatSystem->AddEnemy(8,f(4,100.0f / 640 * SCREEN_WIDTH,270.0f / 480 * SCREEN_HEIGHT,L"敌方组8"));
+    s_CombatSystem->AddEnemy(9,f(4,340.0f / 640 * SCREEN_WIDTH,150.0f / 480 * SCREEN_HEIGHT,L"敌方组9"));
 
 }
 
