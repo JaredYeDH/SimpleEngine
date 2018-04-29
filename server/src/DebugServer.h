@@ -23,6 +23,7 @@ class MessageDispatcher
 {
 public:
 	void Dispatch(lua_State* L,Message msg, MessageHandler* handler);
+	std::function<void()> onConfidoneFunc;
 };
 
 class MessageHandler
@@ -41,11 +42,15 @@ public:
 	bool SendRequest(nlohmann::json& msg);
 
 	void Send(Message msg);
-	
+	void StopOnBreakPointEvent(Json bp);
+
 private:
 	DebugServer* m_Server;
 	MessageDispatcher* m_Dispatcher;
 	
+	
+
+
 };
 
 class DebugSession
@@ -86,7 +91,8 @@ public:
 	void RunSession();
 
 	void Write(Message msg);
-	
+
+
 private:
 	DebugSession* m_Session;
 	asio::ip::tcp::acceptor* m_Acceptor;

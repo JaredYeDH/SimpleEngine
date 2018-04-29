@@ -19,6 +19,7 @@ function SetHook()
 end
 
 function SetTrapWait(bWait)
+    print(bWait)
     trap_wait= bWait
 end
 
@@ -26,7 +27,9 @@ local update = 0
 function OnGameUpdate()
     print('OnGameUpdate' .. tostring(update))
     update = update + 1
-    
+    local c = 3 
+    local d = 1
+    local e = 4
 
 end
 

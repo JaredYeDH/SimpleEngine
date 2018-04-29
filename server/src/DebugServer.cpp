@@ -1,6 +1,7 @@
 #include "DebugServer.h"
+#include "DebuggerCore.h"
 
-
+#define MAIN_THREAD_ID 0
 std::deque<Message> g_ReadQueue;
 std::deque<Message> g_WriteQueue;
 
@@ -8,19 +9,22 @@ std::mutex g_ReadQueueMutex;
 std::mutex g_WriteQueueMutex;
 
 
-int g_MsgIdGen = 0;
+int g_MsgIdGen = 1;
 
+namespace vs
+{
 	struct MetaMessage
 	{
 		Json js;
 		MetaMessage()
+			:js(Json::object())
 		{
-			js = Json::object();
+
 		}
 	};
 
-	struct _Message : public MetaMessage {
-		_Message()
+	struct Message : public MetaMessage {
+		Message()
 		{
 			js["id"] = 0;
 			js["format"] = "";
@@ -84,7 +88,7 @@ int g_MsgIdGen = 0;
 			js["sourceReference"] = 0;
 			js["presentationHint"] = "";
 			js["origin"] = "";
-			js["sources"] = Json::array({ Source().js });
+			js["sources"] = Json::object(); // Json::array({ Source().js });
 			js["adapterData"] = Json::object();
 			js["checksums"] = Json::array({ Checksum().js });
 		}
@@ -94,7 +98,7 @@ int g_MsgIdGen = 0;
 		{
 			js["id"] = 0;
 			js["name"] = "";
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			js["line"] = 0;
 			js["column"] = 0;
 			js["endLine"] = 0;
@@ -111,7 +115,7 @@ int g_MsgIdGen = 0;
 			js["namedVariables"] = 0;
 			js["indexedVariables"] = 0;
 			js["expensive"] = true;
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			js["line"] = 0;
 			js["column"] = 0;
 			js["endLine"] = 0;
@@ -133,7 +137,7 @@ int g_MsgIdGen = 0;
 			js["name"] = "";
 			js["value"] = "";
 			js["type"] = "";
-			js["presentationHint"] = VariablePresentationHint().js;
+			js["presentationHint"] = Json::parse(VariablePresentationHint().js.dump());
 			js["evaluateName"] = "";
 			js["variablesReference"] = 0;
 			js["namedVariables"] = 0;
@@ -164,7 +168,7 @@ int g_MsgIdGen = 0;
 			js["id"] = 0;
 			js["verified"] = true;
 			js["message"] = "";
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			js["line"] = 0;
 			js["column"] = 0;
 			js["endLine"] = 0;
@@ -267,9 +271,9 @@ int g_MsgIdGen = 0;
 	struct SetBreakpointsArguments : public MetaMessage {
 		SetBreakpointsArguments()
 		{
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			Json sourceBreakpoints = Json::parse("[]");
-			sourceBreakpoints[0] = SourceBreakpoint().js;
+			sourceBreakpoints[0] = Json::parse(SourceBreakpoint().js.dump());
 			js["breakpoints"] = sourceBreakpoints;
 			js["lines"] = Json::parse("[]");
 			js["sourceModified"] = false;
@@ -278,7 +282,7 @@ int g_MsgIdGen = 0;
 	struct SetFunctionBreakpointsArguments : public MetaMessage {
 		SetFunctionBreakpointsArguments()
 		{
-			js["breakpoints"] = FunctionBreakpoint().js;
+			js["breakpoints"] = Json::parse(FunctionBreakpoint().js.dump());
 		}
 	};
 	struct SetExceptionBreakpointsArguments : public MetaMessage {
@@ -291,38 +295,38 @@ int g_MsgIdGen = 0;
 	struct ContinueArguments : public MetaMessage {
 		ContinueArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct NextArguments : public MetaMessage {
 		NextArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct StepInArguments : public MetaMessage {
 		StepInArguments()
 		{
-			js["threadId"] = 0;
-			js["targetId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
+			js["targetId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct StepOutArguments : public MetaMessage {
 		StepOutArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct StepBackArguments : public MetaMessage {
 		StepBackArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct ReverseContinueArguments : public MetaMessage {
 		ReverseContinueArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct RestartFrameArguments : public MetaMessage {
@@ -334,14 +338,14 @@ int g_MsgIdGen = 0;
 	struct GotoArguments : public MetaMessage {
 		GotoArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 			js["targetId"] = 0;
 		}
 	};
 	struct PauseArguments : public MetaMessage {
 		PauseArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct StackFrameFormat : public ValueFormat {
@@ -359,10 +363,10 @@ int g_MsgIdGen = 0;
 	struct StackTraceArguments : public MetaMessage {
 		StackTraceArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 			js["startFrame"] = 0;
 			js["levels"] = 0;
-			js["format"] = StackFrameFormat().js;
+			js["format"] = Json::parse(StackFrameFormat().js.dump());
 		}
 	};
 	struct ScopesArguments : public MetaMessage {
@@ -378,7 +382,7 @@ int g_MsgIdGen = 0;
 			js["filter"] = "";
 			js["start"] = 0;
 			js["count"] = 0;
-			js["format"] = ValueFormat().js;
+			js["format"] = Json::parse(ValueFormat().js.dump());
 		}
 	};
 	struct SetVariableArguments : public MetaMessage {
@@ -387,13 +391,13 @@ int g_MsgIdGen = 0;
 			js["variablesReference"] = 0;
 			js["name"] = "";
 			js["value"] = "";
-			js["format"] = ValueFormat().js;
+			js["format"] = Json::parse(ValueFormat().js.dump());
 		}
 	};
 	struct SourceArguments : public MetaMessage {
 		SourceArguments()
 		{
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			js["sourceReference"] = 0;
 		}
 	};
@@ -412,7 +416,7 @@ int g_MsgIdGen = 0;
 			js["expression"] = "";
 			js["frameId"] = 0;
 			js["context"] = "";
-			js["format"] = ValueFormat().js;
+			js["format"] = Json::parse(ValueFormat().js.dump());
 		}
 	};
 	struct StepInTargetsArguments : public MetaMessage {
@@ -424,7 +428,7 @@ int g_MsgIdGen = 0;
 	struct GotoTargetsArguments : public MetaMessage {
 		GotoTargetsArguments()
 		{
-			js["source"] = Source().js;
+			js["source"] = Json::parse(Source().js.dump());
 			js["line"] = 0;
 			js["column"] = 0;
 		}
@@ -441,7 +445,7 @@ int g_MsgIdGen = 0;
 	struct ExceptionInfoArguments : public MetaMessage {
 		ExceptionInfoArguments()
 		{
-			js["threadId"] = 0;
+			js["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct ExceptionBreakpointsFilter : public MetaMessage {
@@ -540,9 +544,9 @@ int g_MsgIdGen = 0;
 			auto& body = js["body"];
 			body["reason"] = "";
 			body["description"] = "";
-			body["threadId"] = 0;
+			body["threadId"] = MAIN_THREAD_ID;
 			body["text"] = "";
-			body["allThreadsStopped"] = false;
+			body["allThreadsStopped"] = true;
 		}
 	};
 	struct ContinuedEvent : public Event {
@@ -550,8 +554,8 @@ int g_MsgIdGen = 0;
 		{
 			js["event"] = "continued";
 			auto& body = js["body"];
-			body["threadId"] = 0;
-			body["allThreadsContinued"] = false;
+			body["threadId"] = MAIN_THREAD_ID;
+			body["allThreadsContinued"] = true;
 		}
 	};
 	struct ExitedEvent : public Event {
@@ -576,7 +580,7 @@ int g_MsgIdGen = 0;
 			js["event"] = "thread";
 			auto& body = js["body"];
 			body["reason"] = "";
-			body["threadId"] = 0;
+			body["threadId"] = MAIN_THREAD_ID;
 		}
 	};
 	struct OutputEvent : public Event {
@@ -678,14 +682,14 @@ int g_MsgIdGen = 0;
 		InitializeRequest()
 		{
 			js["command"] = "initialize";
-			js["arguments"] = InitializeRequestArguments().js;
+			js["arguments"] = Json::parse(InitializeRequestArguments().js.dump());
 		}
 	};
 	struct InitializeResponse : public Response {
 		InitializeResponse()
 		{
 			js["command"] = "initialize";
-			js["body"] = Capabilities().js;
+			js["body"] = Json::parse(Capabilities().js.dump());
 		}
 	};
 
@@ -693,7 +697,7 @@ int g_MsgIdGen = 0;
 		ConfigurationDoneRequest()
 		{
 			js["command"] = "configurationDone";
-			js["arguments"] = ConfigurationDoneArguments().js;
+			js["arguments"] = Json::parse(ConfigurationDoneArguments().js.dump());
 		}
 	};
 	struct ConfigurationDoneResponse : public Response {
@@ -706,7 +710,7 @@ int g_MsgIdGen = 0;
 		LaunchRequest()
 		{
 			js["command"] = "launch";
-			js["arguments"] = LaunchRequestArguments().js;
+			js["arguments"] = Json::parse(LaunchRequestArguments().js.dump());
 		}
 	};
 	struct LaunchResponse : public Response {
@@ -719,7 +723,7 @@ int g_MsgIdGen = 0;
 		AttachRequest()
 		{
 			js["command"] = "attach";
-			js["arguments"] = AttachRequestArguments().js;
+			js["arguments"] = Json::parse(AttachRequestArguments().js.dump());
 		}
 	};
 	struct AttachResponse : public Response {
@@ -732,7 +736,7 @@ int g_MsgIdGen = 0;
 		RestartRequest()
 		{
 			js["command"] = "restart";
-			js["arguments"] = RestartArguments().js;
+			js["arguments"] = Json::parse(RestartArguments().js.dump());
 		}
 	};
 	struct RestartResponse : public Response {
@@ -745,7 +749,7 @@ int g_MsgIdGen = 0;
 		DisconnectRequest()
 		{
 			js["command"] = "disconnect";
-			js["arguments"] = DisconnectArguments().js;
+			js["arguments"] = Json::parse(DisconnectArguments().js.dump());
 		}
 	};
 	struct DisconnectResponse : public Response {
@@ -758,7 +762,7 @@ int g_MsgIdGen = 0;
 		SetBreakpointsRequest()
 		{
 			js["command"] = "setBreakpoints";
-			js["arguments"] = SetBreakpointsArguments().js;
+			js["arguments"] = Json::parse(SetBreakpointsArguments().js.dump());
 		}
 	};
 	struct SetBreakpointsResponse : public Response {
@@ -766,14 +770,14 @@ int g_MsgIdGen = 0;
 		{
 			js["command"] = "setBreakpoints";
 			auto& body = js["body"];
-			body["breakpoints"] = Breakpoint().js;
+			body["breakpoints"] = Json::parse(Breakpoint().js.dump());
 		}
 	};
 	struct SetFunctionBreakpointsRequest : public Request {
 		SetFunctionBreakpointsRequest()
 		{
 			js["command"] = "setFunctionBreakpoints";
-			js["arguments"] = SetFunctionBreakpointsArguments().js;
+			js["arguments"] = Json::parse(SetFunctionBreakpointsArguments().js.dump());
 		}
 	};
 	struct SetFunctionBreakpointsResponse : public Response {
@@ -781,14 +785,14 @@ int g_MsgIdGen = 0;
 		{
 			js["command"] = "setFunctionBreakpoints";
 			auto& body = js["body"];
-			body["breakpoints"] = Breakpoint().js;
+			body["breakpoints"] = Json::parse(Breakpoint().js.dump());
 		}
 	};
 	struct SetExceptionBreakpointsRequest : public Request {
 		SetExceptionBreakpointsRequest()
 		{
 			js["command"] = "setExceptionBreakpoints";
-			js["arguments"] = SetExceptionBreakpointsArguments().js;
+			js["arguments"] = Json::parse(SetExceptionBreakpointsArguments().js.dump());
 		}
 	};
 
@@ -802,7 +806,7 @@ int g_MsgIdGen = 0;
 		ContinueRequest()
 		{
 			js["command"] = "continue";
-			js["arguments"] = ContinueArguments().js;
+			js["arguments"] = Json::parse(ContinueArguments().js.dump());
 		}
 	};
 	struct ContinueResponse : public Response {
@@ -817,7 +821,7 @@ int g_MsgIdGen = 0;
 		NextRequest()
 		{
 			js["command"] = "next";
-			js["arguments"] = NextArguments().js;
+			js["arguments"] = Json::parse(NextArguments().js.dump());
 		}
 	};
 	struct NextResponse : public Response {
@@ -830,7 +834,7 @@ int g_MsgIdGen = 0;
 		StepInRequest()
 		{
 			js["command"] = "stepIn";
-			js["arguments"] = StepInArguments().js;
+			js["arguments"] = Json::parse(StepInArguments().js.dump());
 		}
 	};
 	struct StepInResponse : public Response {
@@ -844,7 +848,7 @@ int g_MsgIdGen = 0;
 		StepOutRequest()
 		{
 			js["command"] = "stepOut";
-			js["arguments"] = StepOutArguments().js;
+			js["arguments"] = Json::parse(StepOutArguments().js.dump());
 		}
 	};
 	struct StepOutResponse : public Response {
@@ -857,7 +861,7 @@ int g_MsgIdGen = 0;
 		StepBackRequest()
 		{
 			js["command"] = "stepBack";
-			js["arguments"] = StepBackArguments().js;
+			js["arguments"] = Json::parse(StepBackArguments().js.dump());
 		}
 	};
 	struct StepBackResponse : public Response {
@@ -870,7 +874,7 @@ int g_MsgIdGen = 0;
 		ReverseContinueRequest()
 		{
 			js["command"] = "reverseContinue";
-			js["arguments"] = ReverseContinueArguments().js;
+			js["arguments"] = Json::parse(ReverseContinueArguments().js.dump());
 		}
 	};
 	struct ReverseContinueResponse : public Response {
@@ -883,7 +887,7 @@ int g_MsgIdGen = 0;
 		RestartFrameRequest()
 		{
 			js["command"] = "restartFrame";
-			js["arguments"] = RestartFrameArguments().js;
+			js["arguments"] = Json::parse(RestartFrameArguments().js.dump());
 		}
 	};
 	struct RestartFrameResponse : public Response {
@@ -896,7 +900,7 @@ int g_MsgIdGen = 0;
 		GotoRequest()
 		{
 			js["command"] = "goto";
-			js["arguments"] = GotoArguments().js;
+			js["arguments"] = Json::parse(GotoArguments().js.dump());
 		}
 	};
 	struct GotoResponse : public Response {
@@ -909,7 +913,7 @@ int g_MsgIdGen = 0;
 		PauseRequest()
 		{
 			js["command"] = "pause";
-			js["arguments"] = PauseArguments().js;
+			js["arguments"] = Json::parse(PauseArguments().js.dump());
 		}
 	};
 	struct PauseResponse : public Response {
@@ -922,7 +926,7 @@ int g_MsgIdGen = 0;
 		StackTraceRequest()
 		{
 			js["command"] = "stackTrace";
-			js["arguments"] = StackTraceArguments().js;
+			js["arguments"] = Json::parse(StackTraceArguments().js.dump());
 		}
 	};
 	struct StackTraceResponse : public Response {
@@ -938,7 +942,7 @@ int g_MsgIdGen = 0;
 		ScopesRequest()
 		{
 			js["command"] = "scopes";
-			js["arguments"] = ScopesArguments().js;
+			js["arguments"] = Json::parse(ScopesArguments().js.dump());
 		}
 	};
 	struct ScopesResponse : public Response {
@@ -953,7 +957,7 @@ int g_MsgIdGen = 0;
 		VariablesRequest()
 		{
 			js["command"] = "variables";
-			js["arguments"] = VariablesArguments().js;
+			js["arguments"] = Json::parse(VariablesArguments().js.dump());
 		}
 	};
 	struct VariablesResponse : public Response {
@@ -968,7 +972,7 @@ int g_MsgIdGen = 0;
 		SetVariableRequest()
 		{
 			js["command"] = "setVariable";
-			js["arguments"] = SetVariableArguments().js;
+			js["arguments"] = Json::parse(SetVariableArguments().js.dump());
 		}
 	};
 	struct SetVariableResponse : public Response {
@@ -987,7 +991,7 @@ int g_MsgIdGen = 0;
 		SourceRequest()
 		{
 			js["command"] = "source";
-			js["arguments"] = SourceArguments().js;
+			js["arguments"] = Json::parse(SourceArguments().js.dump());
 		}
 	};
 	struct SourceResponse : public Response {
@@ -1017,7 +1021,7 @@ int g_MsgIdGen = 0;
 		ModulesRequest()
 		{
 			js["command"] = "modules";
-			js["arguments"] = ModulesArguments().js;
+			js["arguments"] = Json::parse(ModulesArguments().js.dump());
 		}
 	};
 	struct ModulesResponse : public Response {
@@ -1033,7 +1037,7 @@ int g_MsgIdGen = 0;
 		LoadedSourcesRequest()
 		{
 			js["command"] = "loadedSources";
-			js["arguments"] = LoadedSourcesArguments().js;
+			js["arguments"] = Json::parse(LoadedSourcesArguments().js.dump());
 		}
 	};
 	struct LoadedSourcesResponse : public Response {
@@ -1048,7 +1052,7 @@ int g_MsgIdGen = 0;
 		EvaluateRequest()
 		{
 			js["command"] = "evaluate";
-			js["arguments"] = EvaluateArguments().js;
+			js["arguments"] = Json::parse(EvaluateArguments().js.dump());
 		}
 	};
 	struct EvaluateResponse : public Response {
@@ -1058,7 +1062,7 @@ int g_MsgIdGen = 0;
 			auto& body = js["body"];
 			body["result"] = "";
 			body["type"] = "";
-			body["presentationHint"] = VariablePresentationHint().js;
+			body["presentationHint"] = Json::parse(VariablePresentationHint().js.dump());
 			body["variablesReference"] = 0;
 			body["namedVariables"] = 0;
 			body["indexedVariables"] = 0;
@@ -1068,7 +1072,7 @@ int g_MsgIdGen = 0;
 		StepInTargetsRequest()
 		{
 			js["command"] = "stepInTargets";
-			js["arguments"] = StepInTargetsArguments().js;
+			js["arguments"] = Json::parse(StepInTargetsArguments().js.dump());
 		}
 	};
 	struct StepInTargetsResponse : public Response {
@@ -1083,7 +1087,7 @@ int g_MsgIdGen = 0;
 		GotoTargetsRequest()
 		{
 			js["command"] = "gotoTargets";
-			js["arguments"] = GotoTargetsArguments().js;
+			js["arguments"] = Json::parse(GotoTargetsArguments().js.dump());
 		}
 	};
 	struct GotoTargetsResponse : public Response {
@@ -1098,7 +1102,7 @@ int g_MsgIdGen = 0;
 		CompletionsRequest()
 		{
 			js["command"] = "completions";
-			js["arguments"] = CompletionsArguments().js;
+			js["arguments"] = Json::parse(CompletionsArguments().js.dump());
 		}
 	};
 	struct CompletionsResponse : public Response {
@@ -1113,7 +1117,7 @@ int g_MsgIdGen = 0;
 		ExceptionInfoRequest()
 		{
 			js["command"] = "exceptionInfo";
-			js["arguments"] = ExceptionInfoArguments().js;
+			js["arguments"] = Json::parse(ExceptionInfoArguments().js.dump());
 		}
 	};
 	struct ExceptionInfoResponse : public Response {
@@ -1124,25 +1128,28 @@ int g_MsgIdGen = 0;
 			body["exceptionId"] = "";
 			body["description"] = "";
 			body["breakMode"] = "";
-			body["details"] = ExceptionDetails().js;
+			body["details"] = Json::parse(ExceptionDetails().js.dump());
 		}
 	};
 
+
+}
 
 
 
 Message::Message(std::string msg, int type)
 {
 	this->content = msg;
-	this->id = g_MsgIdGen++;
+	this->id = g_MsgIdGen;
 	this->type = type;
 }
 
 void Message::log()
 {
-	std::cout << "msg id:" << id << std::endl
+	/*std::cout << "msg id:" << id << std::endl
 		<< " type:" << type << std::endl
-		<< " content:" << content << std::endl;
+		<< " content:" << content << std::endl;*/
+	std::cout << content << std::endl;
 }
 
 String Message::wrapMsg(String type, Json message)
@@ -1150,8 +1157,8 @@ String Message::wrapMsg(String type, Json message)
 	message["type"] = type;
 	message["seq"] = g_MsgIdGen++;
 	String msg = message.dump();
-	std::cout << "readyToSend:" << std::endl
-		<< msg << std::endl;
+	/*std::cout << "readyToSend:" << std::endl
+	<< msg << std::endl;*/
 
 	int len = msg.length();
 	String wrapped("");
@@ -1163,108 +1170,170 @@ String Message::wrapMsg(String type, Json message)
 
 void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* handler)
 {
-	
-	std::cout << "Dispatch : " << std::endl;
-	_msg.log();
+	//std::cout << "Dispatch : " << std::endl;
+	//_msg.log();
 	String msg = _msg.content;
 	Json request = Json::parse(msg);
-	
 	auto type = request["type"];
-	
-	Json newResponse= Json::parse("{}");
-	newResponse["request_seq"] = request["seq"];
-	newResponse["command"] = request["command"];
-	newResponse["success"] = true;
-
 	if (type == "request")
 	{
 		String command = request["command"];
-		std::cout << command << std::endl;
+		//std::cout << command << std::endl;
+		/*************************************************************************
+		rq init:
+		"{"command":"initialize","arguments":{"clientID":"vscode","clientName":"Visual Studio Code","adapterID":"mock","pathFormat":"path","linesStartAt1":true,"columnsStartAt1":true,"supportsVariableType":true,"supportsVariablePaging":true,"supportsRunInTerminalRequest":true,"locale":"zh-cn"},"type":"request","seq":1}"
+
+		init response
+		"{"seq":1,"type":"response","request_seq":1,"command":"initialize","success":true,"body":{"supportsConfigurationDoneRequest":true,"supportsEvaluateForHovers":true,"supportsStepBack":true}}"
+
+		init event
+		"{"seq":2,"type":"event","event":"initialized"}"
+		/************************************************************************/
 		if (command == "initialize") {
-			
-			newResponse["body"] = {
-				{ "supportsConfigurationDoneRequest",true },
+
+			vs::InitializeResponse resp;
+			resp.setRq(request);
+			resp.js["body"] = {
+				{ "supportsConfigurationDoneRequest",false },
 				{ "supportsEvaluateForHovers",true },
 				{ "supportsStepBack",true }
 			};
-			handler->SendResponse(newResponse);
-
-			handler->SendEvent(InitializedEvent().js);
+			handler->SendResponse(resp.js);
+			handler->SendEvent(vs::InitializedEvent().js);
 		}
 		else if (command == "launch") {
-			LaunchResponse rsp;
-			rsp.setRq(request);
-			rsp.js["success"] = true;
+			Json args = request["arguments"];
+			String program = args["program"];
+			//TODO here should start the program
+			/*std::thread startRuntime([]() {});*/
 
-			//await this._configurationDone.wait(1000);
-
-			LaunchRequestArguments args;
-			args.js = request["arguments"];
 			
-			String program = args.js["program"];
-			//this._runtime.start(args.program, !!args.stopOnEntry);
 
-			bool stopOnEntry = args.js["stopOnEntry"];
-			if (stopOnEntry)
-			{
-				handler->SendEvent(StoppedEvent().js);	
-			}
-			
+			String rqstr = request.dump();
+			vs::LaunchResponse rsp;
+			rsp.setRq(Json::parse(rqstr));
 			handler->SendResponse(rsp.js);
+			handler->StopOnBreakPointEvent({});
+
+
+			vs::StoppedEvent stepEvent;
+			stepEvent.js["event"] = "stopped";
+			stepEvent.js["body"]["reason"] = "step";
+			stepEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
+			handler->SendEvent(stepEvent.js);
+			DebuggerCore::GetInstance()->SetBreaked(true);
+
+
+
+			 stepEvent;
+			stepEvent.js["event"] = "stopped";
+			stepEvent.js["body"]["reason"] = "resume";
+			stepEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
+			handler->SendEvent(stepEvent.js);
+			DebuggerCore::GetInstance()->SetBreaked(false);
+
+			onConfidoneFunc = [handler, rqstr ]()
+			{
+			
+				/*vs::StoppedEvent stopEvent;
+				stopEvent.js["event"] = "stopped";
+				stopEvent.js["body"]["reason"] = "entry";
+				stopEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
+				handler->SendEvent(stopEvent.js);*/
+				
+				
+				
+
+			
+				vs::LaunchResponse rsp;
+				rsp.setRq(Json::parse(rqstr));
+				handler->SendResponse(rsp.js);
+				handler->StopOnBreakPointEvent({});
+
+
+			//	handler->SendEvent(pauseEvent.js);
+
+				//DebuggerCore::GetInstance()->SetBreaked(false);
+			};
 		}
 		else if (command == "attach") {
-
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "disconnect") {
-			lua_getglobal(L, "SetTrapWait");
-			lua_pushboolean(L, false);
-			lua_call(L, 1, 0);
+			DebuggerCore::GetInstance()->SetBreaked(false);
 		}
 		else if (command == "restart") {
-
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "setBreakpoints") {
 			/************************************************************************/
-			/*	1._runtime._clearBreakPoints
-				2.verify bp
-				3.sendResponse(bp)
+			/*
+			1._runtime._clearBreakPoints
+			2.verify bp
+			3.sendResponse(bp)
 			*/
 			/************************************************************************/
 			//server->doWrite(wrapMsg(newResponse,"reso"));
-			SetBreakpointsResponse rsp;
+			Json args = request["arguments"];
+			String path = args["source"]["path"];
+			DebuggerCore::GetInstance()->SetSources(path,args["source"]);
+			DebuggerCore::GetInstance()->SetAllBreakPoints(path, args["breakpoints"]);
+			DebuggerCore::GetInstance()->VerifyAllBreakPoints();
+
+			vs::SetBreakpointsResponse rsp;
 			rsp.setRq(request);
 
-			SetBreakpointsArguments args;
-			args.js = request["arguments"];
-
-//			const path = <string>args.source.path;
+			const Json& bps = DebuggerCore::GetInstance()->GetAllBreakPoints(path);
+			rsp.js["body"] = { "breakpoints", bps };
 
 			handler->SendResponse(rsp.js);
-			
-
 		}
 		else if (command == "setFunctionBreakpoints") {
-
+			/*	vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);*/
 		}
 		else if (command == "setExceptionBreakpoints") {
-			//server->doWrite(wrapMsg(newResponse));
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "configurationDone") {
+			vs::ConfigurationDoneResponse rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 
+			if (onConfidoneFunc)
+				onConfidoneFunc();
+			
+			
 		}
 		else if (command == "continue") {
-			lua_getglobal(L, "SetTrapWait");
-			lua_pushboolean(L, false);
-			lua_call(L, 1, 0);
+
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
+
+			DebuggerCore::GetInstance()->SetBreaked(false);
 		}
 		else if (command == "next") {
-
+			/*vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);*/
 		}
 		else if (command == "stepIn") {
-
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "stepOut") {
-
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "stepBack") {
 
@@ -1279,18 +1348,37 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 		}
 		else if (command == "pause") {
-			lua_getglobal(L, "SetTrapWait");
-			lua_pushboolean(L, false);
-			lua_call(L, 1, 0);
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
+
+			vs::StoppedEvent stopEvent;
+			stopEvent.js["body"]["reason"] = "pause";
+			DebuggerCore::GetInstance()->SetBreaked(true);
+
+			handler->SendEvent(stopEvent.js);
+
 		}
 		else if (command == "stackTrace") {
+			vs::Response rsp;
+			rsp.js = Json::parse(R"#({"body":{"stackFrames":[{"column":0,"id":0,"line":1,"name":"--(0)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":1,"line":1,"name":"local(1)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":2,"line":1,"name":"function(2)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":3,"line":1,"name":"debugger_loop(server)(3)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}}],"totalFrames":4},"command":"stackTrace","request_seq":9,"seq":21,"success":true,"type":"response"})#");
+			rsp.setRq(request);
 
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "scopes") {
+			vs::Response rsp;
+			rsp.js = Json::parse(R"#({"seq":23,"type":"response","request_seq":11,"command":"scopes","success":true,"body":{"scopes":[{"name":"Local","variablesReference":1000,"expensive":false},{"name":"Global","variablesReference":1001,"expensive":true}]}})#");
+			rsp.setRq(request);
 
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "variables") {
+			vs::Response rsp;
+			rsp.js = Json::parse(R"#({"seq":24,"type":"response","request_seq":12,"command":"variables","success":true,"body":{"variables":[{"name":"local_0_i","type":"integer","value":"123","variablesReference":0},{"name":"local_0_f","type":"float","value":"3.14","variablesReference":0},{"name":"local_0_s","type":"string","value":"hello world","variablesReference":0},{"name":"local_0_o","type":"object","value":"Object","variablesReference":1002}]}})#");
+			rsp.setRq(request);
 
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "setVariable") {
 
@@ -1299,7 +1387,18 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 		}
 		else if (command == "threads") {
-
+			vs::ThreadsResponse rsp;
+			rsp.setRq(request);
+			Json threads_js = Json::array({
+				{ 
+					{"id",MAIN_THREAD_ID},
+					{"name","thread 1"}
+				}
+			});
+			rsp.js["body"] = {
+				"threads", threads_js
+			};
+			handler->SendResponse(rsp.js);
 		}
 		else if (command == "evaluate") {
 
@@ -1317,7 +1416,9 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 		}
 		else if (command == "loadedSources") {
-
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
 		}
 		else {
 
@@ -1352,6 +1453,9 @@ void MessageHandler::Loop(lua_State*L)
 			auto msg = g_ReadQueue.front();
 			g_ReadQueue.pop_front();
 			g_ReadQueueMutex.unlock();
+			std::cout << "[g_ReadQueue Log!!!!!!!!!!!!!]" << std::endl;
+			msg.log();
+			std::cout << std::endl;
 			m_Dispatcher->Dispatch(L, msg, this);
 		}
 		if (!g_WriteQueue.empty())
@@ -1360,7 +1464,14 @@ void MessageHandler::Loop(lua_State*L)
 			auto msg = g_WriteQueue.front();
 			g_WriteQueue.pop_front();
 			g_WriteQueueMutex.unlock();
-			m_Server->Write(msg);
+			std::cout << "[g_WriteQueue Log!!!!!!!!!!!!!]" << std::endl;
+			msg.log();
+			std::cout <<  std::endl;
+			if (m_Server)
+			{
+				m_Server->Write(msg);
+			}
+
 		}
 	}
 }
@@ -1370,6 +1481,17 @@ void MessageHandler::Send(Message msg)
 	g_WriteQueueMutex.lock();
 	g_WriteQueue.push_back(msg);
 	g_WriteQueueMutex.unlock();
+}
+
+void MessageHandler::StopOnBreakPointEvent(Json bp)
+{
+	vs::StoppedEvent ev;
+	ev.js["event"] = "stopped";
+	ev.js["body"] = {
+		{"reason","breakpoint"},
+		{"threadId",MAIN_THREAD_ID}
+	};
+	SendEvent(ev.js);
 }
 
 bool MessageHandler::SendEvent(Json& msgJson)
@@ -1485,17 +1607,21 @@ void DebugSession::DoWriteRunable()
 
 void DebugSession::Write(Message msg)
 {
-	std::cout << " DebugSession::Write(Message msg)" << std::endl;
-	msg.log();
-	if (m_Socket->is_open()) {
-		asio::async_write(*m_Socket,
-			asio::buffer(msg.content.c_str(),
-				msg.content.length()),
-			[this](std::error_code ec, std::size_t /*length*/)
-		{
+	//std::cout << " DebugSession::Write(Message msg)" << std::endl;
+	//msg.log();
+	if (m_Socket)
+	{
+		if (m_Socket->is_open()) {
+			asio::async_write(*m_Socket,
+				asio::buffer(msg.content.c_str(),
+					msg.content.length()),
+				[this](std::error_code ec, std::size_t /*length*/)
+			{
 
-		});
+			});
+		}
 	}
+
 }
 
 void DebugSession::Start()
@@ -1581,12 +1707,16 @@ void DebugServer::Run()
 
 void DebugServer::Write(Message msg)
 {
-	std::cout << "server send post" << std::endl;
+	//std::cout << "server send post" << std::endl;
 	asio::post(m_IOContext,
 		[this, msg]()
 	{
-		std::cout << "server send" << std::endl;
-		m_Session->Write(msg);
+		//std::cout << "server send" << std::endl;
+		if (m_Session)
+		{
+			m_Session->Write(msg);
+		}
+
 	});
 }
 
