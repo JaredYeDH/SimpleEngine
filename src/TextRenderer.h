@@ -21,6 +21,11 @@ class TextRenderer
 public:
 	TextRenderer();
 	~TextRenderer();
+	static TextRenderer* GetInstance() 
+	{
+		static TextRenderer* instance = new TextRenderer();
+		return instance;
+	}
 	void RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 	void Draw(std::wstring text,GLfloat x, GLfloat y,glm::vec3 color);
 private:

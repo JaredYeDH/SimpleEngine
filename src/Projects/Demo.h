@@ -47,8 +47,6 @@ private:
 	void ProcessInput();
 	void TestServer();
 	
-	SpriteRenderer  *m_RendererPtr;
-	
 	Texture* m_BlockTexturePtr;
 
 	GameMap* m_GameMapPtr;
@@ -64,9 +62,6 @@ private:
 	
 	
 	Client* m_ClientPtr;
-
-	Renderer2D m_Render;
-	TextRenderer* m_TextRenderer;
 };
 
 

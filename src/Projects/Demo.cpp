@@ -5,10 +5,12 @@
 #include "Random.h"
 #include <asio.hpp>
 #include <thread>
+#include "../core/Renderer.h"
+#include "../global.h"
+#include "Combat.h"
 
-float Demo::s_ScreenWidth = 800.0f;
-float Demo::s_ScreenHeight = 600.0f;
-bool g_IsTest = false;
+float Demo::s_ScreenWidth = SCREEN_WIDTH;
+float Demo::s_ScreenHeight = SCREEN_HEIGHT;
 
 void Demo::OnEvent(int button, int action, int mods) 
 {
@@ -64,6 +66,10 @@ void Demo::OnMove(MoveMessage msg)
 
 Player* Demo::m_OtherPtr  = nullptr;
 Player* Demo::m_StriderPtr = nullptr;
+
+
+CombatSystem* s_CombatSystem;
+bool s_IsCombat = true;
 Demo::Demo()
 	:m_IsTestNpc0(true)
 {
@@ -71,53 +77,64 @@ Demo::Demo()
     m_IsTestNpc0 =false;
 	InputManager::GetInstance()->SetMouseEvent(this);
 	
-	m_RendererPtr = new SpriteRenderer();
-
-	m_TextRenderer = new TextRenderer();
-
 	m_GameMapPtr = new GameMap(0);
 
 	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
 	m_BlockTexturePtr = new Texture(blockPath);
 
-	m_StriderPtr = new Player(Demo::g_Id , Demo::g_Id, 120);
-	m_StriderPtr->SetPos(2100, 1500);
+	m_StriderPtr = new Player(3);
+	m_StriderPtr->SetPos(2300, 1700);
 	m_StriderPtr->SetBox();
+	m_StriderPtr->SetNickName(L"Ocean-藏心");
+	m_StriderPtr->SetActionID(15);
 
-
-	m_OtherPtr = new Player(-1, Demo::g_Id2, 120);
+	m_OtherPtr = new Player(4);
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
-	Line *l = new Line(Vec2(3,3),Vec2(5,5));
-	l->Color() = Vec4(1,0.5,0,1);
-	m_Render.AddObject(l);
 
-	int birthPos[10][2] = 
-	{
-		{ 780, 700},
-		{ 600, 900 },
-		{ 1550, 300 },
-		{ 600, 1900 },
-		{ 400, 2000 },
-		{ 2600, 400 },
-		{ 3400, 800 },
-		{ 4600, 900 },
-		{ 2400, 300 },
-		{ 600, 900 },
-	};
-
-	for (int i = 0; i < 10; i++)
-	{
-		Player* player = new Player(2+i ,1, 120);
-		player->SetPos(birthPos[i][0], birthPos[i][1]);
-       // player->SetBox();
-		player->ResetDirAll(i % 8);
-		m_NPCs.push_back(player);
-		i++;
-	}
+	Sprite2 sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
+	FrameAnimation combatBG(sp);
+	Renderer2D::GetInstance()->AddObject(new Image(
+		combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
+		);
 
 	//TestServer();
+
+	s_CombatSystem = new CombatSystem();
+	auto f = [](int role_id,double x,double y,std::wstring nickname)
+	{
+		Player* p = new Player(role_id);
+		p->SetActionID(4);
+		p->SetCombatPos(x,y);
+        p->SetCombatTargetPos({x*1.0f,y*1.0f});
+        p->SetIsCombat(true);
+		p->SetNickName(nickname);
+		p->ChangeWeapon();
+		return p;
+	};
+    s_CombatSystem->AddSelf(0,f(3,415.0f / 640 * SCREEN_WIDTH,275.0f / 480 * SCREEN_HEIGHT,L"己方组0"));
+    s_CombatSystem->AddSelf(1,f(3,355.0f / 640 * SCREEN_WIDTH,305.0f / 480 * SCREEN_HEIGHT,L"己方组1"));
+    s_CombatSystem->AddSelf(2,f(3,475.0f / 640 * SCREEN_WIDTH,245.0f / 480 * SCREEN_HEIGHT,L"己方组2"));
+    s_CombatSystem->AddSelf(3,f(3,295.0f / 640 * SCREEN_WIDTH,335.0f / 480 * SCREEN_HEIGHT,L"己方组3"));
+    s_CombatSystem->AddSelf(4,f(3,535.0f / 640 * SCREEN_WIDTH,215.0f / 480 * SCREEN_HEIGHT,L"己方组4"));
+    s_CombatSystem->AddSelf(5,f(3,465.0f / 640 * SCREEN_WIDTH,315.0f / 480 * SCREEN_HEIGHT,L"己方组5"));
+    s_CombatSystem->AddSelf(6,f(3,405.0f / 640 * SCREEN_WIDTH,345.0f / 480 * SCREEN_HEIGHT,L"己方组6"));
+    s_CombatSystem->AddSelf(7,f(3,525.0f / 640 * SCREEN_WIDTH,285.0f / 480 * SCREEN_HEIGHT,L"己方组7"));
+    s_CombatSystem->AddSelf(8,f(3,345.0f / 640 * SCREEN_WIDTH,375.0f / 480 * SCREEN_HEIGHT,L"己方组8"));
+    s_CombatSystem->AddSelf(9,f(3,585.0f / 640 * SCREEN_WIDTH,255.0f / 480 * SCREEN_HEIGHT,L"己方组9"));
+
+    s_CombatSystem->AddEnemy(0,f(4,175.0f / 640 * SCREEN_WIDTH,170.0f / 480 * SCREEN_HEIGHT,L"敌方组0"));
+    s_CombatSystem->AddEnemy(1,f(4,115.0f / 640 * SCREEN_WIDTH,200.0f / 480 * SCREEN_HEIGHT,L"敌方组1"));
+    s_CombatSystem->AddEnemy(2,f(4,235.0f / 640 * SCREEN_WIDTH,140.0f / 480 * SCREEN_HEIGHT,L"敌方组2"));
+    s_CombatSystem->AddEnemy(3,f(4,55.0f / 640 * SCREEN_WIDTH,230.0f / 480 * SCREEN_HEIGHT,L"敌方组3"));
+    s_CombatSystem->AddEnemy(4,f(4,295.0f / 640 * SCREEN_WIDTH,110.0f / 480 * SCREEN_HEIGHT,L"敌方组4"));
+    s_CombatSystem->AddEnemy(5,f(4,220.0f / 640 * SCREEN_WIDTH,210.0f / 480 * SCREEN_HEIGHT,L"敌方组5"));
+    s_CombatSystem->AddEnemy(6,f(4,160.0f / 640 * SCREEN_WIDTH,240.0f / 480 * SCREEN_HEIGHT,L"敌方组6"));
+    s_CombatSystem->AddEnemy(7,f(4,280.0f / 640 * SCREEN_WIDTH,180.0f / 480 * SCREEN_HEIGHT,L"敌方组7"));
+    s_CombatSystem->AddEnemy(8,f(4,100.0f / 640 * SCREEN_WIDTH,270.0f / 480 * SCREEN_HEIGHT,L"敌方组8"));
+    s_CombatSystem->AddEnemy(9,f(4,340.0f / 640 * SCREEN_WIDTH,150.0f / 480 * SCREEN_HEIGHT,L"敌方组9"));
+
 }
 
 Demo::~Demo()
@@ -127,26 +144,33 @@ Demo::~Demo()
 
 void Demo::Update()
 {
-	double dt = Engine::GetInstance()->GetDeltaTime(); 
-	
-	m_StriderPtr->OnUpdate(dt);
-	m_OtherPtr->OnUpdate(dt);
-	for (Player* npc : m_NPCs)
+	if(s_IsCombat)
 	{
-		npc->OnUpdate(dt);
+		s_CombatSystem->Update();
 	}
-	
-	ProcessInput();
-
-	if (m_IsChangeState) 
+	else
 	{
-		m_ChangeStateTimeInterval += dt;
-		if (m_ChangeStateTimeInterval >= 20 * dt )
+		double dt = Engine::GetInstance()->GetDeltaTime(); 
+		m_StriderPtr->OnUpdate(dt);
+		m_OtherPtr->OnUpdate(dt);
+		for (Player* npc : m_NPCs)
 		{
-			m_IsChangeState = false;
-			m_ChangeStateTimeInterval = 0;
+			npc->OnUpdate(dt);
+		}
+		
+		ProcessInput();
+
+		if (m_IsChangeState) 
+		{
+			m_ChangeStateTimeInterval += dt;
+			if (m_ChangeStateTimeInterval >= 20 * dt )
+			{
+				m_IsChangeState = false;
+				m_ChangeStateTimeInterval = 0;
+			}
 		}
 	}
+	
 }
 
 void Demo::ProcessInput()
@@ -294,48 +318,54 @@ ImVec4 clear_color = ImColor(114, 144, 154);
 bool show_test_window = true;
 bool show_another_window = false;
 void Demo::Draw()
-{
-	
-	m_GameMapPtr->Draw(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
+{	
+	m_GameMapPtr->Draw(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	Renderer2D::GetInstance()->Render();
 
-	
-	int screenWidth = Demo::GetScreenWidth();
-	int screenHeight = Demo::GetScreenHeight();
-	int halfScreenWidth = screenWidth / 2;
-	int halfScreenHeight = screenHeight / 2;
-	int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
-	int mapOffsetY = halfScreenHeight - m_StriderPtr->GetY();
-	int mapWidth = m_GameMapPtr->GetWidth();
-	int mapHeight = m_GameMapPtr->GetHeight();
-	
-	int px = m_StriderPtr->GetX();
-	int py = m_StriderPtr->GetY();
+	if(s_IsCombat)
+	{
+		s_CombatSystem->Draw();
+	}
+	else
+	{
+		int screenWidth = Demo::GetScreenWidth();
+		int screenHeight = Demo::GetScreenHeight();
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2;
+		int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
+		int mapOffsetY = halfScreenHeight - m_StriderPtr->GetY();
+		int mapWidth = m_GameMapPtr->GetWidth();
+		int mapHeight = m_GameMapPtr->GetHeight();
+		
+		int px = m_StriderPtr->GetX();
+		int py = m_StriderPtr->GetY();
 
-	mapOffsetX = GMath::Clamp(mapOffsetX, -mapWidth + screenWidth, 0);
-	mapOffsetY = GMath::Clamp(mapOffsetY, -mapHeight + screenHeight, 0);
-	
-	int maxMapOffsetX = mapWidth - halfScreenWidth;
-	int maxMapOffsetY = mapHeight - halfScreenHeight;
-	
-	px = px < halfScreenWidth ? px :
-		(px  > maxMapOffsetX ?
-		(screenWidth - (mapWidth - px)) : halfScreenWidth);
-	py = py < halfScreenHeight ? py :
-		(py> maxMapOffsetY ?
-		(screenHeight - (mapHeight - py)) : halfScreenHeight);
+		mapOffsetX = GMath::Clamp(mapOffsetX, -mapWidth + screenWidth, 0);
+		mapOffsetY = GMath::Clamp(mapOffsetY, -mapHeight + screenHeight, 0);
+		
+		int maxMapOffsetX = mapWidth - halfScreenWidth;
+		int maxMapOffsetY = mapHeight - halfScreenHeight;
+		
+		px = px < halfScreenWidth ? px :
+			(px  > maxMapOffsetX ?
+			(screenWidth - (mapWidth - px)) : halfScreenWidth);
+		py = py < halfScreenHeight ? py :
+			(py> maxMapOffsetY ?
+			(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
+		
+		//m_GameMapPtr->DrawCell(SpriteRenderer::GetInstance(), mapOffsetX, mapOffsetY);
+		m_StriderPtr->OnDraw(SpriteRenderer::GetInstance(),px,py);
+		
+		m_OtherPtr->OnDraw(SpriteRenderer::GetInstance(), m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
+		
+		m_GameMapPtr->DrawMask(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	}
 	
-	//m_GameMapPtr->DrawCell(m_RendererPtr, mapOffsetX, mapOffsetY);
-	m_StriderPtr->OnDraw(m_RendererPtr,px,py);
 	
-	m_TextRenderer->RenderText(L"Ocean-藏心",px-20,py-32,0.5f,glm::vec3(115/255.0f,1.0f,137/255.0f));
-	m_OtherPtr->OnDraw(m_RendererPtr, m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
-	
-
-	m_GameMapPtr->DrawMask(m_RendererPtr, m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	/*for (Player* npc : m_NPCs)
 	{
-		npc->OnDraw(m_RendererPtr, npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
+		npc->OnDraw(SpriteRenderer::GetInstance(), npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
 	}*/
 
 

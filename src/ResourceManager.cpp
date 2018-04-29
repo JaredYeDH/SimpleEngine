@@ -66,20 +66,45 @@ void ResourceManager::Clear()
         // glDeleteTextures(1, &(iter.second.GetTextureID()));
 }
 
-Sprite2 ResourceManager::LoadWdfSprite(uint32 wasId)
+Sprite2 ResourceManager::LoadWdfSprite(uint32 wasID)
 {
-
-	return m_ShapeWdfPtr->LoadSprite(wasId);
+    if(m_WDFSpriteCache.find(wasID) == m_WDFSpriteCache.end())
+    {
+        m_WDFSpriteCache[wasID]=m_ShapeWdfPtr->LoadSprite(wasID);
+    }
+	return m_WDFSpriteCache[wasID];
 }
+
+Sprite2 ResourceManager::LoadWASSprite(int pack, uint32 wasId)
+{
+    switch(pack)
+    {
+        case AddonWDF: 
+        {
+            Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
+
+            static auto* s_AddonWDFPtr = new NetEase::WDF(config.GetWdfPath("addon.wdf"));
+            return s_AddonWDFPtr->LoadSprite(wasId);
+        }
+        break;
+    }
+    return {};
+	
+}
+
 
 void ResourceManager::SaveWdfSprite(uint32 wasId)
 {
     m_ShapeWdfPtr->LoadSprite(wasId).SaveImage(0);
 }
 
-Sprite2 ResourceManager::LoadWd3Sprite(uint32 wasId)
+Sprite2 ResourceManager::LoadWd3Sprite(uint32 wasID)
 {
-	return m_ShapeWd3Ptr->LoadSprite(wasId);
+    if(m_WD3SpriteCache.find(wasID) == m_WD3SpriteCache.end())
+    {
+        m_WD3SpriteCache[wasID]=m_ShapeWd3Ptr->LoadSprite(wasID);
+    }
+	return m_WD3SpriteCache[wasID];
 }
 
 

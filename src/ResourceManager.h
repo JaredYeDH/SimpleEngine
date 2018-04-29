@@ -24,13 +24,21 @@
 class ResourceManager final : public Singleton<ResourceManager>
 {
 public:
+	enum PackFile
+	{
+		ShapeWDF,
+		ShapeWD3,
+		AddonWDF,
+		MiscWDF
+	};
 
 	friend Singleton<ResourceManager>;
 
 	Sprite2 LoadWdfSprite(uint32 wasId);
 	Sprite2 LoadWd3Sprite(uint32 wasId);
-	void SaveWdfSprite(uint32 wasId);
+	Sprite2 LoadWASSprite(int pack,uint32 wasId);
 
+	void SaveWdfSprite(uint32 wasId);
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     void LoadShader(const std::string vShaderFile, const std::string fShaderFile, const std::string gShaderFile, std::string name);
     // Retrieves a stored sader
@@ -46,6 +54,9 @@ private:
     // Private constructor, that is we do not want any actual resource manager objects. Its members and functions should be publicly available (static).
 	ResourceManager();
 	~ResourceManager();
+
+	std::map<uint32,Sprite2> m_WDFSpriteCache;
+	std::map<uint32,Sprite2> m_WD3SpriteCache;
 	
 	NetEase::WDF* m_ShapeWdfPtr;
 	NetEase::WDF* m_ShapeWd3Ptr;

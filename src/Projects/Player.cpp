@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "Demo.h"
 #include "Logger.h"
+#include "global.h"
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94
@@ -11,63 +12,50 @@
 // WeaponId : 0-160
 
 //shape.wdf A16A06FF 4FBA48B8 
-//shape.wd3 72013AF5 F2FB1AFA 
-std::map<uint32, std::vector< uint32>> Player::s_PlayerAnimationTable =
-{
-	{ 1, { 0x49386FCE, 0x54F3FC94, 0xA94FBD68,0x58A17D26} },
-	{ 11,{ 0xA16A06FF , 0x4FBA48B8 , 0xA16A06FF,0x4FBA48B8} }
-};
-
-std::map<uint32, std::map<uint32, std::vector< uint32>>> Player::s_WeaponAnimationTable =
-{
-	{ 1, { { 120, { 0xDF749306, 0x1BEC0D8A ,0x89352821,0x27080BB2} } } },
-	{ 11,{ { 120,{ 0x72013AF5, 0xF2FB1AFA, 0x72013AF5,0xF2FB1AFA } } } }
-};
+//shape.wd3 72013AF5 F2FB1AFA
 
 
-Player::Player(int id ,int PlayerId,int WeaponId):
-m_ID(id),
-m_RoleID(1),
+Player::Player(int roleID):
+m_ID(-1),
+m_RoleID(roleID),
 m_WeaponID(1),
 m_ActionID(1),
 m_HasWeapon(false),
 m_RoleTSV(Environment::GetTsvPath("role")),
 m_WeaponTSV(Environment::GetTsvPath("weapon")),
 m_ActionTSV(Environment::GetTsvPath("action")),
-m_PlayerAnimation(4),
-m_WeapAnimation(4),
-m_AnimationState(Idle),
 m_IsMove(false),
 m_MoveVelocity(400),
 m_UpdateDelta(0),
 m_MoveList(),
 m_BackupMoveList(),
 m_MoveToCalled(false),
-m_AnimDB()
+m_AnimDB(),
+m_bInCombat(false),
+m_CombatPos({0.0f,0.0f}),
+m_CombatTargetPos({0.0f,0.0f})
 {
 	LogInfo();
-	// for(int action=Idle ; action<= Caster1; action++)
-	// {
-	// 	m_PlayerAnimation[action] = new FrameAnimation(
-	// 		ResourceManager::GetInstance()->LoadWdfSprite(s_PlayerAnimationTable[PlayerId][action])
-	// 	);
-	// 	m_WeapAnimation[action] = new FrameAnimation(
-	// 		ResourceManager::GetInstance()->LoadWd3Sprite(s_WeaponAnimationTable[PlayerId][WeaponId][action])
-	// 	);
-	// 	if(action > Moving)
-	// 	{
-	// 		m_PlayerAnimation[action]->SetPlayLoop(false);
-	// 		m_WeapAnimation[action]->SetPlayLoop(false);
-	// 	}
-	// }
-	m_RoleID = 3;
-	m_WeaponID = 7;
-	m_ActionID = Player::Idle;
+	ChangeRole(m_RoleID);
 	
+}
+
+
+Player::Player()
+:Player(0)
+{
+};
+
+Player::~Player()
+{
+
+}
+void Player::ReloadFrames()
+{
 	m_PlayerFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
-		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_RoleID == 3?7:3,-1);
 		if(wasID != -1)
 		{
 			m_AnimDB.printInfo(wasID);
@@ -86,50 +74,43 @@ m_AnimDB()
 			m_WeaponFrames.insert(std::make_pair(actionID,FrameAnimation(sprite)));
 		}
 	}
-//	ChangeAction();
-	
 }
-
-
-Player::Player()
-:Player(0,0,0)
-{
-
-};
-
-Player::~Player()
-{
-
-}
-
 void Player::ChangeRole()
 {
-	m_RoleID = m_RoleID == 3 ? 4: 3;
+	ChangeRole(m_RoleID == 0 ? 3 :( (m_RoleID == 3) ? 4 : 3 ));
+}
+void Player::ChangeRole(int roleID)
+{
+	m_RoleID = roleID;
 	m_PlayerFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
-		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,-1,-1);
+		uint32 wasID = m_AnimDB.query(m_RoleID,actionID,m_RoleID == 3?7:3,-1);
 		if(wasID != -1)
 		{
 			m_AnimDB.printInfo(wasID);
             auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
 			FrameAnimation frame(sprite);
-			frame.ResetAll();
+			frame.ResetAnim(m_Dir);
 			m_PlayerFrames.insert(std::make_pair(actionID,frame));
 			if(m_WeaponFrames.find(actionID) != m_WeaponFrames.end())
 			{
-				m_WeaponFrames[actionID].ResetAll();
+				m_WeaponFrames[actionID].ResetAnim(m_Dir);
 				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
 			}
 		}
 	}
-
-
+	
 }
 
 void Player::ChangeWeapon()
 {
-	m_WeaponID = m_RoleID == 3 ? 7 : 3;
+	ChangeWeapon(0);
+}
+
+void Player::ChangeWeapon(int WeaponID )
+{
+	m_WeaponID = WeaponID == 0? ( m_RoleID == 3 ? 7 : 3) : WeaponID;
 	m_WeaponFrames.clear();
 	for(int actionID=1;actionID<20;actionID++)
 	{
@@ -137,27 +118,44 @@ void Player::ChangeWeapon()
 		if(wasID != -1)
 		{
 			m_AnimDB.printInfo(wasID);
-            auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
+			auto sprite = ResourceManager::GetInstance()->LoadWdfSprite(wasID);
 			FrameAnimation frame(sprite);
-			frame.ResetAll();
+			frame.ResetAnim(m_Dir);
 			m_WeaponFrames.insert(std::make_pair(actionID,frame));
 			if(m_PlayerFrames.find(actionID) != m_PlayerFrames.end())
 			{
-				m_PlayerFrames[actionID].ResetAll();
+				m_PlayerFrames[actionID].ResetAnim(m_Dir);
 				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
 			}
 		}
 	}
-
-	
-	
 }
 
 void Player::ChangeAction()
 {
 	m_ActionID++;
 	if(m_ActionID > 20)m_ActionID = 1;
-	
+}
+
+void Player::ChangeAction(int actionID)
+{
+	m_ActionID = actionID;
+}
+
+void Player::ReverseDir()
+{
+	switch(m_Dir)
+	{
+		case 6: m_Dir=4;break;
+		case 4: m_Dir=6;break;
+		case 5: m_Dir=7;break;
+		case 7: m_Dir=5;break;
+		case 3: m_Dir=1;break;
+		case 1: m_Dir=3;break;
+		case 2: m_Dir=0;break;
+		case 0: m_Dir=2;break;
+	}
+	SetDir(m_Dir);
 }
 
 void Player::SaveFrame(int index)
@@ -167,73 +165,97 @@ void Player::SaveFrame(int index)
 
 void Player::OnUpdate(double dt)
 {
-	m_UpdateDelta += dt;
-	if (m_UpdateDelta >= dt) {
-		m_UpdateDelta = 0;
-        if (m_IsMove) {
-			if (!m_MoveList.empty())
-			{
-				double localVelocity = m_MoveVelocity*dt;
-				Pos d = m_MoveList.front();
-				Pos dest;
-				dest.x = d.x * 20 + 10;
-				dest.y = d.y * 20 + 10;
-				
-				Logger::Print("Src X:%.1lf Y:%.1f \t Dest X:%.1lf Y:%.1lf vel:%.1lf dir:%d\n",m_Pos.x,m_Pos.y, dest.x,dest.y,localVelocity,m_Dir);
-
-				if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
-					int degree = GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
-
-					m_Dir = GMath::Astar_GetDir(degree);
-
-					
-
-					double stepRangeX = cos(DegreeToRadian(degree));
-					double stepRangeY = sin(DegreeToRadian(degree));
-
-					TranslateX(stepRangeX * localVelocity);
-					TranslateY(stepRangeY * localVelocity);
-				
-					SetDir(m_Dir);
-				}
-				else {
-					Pos d = m_MoveList.front();
-
-					SetX(d.x * 20 + 10);
-					SetY(d.y * 20 + 10);
-					m_Box.x = d.x;
-					m_Box.y = d.y;
-					m_MoveList.pop_front();
-                 //  HandleMoveToCalled();
-
-				}
-			}
-			else
-			{
-				m_IsMove = false;
-				SetActionID(Player::Idle);
-				//SetDir(m_Dir);
-				m_Box.x = GetBoxX();
-				m_Box.y = GetBoxY();
-             // HandleMoveToCalled();
-
-			}
-			//Logger::Print("boxX:%d boxY:%d x:%.1lf y:%.1lf dir:%d \n",GetBoxX(),GetBoxY(), GetX(),GetY(), m_Dir);
-		}
-
-	}
-
-
-	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	if(m_bInCombat)
 	{
-		m_PlayerFrames[m_ActionID].OnUpdate(dt);
-		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-		{
-			m_WeaponFrames[m_ActionID].OnUpdate(dt);
+        double localVelocity = 5*m_MoveVelocity*dt;
+		if (GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y) > localVelocity*localVelocity) {
+			int degree = GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+			//m_Dir = GMath::Astar_GetDir(degree);
+			double stepRangeX = cos(DegreeToRadian(degree));
+			double stepRangeY = sin(DegreeToRadian(degree));
+
+			m_CombatPos.x += stepRangeX*5;
+			m_CombatPos.y += stepRangeY*5;
+			dt=dt/5;
+			// SetDir(m_Dir);
 		}
+		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+		{
+			m_PlayerFrames[m_ActionID].OnUpdate(dt);
+			if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+			{
+				m_WeaponFrames[m_ActionID].OnUpdate(dt);
+			}
+		}
+
+	}else
+	{
+		m_UpdateDelta += dt;
+		if (m_UpdateDelta >= dt) {
+			m_UpdateDelta = 0;
+			if (m_IsMove) {
+				if (!m_MoveList.empty())
+				{
+					double localVelocity = m_MoveVelocity*dt;
+					Pos d = m_MoveList.front();
+					Pos dest;
+					dest.x = d.x * 20 + 10;
+					dest.y = d.y * 20 + 10;
+					
+					Logger::Print("Src X:%.1lf Y:%.1f \t Dest X:%.1lf Y:%.1lf vel:%.1lf dir:%d\n",m_Pos.x,m_Pos.y, dest.x,dest.y,localVelocity,m_Dir);
+
+					if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
+						int degree = GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
+						m_Dir = GMath::Astar_GetDir(degree);
+
+						double stepRangeX = cos(DegreeToRadian(degree));
+						double stepRangeY = sin(DegreeToRadian(degree));
+
+						TranslateX(stepRangeX * localVelocity);
+						TranslateY(stepRangeY * localVelocity);
+					
+						SetDir(m_Dir);
+					}
+					else {
+						Pos d = m_MoveList.front();
+
+						SetX(d.x * 20 + 10);
+						SetY(d.y * 20 + 10);
+						m_Box.x = d.x;
+						m_Box.y = d.y;
+						m_MoveList.pop_front();
+					//  HandleMoveToCalled();
+
+					}
+				}
+				else
+				{
+					m_IsMove = false;
+					SetActionID(Player::Idle);
+					//SetDir(m_Dir);
+					m_Box.x = GetBoxX();
+					m_Box.y = GetBoxY();
+				// HandleMoveToCalled();
+
+				}
+				//Logger::Print("boxX:%d boxY:%d x:%.1lf y:%.1lf dir:%d \n",GetBoxX(),GetBoxY(), GetX(),GetY(), m_Dir);
+			}
+
+		}
+
+
+		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+		{
+			m_PlayerFrames[m_ActionID].OnUpdate(dt);
+			if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+			{
+				m_WeaponFrames[m_ActionID].OnUpdate(dt);
+			}
+		}
+		
+		HandleMoveToCalled();
 	}
 	
-    HandleMoveToCalled();
 }
 
 void Player::HandleMoveToCalled()
@@ -271,20 +293,26 @@ void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 	{
 		auto& player = m_PlayerFrames[m_ActionID];
-		px = px - player.GetWidth() / 2 + 10;
-		py = py - player.GetHeight() + 20;
-		player.Draw(renderer,px,py);
+		int _px = px - player.GetWidth() / 2 + 10;
+		int _py = py - player.GetHeight() + 20;
+		player.Draw(renderer,_px,_py);
+		
 		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
 		{
 			auto& weapon = m_WeaponFrames[m_ActionID];
-			int px2 = px - (weapon.GetKeyX() - player.GetKeyX());
-			int py2 = py - (weapon.GetKeyY() - player.GetKeyY());
+			int px2 = _px - (weapon.GetKeyX() - player.GetKeyX());
+			int py2 = _py - (weapon.GetKeyY() - player.GetKeyY());
 
 			weapon.Draw(renderer,px2,py2);
 		}
+
+		if(!m_NickName.empty())
+		{
+			auto green = glm::vec3(115/255.0f,1.0f,137/255.0f);
+			TextRenderer::GetInstance()->RenderText(m_NickName,px - m_NickName.length()*1.8,SCREEN_HEIGHT-py-32,0.5f,green);
+		}
 	}
 
-	
 }
 
 void Player::PlayAction(int action,int dir)
@@ -323,11 +351,11 @@ void Player::MoveTo(GameMap* gameMapPtr, int destBoxX, int destBoxY)
 void Player::ResetDirAll(int dir)
 {
 	for (auto& playerIt : m_PlayerFrames)
-		playerIt.second.Reset(dir);
+		playerIt.second.ResetAnim(dir);
 
 	for (auto& weaponIt : m_WeaponFrames)
-		weaponIt.second.Reset(dir);
-	// m_Dir = dir;
+		weaponIt.second.ResetAnim(dir);
+	m_Dir = dir;
 }
 
 void Player::ResetDir(int dir)

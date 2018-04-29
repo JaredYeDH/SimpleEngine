@@ -29,13 +29,16 @@ GameMap::GameMap(uint32 mapId)
 	mCol = mXyqMap->Col();
 	printf("初始化GameMap %d %d ", mRow, mCol);
 
+	mMapTileWidth = 320;
+	mMapTileHeight= 240;
+    mMapTileCoef = Demo::GetScreenWidth()/2/mMapTileWidth+1;
 	mMapTiles.clear();
 	
 // 	for (int i = 0; i<mXyqMap->UnitSize(); i++)
 // 	{
 // 		mXyqMap->ReadUnit(i);
 		
-// 		mMapTiles[i] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(i));
+// 		mMapTiles[i] = new Texture(mMapTileWidth,mMapTileHeight, false,mXyqMap->GetUnitBitmap(i));
 // 	//	 delete[] mXyqMap->m_MapUnits[i].BitmapRGB24;
 // //		mXyqMap->m_MapUnits[i].BitmapRGB24 = nullptr;
 // 	}
@@ -275,14 +278,14 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 
 	// mGameMap->Draw(m_RendererPtr, mapOffsetX, mapOffsetY);
     int startRow , endRow,startCol,endCol ;
-    startRow = playerY/240-3;
+    startRow = playerY/mMapTileHeight-3;
     startRow = startRow<0?0:startRow;
-    endRow = playerY/240+3;
+    endRow = playerY/mMapTileHeight+3;
     endRow = endRow>mRow?mRow:endRow;
 
-    startCol = playerX/320-3;
+    startCol = playerX/mMapTileWidth-3;
     startCol = startCol<0?0:startCol;
-    endCol = playerX/320+3;
+    endCol = playerX/mMapTileWidth+3;
     endCol = endCol>mCol?mCol:endCol;
 
 
@@ -295,13 +298,13 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
 
-                mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
+                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,mXyqMap->GetUnitBitmap(unit));
 				UpdateCell();
             }
 
 			renderer->DrawSprite(mMapTiles[i*mCol + j],
-				glm::vec2(j * 320 + mapOffsetX, i * 240 + mapOffsetY),
-				glm::vec2(320, 240),
+				glm::vec2(j * mMapTileWidth + mapOffsetX, i * mMapTileHeight + mapOffsetY),
+				glm::vec2(mMapTileWidth, mMapTileHeight),
 				0.0f,
 				glm::vec3(1.0f, 1.0f, 1.0f)
 			);
@@ -314,16 +317,21 @@ void GameMap::DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y)
 {
     int minx,maxx,miny,maxy;
     int posx,posy;
-    posx = -cur_x + 400;
-    posy = -cur_y + 300;
-    minx = posx - 410 ;
+	int screenWidth = Demo::GetScreenWidth();
+	int screenHeight = Demo::GetScreenHeight();
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+
+    posx = -cur_x + halfScreenWidth;
+    posy = -cur_y + halfScreenHeight;
+    minx = posx - (halfScreenWidth+10) ;
     minx = minx<0?0:minx;
-    maxx = posx + 410;
+    maxx = posx +  (halfScreenWidth+10) ;
     maxx = maxx>mMapWidth?mMapWidth:maxx;
 
-    miny = posy - 310 ;
+    miny = posy - (halfScreenHeight+10);
     miny = miny<0?0:miny;
-    maxy = posy + 310;
+    maxy = posy + (halfScreenHeight+10);
     maxy = maxy>mMapHeight?mMapHeight:maxy;
 
 
@@ -358,20 +366,20 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
 
 	mapOffsetX = GMath::Clamp(mapOffsetX, -mWidth + screenWidth, 0);
 	mapOffsetY = GMath::Clamp(mapOffsetY, -mHeight + screenHeight, 0);
-
+	
 	int startRow , endRow,startCol,endCol ;
-    startRow = GMath::Clamp(playerY/240-3, 0,mRow );
-    endRow = GMath::Clamp(playerY/240+3, 0,mRow );
-	startCol = GMath::Clamp(playerX/320-3, 0,mCol);
-    endCol = GMath::Clamp(playerX/320+3, 0,mCol );
+    startRow = GMath::Clamp(playerY/mMapTileHeight-mMapTileCoef, 0,mRow );
+    endRow = GMath::Clamp(playerY/mMapTileHeight+mMapTileCoef, 0,mRow );
+	startCol = GMath::Clamp(playerX/mMapTileWidth-mMapTileCoef, 0,mCol);
+    endCol = GMath::Clamp(playerX/mMapTileWidth+mMapTileCoef, 0,mCol );
 
 	int startX,startY, endX,endY;
 	
-	startY = GMath::Clamp(startRow*240,0, mMapHeight);
-	endY = GMath::Clamp(endRow*240,0, mMapHeight);
+	startY = GMath::Clamp(startRow*mMapTileHeight,0, mMapHeight);
+	endY = GMath::Clamp(endRow*mMapTileHeight,0, mMapHeight);
 
-	startX = GMath::Clamp(startCol*320,0, mMapWidth);
-	endX = GMath::Clamp(endCol*320,0, mMapWidth);
+	startX = GMath::Clamp(startCol*mMapTileWidth,0, mMapWidth);
+	endX = GMath::Clamp(endCol*mMapTileWidth,0, mMapWidth);
 
 	
 	for (int m = 0; m < mXyqMap->MaskSize(); m++)
@@ -397,13 +405,13 @@ void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
             {
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
-                mMapTiles[unit] = new Texture(320,240, false,mXyqMap->GetUnitBitmap(unit));
+                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,mXyqMap->GetUnitBitmap(unit));
 				UpdateCell();
             }
 
 			renderer->DrawMapSprite(mMapTiles[i*mCol + j],
-				glm::vec2(j * 320 + mapOffsetX, i * 240 + mapOffsetY),
-				glm::vec2(320, 240),
+				glm::vec2(j * mMapTileWidth + mapOffsetX, i * mMapTileHeight + mapOffsetY),
+				glm::vec2(mMapTileWidth, mMapTileHeight),
 				0.0f,
 				0.5f
 			);

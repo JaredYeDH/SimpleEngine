@@ -41,8 +41,14 @@ public:
 	void Render(); 
 	void AddObject(Object2D* obj);
 	void RemoveObject(int index);
+
+	static Renderer2D* GetInstance()
+	{
+		static Renderer2D* instance = new Renderer2D();
+		return instance;
+	}
+
 private:
-	
 	std::list<Object2D*> m_ObjectList;
 	Graphics2D m_Graphics;
 };

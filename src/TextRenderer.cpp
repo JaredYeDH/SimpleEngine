@@ -1,6 +1,7 @@
 #include "TextRenderer.h"
 #include "Environment.h"
 #include <freetype2/ft2build.h>
+#include "global.h"
 #include FT_FREETYPE_H
 
 
@@ -10,7 +11,7 @@ TextRenderer::TextRenderer()
 	std::string vShader(Environment::GetShaderPath("text.vs")),
 		fShader(Environment::GetShaderPath("text.fs"));
 	shader = new Shader(vShader, fShader);
-	glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH * 1.0f, 0.0f, SCREEN_HEIGHT * 1.0f, -1.0f, 1.0f);
 	shader->Bind();
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)&projection);
 
@@ -119,16 +120,7 @@ void TextRenderer::RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat s
 
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
-		// Update VBO for each character
-		// GLfloat vertices[6][4] = {
-		// 	{ xpos,     ypos + h,   0.0,0.0 },
-		// 	{ xpos,     ypos,       0.0,1.0 },
-		// 	{ xpos + w, ypos,       1.0, 1.0 },
-		// 	{ xpos,     ypos + h,   0.0, 0.0 },
-		// 	{ xpos + w, ypos,       1.0, 1.0 },
-		// 	{ xpos + w, ypos + h,   1.0, 0.0 }
-		// };
-
+	
 		GLfloat vertices[6][4] = {
 			{ xpos,     ypos + h,   0.0,0.0 },
 			{ xpos,     ypos,       0.0,1.0 },

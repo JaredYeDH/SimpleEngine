@@ -24,8 +24,8 @@ mHeight(0)
 {
 	mPath = filePath;
 	mFormat = GL_RGBA;
-	
-	uint8* lImageBuffer = SOIL_load_image(mPath.c_str(), &mWidth,&mHeight, 0,SOIL_LOAD_RGB);
+	int  channel = 0;
+	uint8* lImageBuffer = SOIL_load_image(mPath.c_str(), &mWidth,&mHeight, &channel,SOIL_LOAD_AUTO);
 	if(lImageBuffer == NULL)
 	{
 		std::cout << "ReadSOIL FAILED - NO IMAGE BUFFER" << std::endl;
@@ -43,7 +43,7 @@ mHeight(0)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA , mWidth, mHeight, 0,GL_RGB, GL_UNSIGNED_BYTE, lImageBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA , mWidth, mHeight, 0, channel == 3 ? GL_RGB :( channel == 4 ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, lImageBuffer);
 
 	delete[] lImageBuffer;
 }
@@ -72,7 +72,7 @@ mHeight(height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, mFormat, GL_UNSIGNED_BYTE, lImageBuffer);
 
-	delete[] lImageBuffer;
+	// delete[] lImageBuffer;
 }
 
 Texture::~Texture()

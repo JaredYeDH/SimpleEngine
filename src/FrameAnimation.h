@@ -53,7 +53,8 @@ public:
 	void ResetAnim(int group);
 	void ResetFrameTime(int groupCount);
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
-	Texture* GetFrame(); 
+	Texture* GetFrame(int index); 
+	String GetFramePath(int index); 
 
 	void OnUpdate(double dt);
 	void Draw(SpriteRenderer* renderer,int x, int y);
