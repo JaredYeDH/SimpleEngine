@@ -4,7 +4,7 @@
 
 class Object;
 
-class BaseComponent : public Entity
+class BaseComponent : public BaseGameEntity
 {
 public:
 	BaseComponent();

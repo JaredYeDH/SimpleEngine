@@ -2,7 +2,7 @@
 #include "../Objects/Object.h"
 
 BaseComponent::BaseComponent()
-	:Entity()
+	:BaseGameEntity()
 	, m_pParentObject(nullptr)
 	, m_bInitialized(false)
 	, m_bIsActive(false)
@@ -10,7 +10,7 @@ BaseComponent::BaseComponent()
 }
 
 BaseComponent::BaseComponent(Object* parent)
-	:Entity()
+	:BaseGameEntity()
 	, m_pParentObject(parent)
 	, m_bInitialized(false)
 	, m_bIsActive(false)

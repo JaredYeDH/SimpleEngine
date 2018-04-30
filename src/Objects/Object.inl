@@ -9,7 +9,7 @@ T* Object::GetChildByName(const std::string & name)
 {
 	for(auto child : m_pChildren)
 	{
-		if(child->CompareName(name))
+		if(child->GetName() == name)
 		{
 			auto returnobject = dynamic_cast<T*>(child);
 			if(returnobject == nullptr)

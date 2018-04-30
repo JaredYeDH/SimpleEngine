@@ -10,7 +10,7 @@ Object::Object()
 
 
 Object::Object(const std::string & name)
-: Entity(name)
+: BaseGameEntity(name)
 , m_bIsInitialized(false)
 , m_IsActive(false)
 , m_pParentGameObject(nullptr)
@@ -93,7 +93,7 @@ void Object::BaseInitialize()
 
 
 Object::GarbageInfo::GarbageInfo(
-	Entity* pEntity,
+	BaseGameEntity* pEntity,
 	GarbageType type
 	)
 : element(pEntity)
@@ -394,7 +394,7 @@ void Object::RemoveChild(const std::string & name)
 {
 	for(auto child : m_pChildren)
 	{
-		if(child->CompareName(name))
+		if(child->GetName()==name)
 		{
 			RemoveChild(child);
 			return;

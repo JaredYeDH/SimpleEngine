@@ -6,7 +6,7 @@
 
 class BaseComponent;
 
-class Object : public Entity
+class Object : public BaseGameEntity
 {
 public:
 	Object();
@@ -67,8 +67,8 @@ protected:
 
 	struct GarbageInfo
 	{
-		GarbageInfo(Entity * pEntity, GarbageType type);
-		Entity * element;
+		GarbageInfo(BaseGameEntity * pEntity, GarbageType type);
+		BaseGameEntity * element;
 		GarbageType type;
 	};
 
