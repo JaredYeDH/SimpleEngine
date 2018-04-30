@@ -117,6 +117,8 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install)
 set(SRC_CPP_FILES
 Actor.cpp
 Actor.h
+ActorManager.cpp
+ActorManager.h
 algorithm.cpp
 Astar/include/InputHandler.h
 Astar/include/Node.h
@@ -172,6 +174,8 @@ Logger.cpp
 Logger.h
 LuaVM.cpp
 LuaVM.h
+Message.cpp
+Message.h
 Network/Client.cpp
 Network/Client.h
 Network/Message.cpp
@@ -222,6 +226,8 @@ SpriteBatch.cpp
 SpriteBatch.h
 SpriteRenderer.cpp
 SpriteRenderer.h
+State.cpp
+State.h
 TextRenderer.cpp
 TextRenderer.h
 TextureManager.cpp
