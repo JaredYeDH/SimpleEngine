@@ -29,10 +29,10 @@ public:
 	// 帧的文件头
 	struct FrameHeader
 	{
-		int key_x;			// 图片的关键位X
-		int key_y;			// 图片的关键位Y
-		int width;			// 图片的宽度，单位像素
-		int height;			// 图片的高度，单位像素
+		uint32 key_x;			// 图片的关键位X
+		uint32 key_y;			// 图片的关键位Y
+		uint32 width;			// 图片的宽度，单位像素
+		uint32 height;			// 图片的高度，单位像素
 	};
 
 
@@ -46,8 +46,8 @@ public:
 	uint32 mPalette32[256];
 	uint32* mFrameIndecies;
 	std::string mFileName;
-	int mFileOffset;
-	int mFileSize;
+	uint32 mFileOffset;
+	uint32 mFileSize;
 
 };
 #endif

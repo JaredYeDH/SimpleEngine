@@ -12,7 +12,7 @@ void MessageDispatcher::Discharge(BaseGameEntity* pReceiver, const Telegram& msg
 void MessageDispatcher::DispatchMessage(int delay,
 	int sender,
 	int receiver,
-	int msg,
+	int msgType,
 	void* extraInfo)
 {
 	BaseGameEntity* pReceiver = GAME_ENTITY_MANAGER_INSTANCE->GetEntityByID(receiver);
@@ -20,7 +20,7 @@ void MessageDispatcher::DispatchMessage(int delay,
     Telegram telegram;
     telegram.Sender = sender;
     telegram.Receiver = receiver;
-    telegram.Msg = msg;
+    telegram.MsgType = msgType;
     telegram.ExtraInfo = extraInfo;
 	if(delay <= 0 )
 	{

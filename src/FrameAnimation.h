@@ -5,7 +5,7 @@
 #include "TextureManager.h"
 #include <vector>
 #include "SpriteRenderer.h"
-
+#include "Pos.h"
 class FrameAnimation
 {
 public:
@@ -22,7 +22,7 @@ public:
 		S_W = 1,
 	};
 
-	FrameAnimation(Sprite2 sprite);
+	FrameAnimation(std::shared_ptr<Sprite2> sprite);
 	FrameAnimation();
 	FrameAnimation& operator=(const FrameAnimation& rhs);
 	~FrameAnimation();
@@ -32,18 +32,16 @@ public:
 	int GetLastFrame() { return m_LastFrame;}
 	int GetFrameCount() { return m_FrameCount;}
 	int GetCurrentGroup() { return m_CurrentGroup;}
-
+	bool IsCurrentFrameChangedInUpdate() {return m_bCurrentFrameChangedInUpdate;};
 	void SetCurrentGroup(int group);
 	int GetGroupFrameCount() { return m_GroupFrameCount;}
 
 	int GetKeyX() { return m_KeyX; }
 	int GetKeyY() { return m_KeyY; }
 
-	int GetPosX() { return m_PosX; }
-	int GetPosY() { return m_PosY; }
-
-	void SetPosX(int x) { m_PosX = x; }
-	void SetPosY(int y) { m_PosY = y; }
+	const IntPos GetPos() { return m_Pos; }
+	void SetPos(IntPos pos) { m_Pos = pos; }
+	
 
 	void SetVisible(bool visible);
 
@@ -60,9 +58,10 @@ public:
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
 	Texture* GetFrame(int index); 
 	String GetFramePath(int index); 
+	int GetSpritesCount(){ return m_Sprites.size();};
 
 	void OnUpdate(double dt);
-	void Draw(SpriteRenderer* renderer,int x, int y);
+	void Draw();
 	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};
 	int m_FrameCount;
 	int m_CurrentFrame;
@@ -71,8 +70,7 @@ public:
 	int m_GroupFrameCount;
 	int m_KeyX;
 	int m_KeyY;
-	int m_PosX;
-	int m_PosY;
+	IntPos m_Pos;
 	int m_Width;
 	int m_Height;
 	bool m_bLoop;
@@ -80,6 +78,7 @@ public:
 
 	double m_DeltaTime;
 	bool m_bVisible;
+	bool m_bCurrentFrameChangedInUpdate;
 
 
 	double m_FrameTime;

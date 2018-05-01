@@ -5,7 +5,7 @@
 
 #include "../TextRenderer.h"
 #include "../Bitmap.h"
-
+#include "Combat.h"
 // #include "../tsv.h"
 
 // #include "animation_database.h"
@@ -26,6 +26,7 @@ struct Test2
 AlphaSence::AlphaSence()
 :m_Render()
 {
+	SKILL_MANAGER_INSTANCE;
 	Test2 t2;
 	std::cout << "t2:" << std::hex << &t2
 		<< "\t t2.dd" << &t2.dd
@@ -79,8 +80,8 @@ AlphaSence::AlphaSence()
 	Bitmap bitmap;
 	//bitmap.CreateBitmapFile(201 ,201, 8, "D:\\a.bmp");
 	BitmapFile f;
-	bitmap.Load("F:\\svn\\misc\\2d_logicmap\\2\\areas_0_-43916_18934_85194_47922",f);
-	bitmap.Save("D:\\a.bmp", f);
+	//bitmap.Load("F:\\svn\\misc\\2d_logicmap\\2\\areas_0_-43916_18934_85194_47922",f);
+	//bitmap.Save("D:\\a.bmp", f);
 
 }
 

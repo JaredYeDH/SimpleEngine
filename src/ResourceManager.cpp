@@ -66,7 +66,7 @@ void ResourceManager::Clear()
         // glDeleteTextures(1, &(iter.second.GetTextureID()));
 }
 
-Sprite2 ResourceManager::LoadWdfSprite(uint32 wasID)
+std::shared_ptr<Sprite2> ResourceManager::LoadWdfSprite(uint32 wasID)
 {
     if(m_WDFSpriteCache.find(wasID) == m_WDFSpriteCache.end())
     {
@@ -75,30 +75,32 @@ Sprite2 ResourceManager::LoadWdfSprite(uint32 wasID)
 	return m_WDFSpriteCache[wasID];
 }
 
-Sprite2 ResourceManager::LoadWASSprite(int pack, uint32 wasId)
+static std::vector<String> s_PackToName = {"addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf"};
+static std::map<int,NetEase::WDF*> s_Loaders;
+std::shared_ptr<Sprite2> ResourceManager::LoadWASSprite(int pack, uint32 wasId)
 {
-    switch(pack)
+    if(pack == 6)
     {
-        case AddonWDF: 
-        {
-            Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
-
-            static auto* s_AddonWDFPtr = new NetEase::WDF(config.GetWdfPath("addon.wdf"));
-            return s_AddonWDFPtr->LoadSprite(wasId);
-        }
-        break;
+        static auto* loader =new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
+        return loader->LoadSprite(wasId);
     }
-    return {};
-	
+    else
+    {
+        if(s_Loaders.find(pack) ==s_Loaders.end()  )
+        {
+            s_Loaders[pack] = new NetEase::WDF(Environment::GetWDFPath(s_PackToName[pack]));
+        }
+        return s_Loaders[pack]->LoadSprite(wasId);
+    }
 }
 
 
 void ResourceManager::SaveWdfSprite(uint32 wasId)
 {
-    m_ShapeWdfPtr->LoadSprite(wasId).SaveImage(0);
+    m_ShapeWdfPtr->LoadSprite(wasId)->SaveImage(0);
 }
 
-Sprite2 ResourceManager::LoadWd3Sprite(uint32 wasID)
+std::shared_ptr<Sprite2> ResourceManager::LoadWd3Sprite(uint32 wasID)
 {
     if(m_WD3SpriteCache.find(wasID) == m_WD3SpriteCache.end())
     {

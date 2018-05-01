@@ -263,8 +263,9 @@ GameMap::~GameMap()
 		mXyqMap = nullptr;
 	}
 }
-void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
+void GameMap::Draw(int playerX,int playerY)
 {
+	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
 	int screenWidth = Demo::GetScreenWidth();
 	int screenHeight = Demo::GetScreenHeight();
 	int halfScreenWidth = screenWidth / 2;
@@ -313,8 +314,9 @@ void GameMap::Draw(SpriteRenderer* renderer,int playerX,int playerY)
 }
 
 
-void GameMap::DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y)
+void GameMap::DrawCell(int cur_x, int cur_y)
 {
+	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
     int minx,maxx,miny,maxy;
     int posx,posy;
 	int screenWidth = Demo::GetScreenWidth();
@@ -354,8 +356,9 @@ void GameMap::DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y)
 }
 
 
-void GameMap::DrawMask(SpriteRenderer* renderer, int playerX, int playerY)
+void GameMap::DrawMask(int playerX, int playerY)
 {
+	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
 	int screenWidth = Demo::GetScreenWidth();
 	int screenHeight = Demo::GetScreenHeight();
 	int halfScreenWidth = screenWidth / 2;

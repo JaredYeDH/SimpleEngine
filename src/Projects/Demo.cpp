@@ -94,7 +94,7 @@ Demo::Demo()
 	m_OtherPtr->SetBox();
 	
 
-	Sprite2 sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
+	std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
 	FrameAnimation combatBG(sp);
 	Renderer2D::GetInstance()->AddObject(new Image(
 		combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
@@ -183,10 +183,10 @@ void Demo::ProcessInput()
 		do 
 		{
 			int destBoxX, destBoxY;
-			destBoxX = Random::NextInt(0, m_GameMapPtr->GetWidth() / 20 -1);
-			destBoxY = Random::NextInt(0, m_GameMapPtr->GetHeight() / 20 -1);
+			destBoxX = RANDOM_INSTANCE->NextInt(0, m_GameMapPtr->GetWidth() / 20 -1);
+			destBoxY = RANDOM_INSTANCE->NextInt(0, m_GameMapPtr->GetHeight() / 20 -1);
 			int velocity;
-			velocity = Random::NextInt(150, 375);
+			velocity = RANDOM_INSTANCE->NextInt(150, 375);
 			m_NPCs[0]->SetVelocity(velocity);
 			m_NPCs[0]->MoveTo(m_GameMapPtr, destBoxX, destBoxY);
 			movingSuccess = m_NPCs[0]->IsMove();
@@ -321,7 +321,7 @@ bool show_test_window = true;
 bool show_another_window = false;
 void Demo::Draw()
 {	
-	m_GameMapPtr->Draw(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+	m_GameMapPtr->Draw( m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	Renderer2D::GetInstance()->Render();
 
 	if(s_IsCombat)
@@ -356,17 +356,17 @@ void Demo::Draw()
 			(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
 		
-		//m_GameMapPtr->DrawCell(SpriteRenderer::GetInstance(), mapOffsetX, mapOffsetY);
-		m_StriderPtr->OnDraw(SpriteRenderer::GetInstance(),px,py);
+		//m_GameMapPtr->DrawCell( mapOffsetX, mapOffsetY);
+		m_StriderPtr->OnDraw(px,py);
 		
-		m_OtherPtr->OnDraw(SpriteRenderer::GetInstance(), m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
+		m_OtherPtr->OnDraw( m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
 		
-		m_GameMapPtr->DrawMask(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
+		m_GameMapPtr->DrawMask(m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	}
 	
 	/*for (Player* npc : m_NPCs)
 	{
-		npc->OnDraw(SpriteRenderer::GetInstance(), npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
+		npc->OnDraw( npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
 	}*/
 	//m_Render.Render();
 

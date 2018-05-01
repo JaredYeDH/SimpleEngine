@@ -24,9 +24,9 @@ public:
 	Astar* GetAstar() { return mAstar; };
 	int GetRowCount() { return mRow; };
 	int GetColCount() { return mCol; };
-	void Draw(SpriteRenderer* renderer, int playerX, int playerY);
-	void DrawMask(SpriteRenderer* renderer, int playerX, int playerY);
-	void DrawCell(SpriteRenderer* renderer, int cur_x, int cur_y);
+	void Draw(int playerX, int playerY);
+	void DrawMask( int playerX, int playerY);
+	void DrawCell( int cur_x, int cur_y);
 
 	
 	int GetWidth(){return mWidth;}

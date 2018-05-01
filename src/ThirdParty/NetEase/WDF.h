@@ -35,7 +35,7 @@ namespace NetEase {
 		void Init();
 		// Sprite LoadSprite(int id);
 		WAS GetWAS(uint32 id);
-		Sprite2 LoadSprite(uint32 id);
+		std::shared_ptr<Sprite2> LoadSprite(uint32 id);
 		~WDF();
 
 	public:

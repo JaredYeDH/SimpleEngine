@@ -12,10 +12,15 @@
 #include "../Message.h"
 
 
+
 class PlayerCombatIdleState;
 class PlayerCombatMoveState;
 class PlayerCombatBackState;
 class PlayerCombatAttackState;
+class PlayerCombatCastAttackState;
+class PlayerCombatBeCastAttackedState;
+class PlayerCombatBeAttackedState;
+class PlayerCombatGlobalState;
 
 
 
@@ -26,16 +31,17 @@ private:
 	friend class PlayerCombatMoveState;
 	friend class PlayerCombatBackState;
 	friend class PlayerCombatAttackState;
-	
+	friend class PlayerCombatBeAttackedState;
+	friend class PlayerCombatCastAttackState;
+	friend class PlayerCombatGlobalState;
+	friend class PlayerCombatBeCastAttackedState;
 
 	StateMachine<Player>* m_pFSM;
 public:
 	StateMachine<Player>* GetFSM(){ return m_pFSM;};
  	
-	bool HandleMessage(const Telegram& msg) override
-	{	
-		return GetFSM()->HandleMessage(msg);
-	};
+	bool HandleMessage(const Telegram& msg) override;
+
 public:
 	enum ActionName : int 
 	{
@@ -70,8 +76,10 @@ public:
 	};
 	int GetActionID(){ return m_ActionID; }
 
-	void OnDraw(SpriteRenderer * renderer, int px,int py);
+	void OnDraw(int px,int py);
 	void SetPos(double x, double y);
+    void SetPos(Pos p){ m_Pos = p;};
+	Pos GetPos(){ return m_Pos;};
 	void SetCombatPos(double x, double y) {m_CombatPos.x=x;m_CombatPos.y=y;};
 	void SetCombatPos(Pos pos){m_CombatPos = pos;};
 	Pos GetCombatPos(){ return m_CombatPos;};
@@ -106,7 +114,6 @@ public:
 	
 
 	bool IsMove() { return m_IsMove; }
-	int GetId() { return m_ID; }
 	void HandleMoveToCalled();
 	void SaveFrame(int index);
 	void ChangeRole();
@@ -119,10 +126,34 @@ public:
 	
 	void SetNickName(std::wstring name) { m_NickName= name ;};
 	void SetIsCombat(bool bcombat){ m_bInCombat = bcombat;}
+
+	void SetSkillFrame(FrameAnimation* anim)
+	{
+        if(anim&&anim->GetSpritesCount() <= 0 ) return;
+		m_bSkillFrameShow = true;
+		m_SkillFrame =  *anim;
+		m_SkillFrame.ResetAnim(0);
+	}
+	FrameAnimation& GetSkillFrame()
+	{
+		return m_SkillFrame;
+	}
+	void SetTargetID(int id)
+	{
+		m_TargetID = id;
+	}
+	int GetTargetID()
+	{
+		return m_TargetID;
+	}
+	
 private:
 
 	std::map<int,FrameAnimation> m_PlayerFrames;
 	std::map<int,FrameAnimation> m_WeaponFrames;
+	FrameAnimation m_SkillFrame;
+	bool m_bSkillFrameShow;
+	// std::map<int,FrameAnimation> m_SkillFrames;
 	
 	std::wstring m_NickName;
 	int m_AnimationState;
@@ -136,7 +167,6 @@ private:
     bool m_MoveToCalled;
 	double m_UpdateDelta;
 	bool m_IsMove;
-	int m_ID;
 	double m_MoveVelocity;
 	bool m_bInCombat;
 
@@ -144,11 +174,13 @@ private:
 	int m_ActionID;				//current action
 	int m_WeaponID;				//current weapon
 	bool m_HasWeapon;
+	int m_TargetID;
 
 	utils::tsv m_ActionTSV;
 	utils::tsv m_RoleTSV;
 	utils::tsv m_WeaponTSV;
 	utils::AnimDB m_AnimDB;
+	
 	
 
 	void LogInfo()
@@ -194,6 +226,15 @@ public:
     void Execute(Player* player) override;
 	void Enter(Player* player) override;
 };
+
+class PlayerCombatCastAttackState : public BasePlayerCombatState, public Singleton<PlayerCombatCastAttackState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+};
+
+
 class PlayerCombatBackState : public BasePlayerCombatState, public Singleton<PlayerCombatBackState>
 {
 public:	
@@ -202,6 +243,27 @@ public:
 };
 
 
+class PlayerCombatBeAttackedState : public BasePlayerCombatState, public Singleton<PlayerCombatBeAttackedState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
 
+};
 
+class PlayerCombatBeCastAttackedState : public BasePlayerCombatState, public Singleton<PlayerCombatBeCastAttackedState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+
+};
+
+class PlayerCombatGlobalState : public BasePlayerCombatState, public Singleton<PlayerCombatGlobalState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+	bool OnMessage(Player* , const Telegram& ) override;
+};
 

@@ -54,14 +54,14 @@ namespace NetEase {
 	}
 
 
-	Sprite2 WDF::LoadSprite(uint32 id)
+	std::shared_ptr<Sprite2> WDF::LoadSprite(uint32 id)
 	{
 		WAS::Header header;
-		Sprite2 sprite;
+		auto sprite = std::make_shared<Sprite2>();
 
 		Index index = mIndencies[mIdToPos[id]];
-		int wasOffset = index.offset;
-		int wasSize = index.size;
+		uint32 wasOffset = index.offset;
+		uint32 wasSize = index.size;
 		// mFile.seekg(wasOffset,ios::beg);
 		// char* outfilec=new char[wasSize];
 		// mFile.read(outfilec,wasSize);
@@ -71,34 +71,37 @@ namespace NetEase {
 
 		mFile.seekg(wasOffset, ios::beg);
 		mFile.read((char*)&header, sizeof(header));
-		sprite.mID = std::to_string(id);
-		sprite.mPath = mFileName+"/"+sprite.mID;
-		sprite.mGroupSize = header.group;
-		sprite.mFrameSize = header.frame;
-		sprite.mWidth = header.width;
-		sprite.mHeight = header.height;
-		sprite.mKeyX = header.key_x;
-		sprite.mKeyY = header.key_y;
-		sprite.mFrames = new Sprite2::Sequence*[header.group];
-        memset(sprite.mFrames, 0, sizeof(Sprite2::Sequence*)*header.group);
+		sprite->mID = std::to_string(id);
+		sprite->mPath = mFileName+"/"+sprite->mID;
+		sprite->mGroupSize = header.group;
+		sprite->mFrameSize = header.frame;
+		sprite->mWidth = header.width;
+		sprite->mHeight = header.height;
+		sprite->mKeyX = header.key_x;
+		sprite->mKeyY = header.key_y;
+		sprite->mFrames = new Sprite2::Sequence*[header.group];
+        memset(sprite->mFrames, 0, sizeof(Sprite2::Sequence*)*header.group);
 		for (int i = 0; i < header.group; i++)
 		{
-			sprite.mFrames[i] = new Sprite2::Sequence[header.frame];
-            memset(sprite.mFrames[i], 0, sizeof(Sprite2::Sequence)*header.frame);
+			sprite->mFrames[i] = new Sprite2::Sequence[header.frame];
+            memset(sprite->mFrames[i], 0, sizeof(Sprite2::Sequence)*header.frame);
 		}
 
 		if (header.flag != 0x5053)
 		{
 			cerr << "Sprite File Flag Error!" << endl;
-			exit(EXIT_FAILURE);
+			std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
+			sp->Error = true;
+            return sp;
+			//exit(EXIT_FAILURE);
 		}
 
-		// ?§Ø????????????????12
+		// ?ï¿½ï¿½????????????????12
 		if (header.len != 12)
 		{
 			// ???????????????
 			int AddonHeadLen = header.len - 12;
-			uint8* m_AddonHead = new uint8[AddonHeadLen]; // ???Àö??????????
+			uint8* m_AddonHead = new uint8[AddonHeadLen]; // ???ï¿½ï¿½??????????
 			mFile.read((char*)m_AddonHead, AddonHeadLen); // ???????????
 		}
 
@@ -120,8 +123,10 @@ namespace NetEase {
 
 		int frameHeadOffset = 2 + 2 + header.len;
 
-		uint32* frameLine = new uint32[header.height]; // ???????????§Ò????
+		uint32* frameLine = new uint32[header.height]; // ???????????ï¿½ï¿½????
+        memset(frameLine,0,4*header.height);
 		uint8* lineData = new uint8[header.width * 4]; // ?????????????
+        memset(lineData,0,4*header.width);
 
 		int x = 0; // ???????
 		int z = 0; // ???????
@@ -132,18 +137,35 @@ namespace NetEase {
 			int gpos = i / (header.frame);
 			int cpos = i % (header.frame);
 
-			Sprite2::Sequence& frame = sprite.mFrames[gpos][cpos];
+			Sprite2::Sequence& frame = sprite->mFrames[gpos][cpos];
 
 			WAS::FrameHeader tempFreamHeader;
-			mFile.seekg(wasOffset + frameHeadOffset + frameIndexes[i], ios::beg);
+            tempFreamHeader.key_x=0;
+            tempFreamHeader.key_y=0;
+            tempFreamHeader.width=0;
+            tempFreamHeader.height=0;
+
+
+            mFile.seekg(wasOffset + frameHeadOffset + frameIndexes[i], ios::beg);
 			mFile.read((char*)&tempFreamHeader, sizeof(WAS::FrameHeader));
+
+            if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15) )
+            {
+                std::cout <<"w:" << std::dec<< tempFreamHeader.width <<" \t h:" << tempFreamHeader.height << std::endl;
+                std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
+				std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
+				sp->Error = true;
+                return sp;
+            }
 
 			frame.key_x = tempFreamHeader.key_x;
 			frame.key_y = tempFreamHeader.key_y;
 			frame.width = tempFreamHeader.width;
 			frame.height = tempFreamHeader.height;
-			frame.src = new uint32[pixels];
+            frame.src = new uint32[pixels];
 			memset(frame.src, 0, pixels * 4);
+
+
 
 			// ??????????????
 			mFile.read((char*)frameLine, tempFreamHeader.height * 4);
@@ -152,11 +174,11 @@ namespace NetEase {
 			
 			for (int j = 0; j< tempFreamHeader.height; j++)
 			{
-				pBmpStart = frame.src + sprite.mWidth*(j);
+				pBmpStart = frame.src + sprite->mWidth*(j);
 				int lineDataLen = 0;
 				if (j < tempFreamHeader.height - 1)
 				{
-					lineDataLen = frameLine[j + 1] - frameLine[j]; // ???????????§³
+                	lineDataLen = frameLine[j + 1] - frameLine[j]; // ???????????ï¿½ï¿½
 				}
 				else
 				{
@@ -167,16 +189,16 @@ namespace NetEase {
 						lineDataLen = wasSize - (frameIndexes[i] + frameLine[j]);
 					}
 				}
-				// printf("lineLen:%d\n",lineDataLen);
+                // printf("lineLen:%d\n",lineDataLen);
 				memset(lineData, 0, frame.width);
 				mFile.seekg(wasOffset + frameIndexes[i] + frameHeadOffset + frameLine[j], ios::beg);
 				mFile.read((char*)lineData, lineDataLen);
-				// printf("before handler:  %x\n",  sprite.mFrames[gpos][cpos].src );
-				int pixelOffset = (sprite.mKeyX - frame.key_x);
-				int pixelLen = sprite.mWidth;
+				// printf("before handler:  %x\n",  sprite->mFrames[gpos][cpos].src );
+				int pixelOffset = (sprite->mKeyX - frame.key_x);
+				int pixelLen = sprite->mWidth;
 				// printf("pixelOffset: %d  pixelLen: %d\n",pixelOffset,pixelLen );
 				pBmpStart += pixelOffset;
-				pBmpStart += (sprite.mKeyY - frame.key_y)*sprite.mWidth;
+				pBmpStart += (sprite->mKeyY - frame.key_y)*sprite->mWidth;
 
 				DataHandler((char*)lineData, pBmpStart, pixelOffset, pixelLen);
 
@@ -196,7 +218,7 @@ namespace NetEase {
 		uint32 PixelLen = pixelLen;
 		uint16 AlphaPixel = 0;
 
-		while (*pData != 0) // {00000000} ????????§ß??????????????????????????
+		while (*pData != 0) // {00000000} ????????ï¿½ï¿½??????????????????????????
 		{
 			uint8 style = 0;
 			uint8 Level = 0; // Alpha????
@@ -219,11 +241,11 @@ namespace NetEase {
 						pData++;
 					}
 				}
-				else // {000*****} ??????n?¦Ä???Alpha?????????
+				else // {000*****} ??????n?ï¿½ï¿½???Alpha?????????
 				{
-					// {000 +5bit Times}+{1Byte Alpha}+{1Byte Index}, ??????n?¦Ä???Alpha??????????
+					// {000 +5bit Times}+{1Byte Alpha}+{1Byte Index}, ??????n?ï¿½ï¿½???Alpha??????????
 					// {000 +???1~31??}+{0~255??Alpha???}+{1~255???????????}
-					// ?: ?????{00000000} ??????????§ß???????????????????1~31?¦±?
+					// ?: ?????{00000000} ??????????ï¿½ï¿½???????????????????1~31?ï¿½ï¿½?
 					Repeat = (*pData) & 0x1f; // ???????????
 					pData++;
 					Level = *pData; // ???Alpha????
@@ -241,9 +263,9 @@ namespace NetEase {
 				}
 				break;
 			case 1: // {01******} ???????Alpha??????????n???????????????
-					// {01  +6bit Times}+{nByte Datas},???????Alpha??????????n??????????????¦±?
+					// {01  +6bit Times}+{nByte Datas},???????Alpha??????????n??????????????ï¿½ï¿½?
 					// {01  +1~63??????}+{n??????????},{01000000}????
-				Repeat = (*pData) & 0x3f; // ??????????§Ö????
+				Repeat = (*pData) & 0x3f; // ??????????ï¿½ï¿½????
 				pData++;
 				for (int i = 1; i <= Repeat; i++)
 				{
@@ -271,7 +293,7 @@ namespace NetEase {
 				pData++;
 				break;
 			case 3: // {11******} ???????n???????????????????????????
-					// {11  +6bit Times}, ???????n??????????????????????????µµ
+					// {11  +6bit Times}, ???????n??????????????????????????ï¿½ï¿½
 					// {11  +????1~63??????},{11000000}????
 				Repeat = (*pData) & 0x3f; // ??????????
 				for (int i = 1; i <= Repeat; i++)

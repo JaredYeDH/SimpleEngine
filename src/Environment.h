@@ -39,5 +39,12 @@ public:
 	{
 		return GetPath() + "/scripts/client/" + path;
 	}
-
+	static std::string GetWDFPath(std::string path)
+	{
+		return GetPath() + "/Data/" + path;
+	}
+	static std::string GetMapPath(std::string path)
+	{
+		return GetPath() + "/Data/scene/" + path;
+	}
 };

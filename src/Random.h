@@ -1,8 +1,10 @@
 #pragma once
-class Random
+#include "Singleton.h"
+class Random : public Singleton<Random>
 {
 public:
-	Random() {};
+	Random() ;
 	~Random() {};
-	static	int NextInt(int rangeMin,int rangeMax);
+	int NextInt(int rangeMin,int rangeMax);
 };
+#define RANDOM_INSTANCE Random::GetInstance()

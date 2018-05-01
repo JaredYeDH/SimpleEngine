@@ -4,6 +4,8 @@
 #include "Logger.h"
 #include "global.h"
 #include "../Message.h"
+#include "Combat.h"
+#include "../Random.h"
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94
@@ -17,7 +19,6 @@
 
 
 Player::Player(int roleID):
-m_ID(-1),
 m_RoleID(roleID),
 m_WeaponID(1),
 m_ActionID(1),
@@ -40,6 +41,7 @@ m_CombatTargetPos({0.0f,0.0f})
 	ChangeRole(m_RoleID);
 	m_pFSM = new StateMachine<Player>(this);
 	m_pFSM->SetCurrentState(PlayerCombatIdleState::GetInstance());
+	m_pFSM->SetGlobalState(PlayerCombatGlobalState::GetInstance());
 }
 
 
@@ -199,7 +201,14 @@ void Player::OnUpdate(double dt)
 				m_WeaponFrames[m_ActionID].OnUpdate(dt);
 			}
 		}
-
+		if(m_SkillFrame.IsNextFrameRestart())
+		{
+			m_bSkillFrameShow = false;
+		}
+		if(m_bSkillFrameShow)
+		{
+			m_SkillFrame.OnUpdate(dt);
+		}
 	}else
 	{
 		m_UpdateDelta += dt;
@@ -299,28 +308,34 @@ void Player::HandleMoveToCalled()
 }
 
 
-void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
+void Player::OnDraw(int px,int py)
 {	
+	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
 	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 	{
 		auto& player = m_PlayerFrames[m_ActionID];
 		int _px = px - player.GetWidth() / 2 + 10;
 		int _py = py - player.GetHeight() + 20;
-		player.Draw(renderer,_px,_py);
+        player.SetPos({_px,_py});
+		player.Draw();
 		
 		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
 		{
 			auto& weapon = m_WeaponFrames[m_ActionID];
 			int px2 = _px - (weapon.GetKeyX() - player.GetKeyX());
 			int py2 = _py - (weapon.GetKeyY() - player.GetKeyY());
-
-			weapon.Draw(renderer,px2,py2);
+            weapon.SetPos({px2,py2});
+			weapon.Draw();
 		}
 
 		if(!m_NickName.empty())
 		{
 			auto green = glm::vec3(115/255.0f,1.0f,137/255.0f);
 			TextRenderer::GetInstance()->RenderText(m_NickName,px - m_NickName.length()*1.8,SCREEN_HEIGHT-py-32,0.5f,green);
+		}
+		if(m_bSkillFrameShow)
+		{
+			m_SkillFrame.Draw();
 		}
 	}
 }
@@ -377,6 +392,13 @@ void Player::SetDir(int dir)
 	// m_Dir = dir;
 }
 
+
+bool Player::HandleMessage(const Telegram& msg) 
+{	
+	
+	return GetFSM()->HandleMessage(msg);
+};
+
 void PlayerCombatIdleState::Enter(Player* player) 
 {
 	player->SetActionID(4);
@@ -384,23 +406,14 @@ void PlayerCombatIdleState::Enter(Player* player)
 
 void PlayerCombatIdleState::Execute(Player* player) 
 {
-	if(player->GetID() == 7)
-	{
-		InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
-			[player](){
-				float x = 220.0f / 640 * SCREEN_WIDTH +70;
-				float y = 210.0f / 480 * SCREEN_HEIGHT+70;
-    			player->SetCombatTargetPos({x,y});
-				player->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
-			}
-		);
-	}
+	
 };
 
 void PlayerCombatMoveState::Enter(Player* player) 
 {
 	m_bSent = false;
 	player->SetActionID(11);
+	player->SetPos(player->GetCombatPos());
 	auto& playerFrame = player->GetCurrentPlayerFrame();
 	auto& weaponFrame = player->GetCurrentWeaponFrame();
 	double dist_sqr = GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) ;
@@ -442,7 +455,6 @@ bool PlayerCombatMoveState::OnMessage(Player* player, const Telegram& msg)
 
 void PlayerCombatAttackState::Enter(Player* player) 
 {
-
 	player->SetActionID(6);
 	auto& playerFrame = player->GetCurrentPlayerFrame();
 	auto& weaponFrame = player->GetCurrentWeaponFrame();
@@ -454,22 +466,19 @@ void PlayerCombatAttackState::Execute(Player* player)
 {
 	if(player->m_PlayerFrames.find(6)!= player->m_PlayerFrames.end() )
 	{
-	
+		
 		auto& playerFrame = player->GetCurrentPlayerFrame();
 		auto& weaponFrame = player->GetCurrentWeaponFrame();
-		// if(playerFrame.IsFirstFrame())
-		// {
-			
-		// }
-		// playerFrame.SetFrameTimeBase(1.0/60*6);
-		// weaponFrame.SetFrameTimeBase(1.0/60*6);
-		// weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
+		if(playerFrame.IsCurrentFrameChangedInUpdate() && playerFrame.GetLastFrame() % playerFrame.GetGroupFrameCount()== 3)
+		{
+			MESSAGE_DISPATCHER_INSTANCE->DispatchMessage(2,player->GetID(),player->GetTargetID(),MSG_PlayerCombatBeAttackedState,nullptr);
+		}
 		
 		if(playerFrame.IsNextFrameRestart())
 		{
-			float x = 525.0f / 640 * SCREEN_WIDTH ;
-			float y = 285.0f / 480 * SCREEN_HEIGHT;
-			player->SetCombatTargetPos({x,y});
+			// player->SetCombatPos(player->GetPos());			
+			player->SetCombatTargetPos(player->GetPos());
+
 			player->GetFSM()->ChangeState(PlayerCombatBackState::GetInstance());
 		}
 	}
@@ -508,6 +517,121 @@ void PlayerCombatBackState::Execute(Player* player)
 	else
 	{
 		player->ReverseDir();
+		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
+	}
+}
+
+
+void PlayerCombatBeAttackedState::Enter(Player* player) 
+{
+	player->SetActionID(10);
+    auto& playerFrame = player->GetCurrentPlayerFrame();
+    auto& weaponFrame = player->GetCurrentWeaponFrame();
+    playerFrame.SetFrameTimeBase(1.0 / 60 * 4 );
+    weaponFrame.SetFrameTimeBase(1.0 / 60 * 4 );
+	
+}
+void PlayerCombatBeAttackedState::Execute(Player* player) 
+{
+	if(player->m_PlayerFrames.find(11)!= player->m_PlayerFrames.end() )
+	{
+		auto& playerFrame = player->GetCurrentPlayerFrame();
+		auto& weaponFrame = player->GetCurrentWeaponFrame();
+		
+		if(playerFrame.IsNextFrameRestart())
+		{
+			player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
+		}
+	}
+}
+
+
+void PlayerCombatBeCastAttackedState::Enter(Player* player) 
+{
+	FrameAnimation* frame = SKILL_MANAGER_INSTANCE->GetRandomSkill();
+	frame->SetFrameTimeBase(1.0 / 60 * 3 );
+	int x = std::floor(player->GetCombatPos().x - frame->GetKeyX());
+	int y = std::floor(player->GetCombatPos().y- frame->GetKeyY());
+	frame->SetPos({x,y});
+	player->SetSkillFrame(frame);
+}
+
+void PlayerCombatBeCastAttackedState::Execute(Player* player) 
+{
+	if(player->m_PlayerFrames.find(11)!= player->m_PlayerFrames.end() )
+	{
+        auto& skillFrame = player->GetSkillFrame();
+        if(skillFrame.GetCurrentFrame() == std::floor(skillFrame.GetGroupFrameCount()/3.0*2))
+		{
+			player->GetFSM()->ChangeState(PlayerCombatBeAttackedState::GetInstance());
+		}
+	}
+}
+
+
+bool PlayerCombatGlobalState::OnMessage(Player* player, const Telegram& msg)
+{
+	if(msg.MsgType == MSG_PlayerCombatBeAttackedState)
+	{
+		player->GetFSM()->ChangeState(PlayerCombatBeAttackedState::GetInstance());
+		return true;
+	}
+	else if(msg.MsgType == MSG_PlayerCombatBeCastAttackedState)
+	{
+		player->GetFSM()->ChangeState(PlayerCombatBeCastAttackedState::GetInstance());
+		return true;
+	}
+	return false;
+}
+void PlayerCombatGlobalState::Enter(Player* player) 
+{
+}
+void PlayerCombatGlobalState::Execute(Player* player) 
+{
+}
+void PlayerCombatCastAttackState::Enter(Player* player) 
+{
+	player->SetActionID(7);
+	auto& playerFrame = player->GetCurrentPlayerFrame();
+	auto& weaponFrame = player->GetCurrentWeaponFrame();
+	playerFrame.SetFrameTimeBase(1.0/60*5);
+	weaponFrame.SetFrameTimeBase(1.0/60*5);
+	weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
+}
+void PlayerCombatCastAttackState::Execute(Player* player) 
+{
+	if(player->m_PlayerFrames.find(7)!= player->m_PlayerFrames.end() )
+	{
+		
+		auto& playerFrame = player->GetCurrentPlayerFrame();
+		auto& weaponFrame = player->GetCurrentWeaponFrame();
+		if(playerFrame.IsCurrentFrameChangedInUpdate() && playerFrame.GetLastFrame() % playerFrame.GetGroupFrameCount()== playerFrame.GetGroupFrameCount()/3)
+		{
+			SKILL_MANAGER_INSTANCE->SetRandomSkillID();
+			
+			std::set<int> enemySet;
+			for(int i=0;i<10;i++)
+            {
+                int a = RANDOM_INSTANCE->NextInt(10,19);
+				enemySet.insert(a);
+			}
+			int i = 0;
+			for (auto it = enemySet.begin(); it != enemySet.end(); ++it)
+			{
+				int enemy = *it;
+				MESSAGE_DISPATCHER_INSTANCE->DispatchMessage(i,player->GetID(),enemy,MSG_PlayerCombatBeCastAttackedState,nullptr);	
+				i=i+2;
+			}
+			
+		}
+		
+		if(playerFrame.IsNextFrameRestart())
+		{
+			player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
+		}
+	}
+	else
+	{
 		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
 	}
 }

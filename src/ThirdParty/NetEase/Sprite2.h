@@ -34,6 +34,7 @@ public:
 	String mID;
 	String mPath;
 	Sequence** mFrames;
+	bool Error;
 	void SaveImage(int index);
 };
 #endif

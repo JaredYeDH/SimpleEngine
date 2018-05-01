@@ -9,15 +9,26 @@ enum GameMessageType
 {
 	MSG_GAME_STATR,
 	MSG_COMBAT_ACTOR_ATTACK,
-	MSG_COMBAT_ACTOR_DEFEND
+	MSG_COMBAT_ACTOR_DEFEND,
+	MSG_PlayerCombatIdleState,
+	MSG_PlayerCombatMoveState,
+	MSG_PlayerCombatBackState,
+	MSG_PlayerCombatAttackState,
+	MSG_PlayerCombatBeAttackedState,
+	MSG_PlayerCombatBeCastAttackedState,
+	MSG_PlayerCombatGlobalState
 };
+
+
+
+
 
 
 struct Telegram
 {
 	int Sender;
 	int Receiver;
-	int Msg;			//GameMessageType
+	int MsgType;			//GameMessageType
 	int64_t DispatchTime;
 	void* ExtraInfo;
     
@@ -42,7 +53,7 @@ public:
 	void DispatchMessage(int delay,
 	int sender,
 	int receiver,
-	int msg,
+	int msgType,
 	void* ExtraInfo);
 
 	void DispatchDelayedMessage();

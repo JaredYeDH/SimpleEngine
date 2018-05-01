@@ -3,6 +3,40 @@
 #include "../defines.h"
 #include "../defineTypes.h"
 #include "Player.h"
+#include "../tsv.h"
+#include "../Singleton.h"
+#include "FrameAnimation.h"
+#include "../Random.h"
+
+class SkillManager : public Singleton<SkillManager>
+{
+	friend class Singleton<SkillManager>;
+public:
+	FrameAnimation* GetSkillByID(int id){ 
+		assert(m_Skills.find(id) != m_Skills.end());
+		return &m_Skills[id]; 
+	};
+	FrameAnimation* GetRandomSkill(){
+        std::cout << "m_RandomId ::" << m_RandomID << std::endl;
+		return &m_Skills[m_RandomID];
+	};
+
+	void SetRandomSkillID(){ 
+		m_RandomID++;
+		if(m_RandomID == m_Skills.size() )
+		{
+			m_RandomID=0;
+		}
+	};
+
+protected:
+	SkillManager();
+private:
+	int m_RandomID;
+	std::map<int,FrameAnimation> m_Skills;
+};
+#define SKILL_MANAGER_INSTANCE SkillManager::GetInstance()
+
 
 class CombatSystem
 {

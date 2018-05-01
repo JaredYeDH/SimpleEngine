@@ -40,3 +40,4 @@ private:
     // Initializes and configures the quad's buffer and vertex attributes
     void initRenderData();
 };
+#define SPRITE_RENDERER_INSTANCE SpriteRenderer::GetInstance()
