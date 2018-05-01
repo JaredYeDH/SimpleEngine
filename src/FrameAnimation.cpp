@@ -39,7 +39,7 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 		int cpos = i % m_GroupFrameCount;
 		
 		String tPath = sprite->mPath+"/"+std::to_string(i);
-		Texture* t = TextureManager::GetInstance()->LoadTexture(
+			Texture* t = TextureManager::GetInstance()->LoadTexture(
 			tPath,
 			sprite->mWidth,sprite->mHeight,true,(uint8*)&(sprite->mFrames[gpos][cpos].src[0])
 			);

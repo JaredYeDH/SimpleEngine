@@ -141,75 +141,32 @@ void CombatSystem::Draw()
 
 void CombatSystem::ProcessInput()
 {
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_3,
 		[this](){
 			for(auto* self: m_Ourselves)
 			{
 				if(self!=nullptr)
 				{
-					self->ChangeAction();
+					self->ChangeRole();
 				}
 			}
 		}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_7 ,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_4 ,
 		[this](){
-			// for(auto* self: m_Ourselves)
-			// {
-			// 	if(self!=nullptr)
-			// 	{
-			// 		self->ChangeAction();
-			// 	}
-			// }
-			//4->11->6->13->4
-			static int ac[4] = {4,11,6,13};
-			static int index=0;
-			auto* self = m_Ourselves[7];
-			if(index == 1)
+			for(auto* self: m_Ourselves)
 			{
-				float x = 220.0f / 640 * SCREEN_WIDTH +70;
-				float y = 210.0f / 480 * SCREEN_HEIGHT+70;
-                self->SetCombatTargetPos({x,y});
-				// self->MoveTo(ac[index++],);	
+				if(self!=nullptr)
+				{
+					self->ChangeWeapon();
+				}
 			}
-			else if(index==3)
-			{
-				float x = 525.0f / 640 * SCREEN_WIDTH ;
-				float y = 285.0f / 480 * SCREEN_HEIGHT;
-                self->SetCombatTargetPos({x,y});
-			}
-			self->ChangeAction(ac[index++]);
-
-			index = index==4?0:index;
 		}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_2,
-		[this](){
-			// for(auto* self: m_Ourselves)
-			// {
-			// 	if(self!=nullptr)
-			// 	{
-			// 		self->ChangeRole();
-			// 	}
-			// }
-		}
-	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_3,
-		[this](){
-			// for(auto* self: m_Ourselves)
-			// {
-			// 	if(self!=nullptr)
-			// 	{
-			// 		self->ChangeWeapon();
-			// 	}
-			// }
-		}
-	);
-
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_4,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_5,
 		[this](){
 			for(auto* enemy: m_Enemies)
 			{
@@ -221,7 +178,7 @@ void CombatSystem::ProcessInput()
 		}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_5,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_6,
 		[this](){
 			for(auto* enemy: m_Enemies)
 			{
@@ -233,7 +190,7 @@ void CombatSystem::ProcessInput()
 		}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_6,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_7,
 		[this](){
 			for(auto* enemy: m_Enemies)
 			{

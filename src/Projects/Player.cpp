@@ -335,6 +335,9 @@ void Player::OnDraw(int px,int py)
 		}
 		if(m_bSkillFrameShow)
 		{
+			int px2 = _px - (m_SkillFrame.GetKeyX() - player.GetKeyX());
+			int py2 = _py - (m_SkillFrame.GetKeyY() - player.GetKeyY()) - 15;
+            m_SkillFrame.SetPos({px2,py2});
 			m_SkillFrame.Draw();
 		}
 	}
@@ -548,11 +551,12 @@ void PlayerCombatBeAttackedState::Execute(Player* player)
 
 void PlayerCombatBeCastAttackedState::Enter(Player* player) 
 {
+	auto& playerFrame = player->GetCurrentPlayerFrame();
 	FrameAnimation* frame = SKILL_MANAGER_INSTANCE->GetRandomSkill();
-	frame->SetFrameTimeBase(1.0 / 60 * 3 );
-	int x = std::floor(player->GetCombatPos().x - frame->GetKeyX());
-	int y = std::floor(player->GetCombatPos().y- frame->GetKeyY());
-	frame->SetPos({x,y});
+	frame->SetFrameTimeBase(1.0 / 60 * 4 );
+	//int x = std::floor(player->GetCombatPos().x - frame->GetKeyX());
+	//int y = std::floor(player->GetCombatPos().y - frame->GetKeyY());
+	//frame->SetPos({x,y});
 	player->SetSkillFrame(frame);
 }
 

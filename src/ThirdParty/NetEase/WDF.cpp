@@ -29,7 +29,7 @@ namespace NetEase {
 		memset(mIndencies, 0, sizeof(Index)*number);
 		mFile.seekg(offset);
 		mFile.read((char*)mIndencies, sizeof(Index)*number);
-		// mFile.close();
+		mFile.close();
 
 		for (int i = 0; i<number; i++)
 		{
@@ -41,7 +41,7 @@ namespace NetEase {
 
 	WDF::~WDF()
 	{
-		mFile.close();
+	//	mFile.close();
 	}
 
 	/**
@@ -56,21 +56,24 @@ namespace NetEase {
 
 	std::shared_ptr<Sprite2> WDF::LoadSprite(uint32 id)
 	{
+		std::fstream file(mFilePath, ios::in | ios::binary);
+		
+        
 		WAS::Header header;
 		auto sprite = std::make_shared<Sprite2>();
 
 		Index index = mIndencies[mIdToPos[id]];
 		uint32 wasOffset = index.offset;
 		uint32 wasSize = index.size;
-		// mFile.seekg(wasOffset,ios::beg);
+		// file.seekg(wasOffset,ios::beg);
 		// char* outfilec=new char[wasSize];
-		// mFile.read(outfilec,wasSize);
+		// file.read(outfilec,wasSize);
 		// fstream of("a.was",ios::binary|ios::out);
 		// of.write(outfilec,wasSize);
 		// of.close();
 
-		mFile.seekg(wasOffset, ios::beg);
-		mFile.read((char*)&header, sizeof(header));
+		file.seekg(wasOffset, ios::beg);
+		file.read((char*)&header, sizeof(header));
 		sprite->mID = std::to_string(id);
 		sprite->mPath = mFileName+"/"+sprite->mID;
 		sprite->mGroupSize = header.group;
@@ -92,6 +95,7 @@ namespace NetEase {
 			cerr << "Sprite File Flag Error!" << endl;
 			std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
 			sp->Error = true;
+			file.close();
             return sp;
 			//exit(EXIT_FAILURE);
 		}
@@ -102,12 +106,12 @@ namespace NetEase {
 			// ???????????????
 			int AddonHeadLen = header.len - 12;
 			uint8* m_AddonHead = new uint8[AddonHeadLen]; // ???��??????????
-			mFile.read((char*)m_AddonHead, AddonHeadLen); // ???????????
+			file.read((char*)m_AddonHead, AddonHeadLen); // ???????????
 		}
 
 
 		// ????????????
-		mFile.read((char*)&palette16[0], 256 * 2); // Palette[0]?????
+		file.read((char*)&palette16[0], 256 * 2); // Palette[0]?????
 
 		for (int k = 0; k < 256; k++)
 		{
@@ -116,7 +120,7 @@ namespace NetEase {
 
 		int frameTotalSize = header.group * header.frame;
 		uint32* frameIndexes = new uint32[frameTotalSize];
-		mFile.read((char*)frameIndexes, frameTotalSize * 4);
+		file.read((char*)frameIndexes, frameTotalSize * 4);
 
 
 		uint32 pixels = header.width*header.height;
@@ -146,8 +150,8 @@ namespace NetEase {
             tempFreamHeader.height=0;
 
 
-            mFile.seekg(wasOffset + frameHeadOffset + frameIndexes[i], ios::beg);
-			mFile.read((char*)&tempFreamHeader, sizeof(WAS::FrameHeader));
+            file.seekg(wasOffset + frameHeadOffset + frameIndexes[i], ios::beg);
+			file.read((char*)&tempFreamHeader, sizeof(WAS::FrameHeader));
 
             if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15) )
             {
@@ -155,6 +159,7 @@ namespace NetEase {
                 std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
 				std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
 				sp->Error = true;
+				file.close();
                 return sp;
             }
 
@@ -168,7 +173,7 @@ namespace NetEase {
 
 
 			// ??????????????
-			mFile.read((char*)frameLine, tempFreamHeader.height * 4);
+			file.read((char*)frameLine, tempFreamHeader.height * 4);
 
 			uint32* pBmpStart = frame.src;//=frame.src+pixels*3;
 			
@@ -191,8 +196,8 @@ namespace NetEase {
 				}
                 // printf("lineLen:%d\n",lineDataLen);
 				memset(lineData, 0, frame.width);
-				mFile.seekg(wasOffset + frameIndexes[i] + frameHeadOffset + frameLine[j], ios::beg);
-				mFile.read((char*)lineData, lineDataLen);
+				file.seekg(wasOffset + frameIndexes[i] + frameHeadOffset + frameLine[j], ios::beg);
+				file.read((char*)lineData, lineDataLen);
 				// printf("before handler:  %x\n",  sprite->mFrames[gpos][cpos].src );
 				int pixelOffset = (sprite->mKeyX - frame.key_x);
 				int pixelLen = sprite->mWidth;
@@ -205,6 +210,8 @@ namespace NetEase {
 			}
 			 //sprite.SaveImage(i);
 		}
+		file.close();
+		sprite->Error= false;
 		return sprite;
 	}
 

@@ -6,7 +6,7 @@
 using namespace std;
 
 Sprite2::Sprite2()
-:Error(false)
+:Error(false),
 {
 
 }
