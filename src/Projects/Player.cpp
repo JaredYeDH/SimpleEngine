@@ -3,6 +3,7 @@
 #include "Demo.h"
 #include "Logger.h"
 #include "global.h"
+#include "../Message.h"
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94
@@ -97,7 +98,7 @@ void Player::ChangeRole(int roleID)
 			if(m_WeaponFrames.find(actionID) != m_WeaponFrames.end())
 			{
 				m_WeaponFrames[actionID].ResetAnim(m_Dir);
-				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
+				m_WeaponFrames[actionID].ResetFrameTimeByGroupCount(m_PlayerFrames[actionID].GetGroupFrameCount());
 			}
 		}
 	}
@@ -126,7 +127,7 @@ void Player::ChangeWeapon(int WeaponID )
 			if(m_PlayerFrames.find(actionID) != m_PlayerFrames.end())
 			{
 				m_PlayerFrames[actionID].ResetAnim(m_Dir);
-				m_WeaponFrames[actionID].ResetFrameTime(m_PlayerFrames[actionID].GetGroupFrameCount());
+				m_WeaponFrames[actionID].ResetFrameTimeByGroupCount(m_PlayerFrames[actionID].GetGroupFrameCount());
 			}
 		}
 	}
@@ -266,7 +267,6 @@ void Player::OnUpdate(double dt)
 		
 		HandleMoveToCalled();
 	}
-	
 }
 
 void Player::HandleMoveToCalled()
@@ -381,6 +381,7 @@ void PlayerCombatIdleState::Enter(Player* player)
 {
 	player->SetActionID(4);
 }
+
 void PlayerCombatIdleState::Execute(Player* player) 
 {
 	if(player->GetID() == 7)
@@ -389,7 +390,7 @@ void PlayerCombatIdleState::Execute(Player* player)
 			[player](){
 				float x = 220.0f / 640 * SCREEN_WIDTH +70;
 				float y = 210.0f / 480 * SCREEN_HEIGHT+70;
-        		player->SetCombatTargetPos({x,y});
+    			player->SetCombatTargetPos({x,y});
 				player->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
 			}
 		);
@@ -398,38 +399,73 @@ void PlayerCombatIdleState::Execute(Player* player)
 
 void PlayerCombatMoveState::Enter(Player* player) 
 {
+	m_bSent = false;
 	player->SetActionID(11);
+	auto& playerFrame = player->GetCurrentPlayerFrame();
+	auto& weaponFrame = player->GetCurrentWeaponFrame();
+	double dist_sqr = GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) ;
+	double d = std::sqrt(dist_sqr) *1.0 / playerFrame.GetGroupFrameCount();
+	player->SetVelocity(1100);
+	double localVelocity = player->GetVelocity();
+	playerFrame.SetFrameTimeBase(d/localVelocity);
+	weaponFrame.SetFrameTimeBase(d/localVelocity);
+	weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
 }
 
 void PlayerCombatMoveState::Execute(Player* player) 
 {	
 	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 	double localVelocity = player->GetVelocity()*dt;
+	//double time_base = 1.0/60*4;
 	if (GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) > localVelocity*localVelocity) {
 		int degree = GMath::Astar_GetAngle(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y);
 		//player->m_Dir = GMath::Astar_GetDir(degree);
 		double stepRangeX = cos(DegreeToRadian(degree));
 		double stepRangeY = sin(DegreeToRadian(degree));
-		player->m_CombatPos.x += stepRangeX*5;
-		player->m_CombatPos.y += stepRangeY*5;
+		player->m_CombatPos.x += stepRangeX*localVelocity;
+		player->m_CombatPos.y += stepRangeY*localVelocity;
 		// SetDir(player->m_Dir);
 	}
 	else
 	{
+		player->SetVelocity(400);
 		player->GetFSM()->ChangeState(PlayerCombatAttackState::GetInstance());
 	}
-	
 }
+
+bool PlayerCombatMoveState::OnMessage(Player* player, const Telegram& msg) 
+{
+	player->SetVelocity(400);
+	player->GetFSM()->ChangeState(PlayerCombatAttackState::GetInstance());
+	return true;
+};
+
 void PlayerCombatAttackState::Enter(Player* player) 
 {
+
 	player->SetActionID(6);
+	auto& playerFrame = player->GetCurrentPlayerFrame();
+	auto& weaponFrame = player->GetCurrentWeaponFrame();
+	playerFrame.SetFrameTimeBase(1.0/60*5);
+	weaponFrame.SetFrameTimeBase(1.0/60*5);
+	weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
 }
 void PlayerCombatAttackState::Execute(Player* player) 
 {
 	if(player->m_PlayerFrames.find(6)!= player->m_PlayerFrames.end() )
 	{
-		auto& frame = player->m_PlayerFrames[6];
-		if(frame.IsNextFrameRestart())
+	
+		auto& playerFrame = player->GetCurrentPlayerFrame();
+		auto& weaponFrame = player->GetCurrentWeaponFrame();
+		// if(playerFrame.IsFirstFrame())
+		// {
+			
+		// }
+		// playerFrame.SetFrameTimeBase(1.0/60*6);
+		// weaponFrame.SetFrameTimeBase(1.0/60*6);
+		// weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
+		
+		if(playerFrame.IsNextFrameRestart())
 		{
 			float x = 525.0f / 640 * SCREEN_WIDTH ;
 			float y = 285.0f / 480 * SCREEN_HEIGHT;
@@ -445,6 +481,16 @@ void PlayerCombatAttackState::Execute(Player* player)
 void PlayerCombatBackState::Enter(Player* player) 
 {
 	player->SetActionID(13);
+	auto& playerFrame = player->GetCurrentPlayerFrame();
+	auto& weaponFrame = player->GetCurrentWeaponFrame();
+	double dist_sqr = GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) ;
+	double d = std::sqrt(dist_sqr) *1.0 / playerFrame.GetGroupFrameCount();
+	player->SetVelocity(950);
+	double localVelocity = player->GetVelocity();
+	playerFrame.SetFrameTimeBase(d/localVelocity);
+	weaponFrame.SetFrameTimeBase(d/localVelocity);
+	player->ReverseDir();
+	weaponFrame.ResetFrameTimeByGroupCount(playerFrame.GetGroupFrameCount());
 }
 void PlayerCombatBackState::Execute(Player* player) 
 {
@@ -455,12 +501,13 @@ void PlayerCombatBackState::Execute(Player* player)
 		//player->m_Dir = GMath::Astar_GetDir(degree);
 		double stepRangeX = cos(DegreeToRadian(degree));
 		double stepRangeY = sin(DegreeToRadian(degree));
-		player->m_CombatPos.x += stepRangeX*5;
-		player->m_CombatPos.y += stepRangeY*5;
+		player->m_CombatPos.x += stepRangeX*localVelocity;
+		player->m_CombatPos.y += stepRangeY*localVelocity;
 		// SetDir(player->m_Dir);
 	}
 	else
 	{
+		player->ReverseDir();
 		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
 	}
 }

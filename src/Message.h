@@ -18,7 +18,7 @@ struct Telegram
 	int Sender;
 	int Receiver;
 	int Msg;			//GameMessageType
-	time_t DispatchTime;
+	int64_t DispatchTime;
 	void* ExtraInfo;
     
 	bool operator < (const Telegram& telegram) const
@@ -28,15 +28,18 @@ struct Telegram
  
 };
 
-class MessageDispatcher final : Singleton<MessageDispatcher>
+class MessageDispatcher final : public Singleton<MessageDispatcher>
 {
 private: 
+	friend class Singleton<MessageDispatcher>;
 	std::set<Telegram> m_MessageQueue;
 	void Discharge(BaseGameEntity* pReceiver, const Telegram& msg);
-	MessageDispatcher(){}
+	MessageDispatcher(){
+		m_MessageQueue.clear();
+	}
 public:
 	
-	void DispatchMessage(double delay,
+	void DispatchMessage(int delay,
 	int sender,
 	int receiver,
 	int msg,
@@ -44,5 +47,5 @@ public:
 
 	void DispatchDelayedMessage();
 };
-#define MESSAGE_DISPATCHER_INSTANCE MessageDispatcher::GetInstance();
+#define MESSAGE_DISPATCHER_INSTANCE MessageDispatcher::GetInstance()
 

@@ -8,6 +8,7 @@
 #include "../core/Renderer.h"
 #include "../global.h"
 #include "Combat.h"
+#include "../Message.h"
 
 float Demo::s_ScreenWidth = SCREEN_WIDTH;
 float Demo::s_ScreenHeight = SCREEN_HEIGHT;
@@ -147,6 +148,7 @@ void Demo::Update()
 	if(s_IsCombat)
 	{
 		s_CombatSystem->Update();
+		
 	}
 	else
 	{
@@ -362,15 +364,10 @@ void Demo::Draw()
 		m_GameMapPtr->DrawMask(SpriteRenderer::GetInstance(), m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	}
 	
-	
 	/*for (Player* npc : m_NPCs)
 	{
 		npc->OnDraw(SpriteRenderer::GetInstance(), npc->GetX() + mapOffsetX, npc->GetY() + mapOffsetY);
 	}*/
-
-
-	
-	
 	//m_Render.Render();
 
 	//// 1. Show a simple window
@@ -401,10 +398,7 @@ void Demo::Draw()
 	//}
 
 	//ImGui::Render();
-
-
 }
-
 
  void Demo::TestServer()
  {

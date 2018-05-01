@@ -4,11 +4,12 @@
 
 void MessageDispatcher::Discharge(BaseGameEntity* pReceiver, const Telegram& msg)
 {
+    if(pReceiver)
 	pReceiver->HandleMessage(msg);
 }
 
 
-void MessageDispatcher::DispatchMessage(double delay,
+void MessageDispatcher::DispatchMessage(int delay,
 	int sender,
 	int receiver,
 	int msg,
@@ -21,14 +22,14 @@ void MessageDispatcher::DispatchMessage(double delay,
     telegram.Receiver = receiver;
     telegram.Msg = msg;
     telegram.ExtraInfo = extraInfo;
-	if(delay <= 0.0)
+	if(delay <= 0 )
 	{
 		Discharge(pReceiver,telegram);
 	}
 	else
 	{
-        std::chrono::system_clock::time_point now =std::chrono::system_clock::now();
-		time_t currentTime =std::chrono::system_clock::to_time_t(now );
+    	auto now = std::chrono::system_clock::now();
+   		auto currentTime = now.time_since_epoch().count() /1000;
 		telegram.DispatchTime = currentTime + delay;
 		m_MessageQueue.insert(telegram);
 	}
@@ -36,10 +37,10 @@ void MessageDispatcher::DispatchMessage(double delay,
 
 void MessageDispatcher::DispatchDelayedMessage()
 {
-    std::chrono::system_clock::time_point now =std::chrono::system_clock::now();
-    time_t currentTime =std::chrono::system_clock::to_time_t(now );
+   	auto now = std::chrono::system_clock::now();
+   	auto currentTime = now.time_since_epoch().count() /1000;
 
-	while( (m_MessageQueue.begin()->DispatchTime < currentTime) &&
+	while(m_MessageQueue.size()>0&& (m_MessageQueue.begin()->DispatchTime < currentTime) &&
 		(m_MessageQueue.begin()->DispatchTime > 0) )
 	{
 		Telegram telegram = *m_MessageQueue.begin();

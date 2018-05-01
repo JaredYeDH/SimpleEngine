@@ -28,6 +28,7 @@ public:
 	~FrameAnimation();
 
 	int GetCurrentFrame() { return m_CurrentFrame;}
+	bool IsFirstFrame() { return m_CurrentFrame %m_GroupFrameCount ==0 ;}
 	int GetLastFrame() { return m_LastFrame;}
 	int GetFrameCount() { return m_FrameCount;}
 	int GetCurrentGroup() { return m_CurrentGroup;}
@@ -52,7 +53,10 @@ public:
 	void ResetAll();
 	void Reset(int group );
 	void ResetAnim(int group);
-	void ResetFrameTime(int groupCount);
+	void ResetFrameTimeByGroupCount(int groupCount);
+	
+	void SetFrameTimeBase(double base);
+	
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
 	Texture* GetFrame(int index); 
 	String GetFramePath(int index); 
@@ -79,5 +83,6 @@ public:
 
 
 	double m_FrameTime;
+	double m_FrameTimeBase;
 	std::vector<String> m_Sprites;
 };

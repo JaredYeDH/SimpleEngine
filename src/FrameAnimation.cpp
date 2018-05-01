@@ -56,14 +56,21 @@ m_PosY(0)
 	}
 	m_bVisible = true;
 	m_bLoop = true;
-	
-	m_FrameTime = 1.0 / 60 * 4 ;
+	m_FrameTimeBase = 1.0 / 60 * 4 ;
+	m_FrameTime = m_FrameTimeBase;
 }
-void FrameAnimation::ResetFrameTime(int groupCount)
+void FrameAnimation::ResetFrameTimeByGroupCount(int groupCount)
 {
-	m_FrameTime = 1.0 / 60 * 4 * groupCount/ m_GroupFrameCount;
+	m_FrameTime = m_FrameTimeBase * groupCount/ m_GroupFrameCount;
 	
 }
+void FrameAnimation::SetFrameTimeBase(double base)
+{
+	m_FrameTimeBase = base;
+	m_FrameTime = m_FrameTimeBase;
+}
+
+
 FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 {
 	this->m_LastFrame = rhs.m_LastFrame;
@@ -159,6 +166,7 @@ void FrameAnimation::ResetAnim(int group)
 	m_CurrentFrame=0;
 	SetCurrentGroup(group);
 	m_DeltaTime = 0;	
+	m_bIsNextFrameRestart = false;
 		// m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
 }
 

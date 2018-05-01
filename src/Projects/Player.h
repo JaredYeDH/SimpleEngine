@@ -31,6 +31,11 @@ private:
 	StateMachine<Player>* m_pFSM;
 public:
 	StateMachine<Player>* GetFSM(){ return m_pFSM;};
+ 	
+	bool HandleMessage(const Telegram& msg) override
+	{	
+		return GetFSM()->HandleMessage(msg);
+	};
 public:
 	enum ActionName : int 
 	{
@@ -52,7 +57,17 @@ public:
 	void SetDir(int dir);
 	void ReverseDir();
 	
-	void SetActionID(int state) { m_ActionID = state; };
+	void SetActionID(int state) { 
+		m_ActionID = state; 
+		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+		{
+			m_PlayerFrames[m_ActionID].ResetAnim(m_Dir);
+			if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+			{
+				m_WeaponFrames[m_ActionID].ResetAnim(m_Dir);
+			}
+		}
+	};
 	int GetActionID(){ return m_ActionID; }
 
 	void OnDraw(SpriteRenderer * renderer, int px,int py);
@@ -77,6 +92,18 @@ public:
 	void MoveTo(GameMap* gameMapPtr, int param2, int param3);
 	void SetVelocity(int velocity) { m_MoveVelocity = velocity; };
 	double GetVelocity() { return  m_MoveVelocity ;};
+
+	FrameAnimation& GetCurrentPlayerFrame()
+	{
+		assert(m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end());
+		return m_PlayerFrames[m_ActionID];
+	};
+	FrameAnimation& GetCurrentWeaponFrame()
+	{
+		assert(m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end());
+		return m_WeaponFrames[m_ActionID];
+	};
+	
 
 	bool IsMove() { return m_IsMove; }
 	int GetId() { return m_ID; }
@@ -157,6 +184,9 @@ class PlayerCombatMoveState : public BasePlayerCombatState, public Singleton<Pla
 public:	
     void Execute(Player* player) override;
 	void Enter(Player* player) override;
+	bool OnMessage(Player* , const Telegram& ) override;
+private:
+	bool m_bSent;
 };
 class PlayerCombatAttackState : public BasePlayerCombatState, public Singleton<PlayerCombatAttackState>
 {

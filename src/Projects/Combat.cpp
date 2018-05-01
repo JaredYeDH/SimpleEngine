@@ -2,7 +2,7 @@
 #include "../Engine.h"
 #include "Demo.h"
 #include "../global.h"
-
+#include "../Message.h"
 CombatSystem::CombatSystem()
 : m_Ourselves(10,nullptr),
 m_Enemies(10,nullptr)
@@ -20,6 +20,7 @@ void CombatSystem::AddEnemy(int pos,Player* enemy)
 	int dir  = static_cast<int>(FrameAnimation::Dir::S_E);
 	enemy->ResetDirAll(dir);
 	enemy->SetID(10+pos);
+	GAME_ENTITY_MANAGER_INSTANCE->RegisterEntity(enemy);
 	m_Enemies[pos] = enemy;
 
 }
@@ -29,12 +30,16 @@ void CombatSystem::AddSelf(int pos,Player* self)
 	int dir = static_cast<int>(FrameAnimation::Dir::N_W);
 	self->ResetDirAll(dir);
 	self->SetID(pos);
+	GAME_ENTITY_MANAGER_INSTANCE->RegisterEntity(self);
 	m_Ourselves[pos] = self;
 }
 
 void CombatSystem::Update()
 {
 	ProcessInput();
+	
+	MESSAGE_DISPATCHER_INSTANCE->DispatchDelayedMessage();
+
 	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 	for(auto* self: m_Ourselves)
 	{
@@ -51,8 +56,7 @@ void CombatSystem::Update()
 			enemy->OnUpdate(dt);
 		}
 	}
-
-
+	
 }
 
 void CombatSystem::Draw()
