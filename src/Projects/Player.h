@@ -8,9 +8,29 @@
 #include "tsv.h"
 #include "Logger.h"
 #include "animation_database.h"
+#include "../State.h"
+#include "../Message.h"
 
-class Player 
+
+class PlayerCombatIdleState;
+class PlayerCombatMoveState;
+class PlayerCombatBackState;
+class PlayerCombatAttackState;
+
+
+
+class Player  : public BaseGameEntity
 {
+private:
+	friend class PlayerCombatIdleState;
+	friend class PlayerCombatMoveState;
+	friend class PlayerCombatBackState;
+	friend class PlayerCombatAttackState;
+	
+
+	StateMachine<Player>* m_pFSM;
+public:
+	StateMachine<Player>* GetFSM(){ return m_pFSM;};
 public:
 	enum ActionName : int 
 	{
@@ -54,10 +74,9 @@ public:
 	void TranslateX(double x) { m_Pos.x += x; }
 	void TranslateY(double y) { m_Pos.y += y; }
 	
-	void PlayAction(int action,int dir);
-
 	void MoveTo(GameMap* gameMapPtr, int param2, int param3);
 	void SetVelocity(int velocity) { m_MoveVelocity = velocity; };
+	double GetVelocity() { return  m_MoveVelocity ;};
 
 	bool IsMove() { return m_IsMove; }
 	int GetId() { return m_ID; }
@@ -71,8 +90,6 @@ public:
 	void ChangeAction(int actionID);
 	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos;};
 	
-	
-
 	void SetNickName(std::wstring name) { m_NickName= name ;};
 	void SetIsCombat(bool bcombat){ m_bInCombat = bcombat;}
 private:
@@ -116,4 +133,45 @@ private:
 		);
 	}
 };
+
+
+class BasePlayerCombatState :  public State<Player> 
+{
+public:
+	virtual void Enter(Player* ){};
+    virtual void Execute(Player* player){};
+ 	virtual void Exit(Player* ) {};
+	virtual bool OnMessage(Player* , const Telegram& ) {};
+};
+
+class PlayerCombatIdleState : public BasePlayerCombatState, public Singleton<PlayerCombatIdleState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+};
+
+
+class PlayerCombatMoveState : public BasePlayerCombatState, public Singleton<PlayerCombatMoveState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+};
+class PlayerCombatAttackState : public BasePlayerCombatState, public Singleton<PlayerCombatAttackState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+};
+class PlayerCombatBackState : public BasePlayerCombatState, public Singleton<PlayerCombatBackState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+};
+
+
+
+
 

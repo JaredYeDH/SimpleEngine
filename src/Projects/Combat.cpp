@@ -19,19 +19,23 @@ void CombatSystem::AddEnemy(int pos,Player* enemy)
 {
 	int dir  = static_cast<int>(FrameAnimation::Dir::S_E);
 	enemy->ResetDirAll(dir);
+	enemy->SetID(10+pos);
 	m_Enemies[pos] = enemy;
+
 }
 
 void CombatSystem::AddSelf(int pos,Player* self)
 {
 	int dir = static_cast<int>(FrameAnimation::Dir::N_W);
 	self->ResetDirAll(dir);
+	self->SetID(pos);
 	m_Ourselves[pos] = self;
 }
 
 void CombatSystem::Update()
 {
-	double dt = Engine::GetInstance()->GetDeltaTime(); 
+	ProcessInput();
+	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 	for(auto* self: m_Ourselves)
 	{
 		if(self!=nullptr)
@@ -48,7 +52,7 @@ void CombatSystem::Update()
 		}
 	}
 
-	ProcessInput();
+
 }
 
 void CombatSystem::Draw()
@@ -89,7 +93,7 @@ void CombatSystem::ProcessInput()
 		}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_7 ,
 		[this](){
 			// for(auto* self: m_Ourselves)
 			// {

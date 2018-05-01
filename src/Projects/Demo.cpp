@@ -150,7 +150,7 @@ void Demo::Update()
 	}
 	else
 	{
-		double dt = Engine::GetInstance()->GetDeltaTime(); 
+		double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 		m_StriderPtr->OnUpdate(dt);
 		m_OtherPtr->OnUpdate(dt);
 		for (Player* npc : m_NPCs)

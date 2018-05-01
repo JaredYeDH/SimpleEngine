@@ -28,6 +28,6 @@ private:
 	Engine();
 	double m_DeltaTime;
 	IUpdateDraw * mSence;
-	
-
 };
+
+#define ENGINE_INSTANCE Engine::GetInstance()

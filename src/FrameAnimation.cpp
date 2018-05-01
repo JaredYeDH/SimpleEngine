@@ -5,6 +5,7 @@ FrameAnimation::FrameAnimation()
 :m_PosX(0),
 m_PosY(0)
 {
+	m_LastFrame = -1;
 	m_CurrentFrame = 0;
 	m_CurrentGroup = 0;
 	m_GroupFrameCount = 0;
@@ -20,6 +21,7 @@ FrameAnimation::FrameAnimation(Sprite2 sprite)
 :m_PosX(0),
 m_PosY(0)
 {
+	m_LastFrame = -1;
 	m_CurrentFrame = 0;
 	m_CurrentGroup = 0;
 	m_GroupFrameCount = sprite.mFrameSize;
@@ -64,6 +66,7 @@ void FrameAnimation::ResetFrameTime(int groupCount)
 }
 FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 {
+	this->m_LastFrame = rhs.m_LastFrame;
 	this->m_CurrentFrame = rhs.m_CurrentFrame;
 	this->m_CurrentGroup = rhs.m_CurrentGroup;
 	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
@@ -117,9 +120,11 @@ void FrameAnimation::SetCurrentGroup(int group)
 void FrameAnimation::OnUpdate(double dt)
 {
 	m_DeltaTime += dt;
+	m_bIsNextFrameRestart = false;
 	if( m_DeltaTime  >= m_FrameTime)
 	{
 		m_DeltaTime = m_DeltaTime - m_FrameTime;
+		m_LastFrame = m_CurrentFrame;
 		m_CurrentFrame++;
 		if( m_CurrentFrame % m_GroupFrameCount == 0 )
 		{
@@ -128,14 +133,9 @@ void FrameAnimation::OnUpdate(double dt)
 			{
 				m_CurrentGroup = 0;
 			}*/
-			if (!m_bLoop)
-			{
-				m_CurrentFrame--;
-			}
-			else
-			{
-				m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
-			}
+			m_bIsNextFrameRestart = true;
+			m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
+			m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
 		}
 	}
 }

@@ -31,13 +31,14 @@ m_MoveList(),
 m_BackupMoveList(),
 m_MoveToCalled(false),
 m_AnimDB(),
-m_bInCombat(false),
+m_bInCombat(true),
 m_CombatPos({0.0f,0.0f}),
 m_CombatTargetPos({0.0f,0.0f})
 {
 	LogInfo();
 	ChangeRole(m_RoleID);
-	
+	m_pFSM = new StateMachine<Player>(this);
+	m_pFSM->SetCurrentState(PlayerCombatIdleState::GetInstance());
 }
 
 
@@ -167,18 +168,28 @@ void Player::OnUpdate(double dt)
 {
 	if(m_bInCombat)
 	{
-        double localVelocity = 5*m_MoveVelocity*dt;
-		if (GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y) > localVelocity*localVelocity) {
-			int degree = GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
-			//m_Dir = GMath::Astar_GetDir(degree);
-			double stepRangeX = cos(DegreeToRadian(degree));
-			double stepRangeY = sin(DegreeToRadian(degree));
+		
+        // double localVelocity = m_MoveVelocity*dt;
+		// if (GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y) > localVelocity*localVelocity) {
+		// 	int degree = GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+		// 	//m_Dir = GMath::Astar_GetDir(degree);
+		// 	double stepRangeX = cos(DegreeToRadian(degree));
+		// 	double stepRangeY = sin(DegreeToRadian(degree));
 
-			m_CombatPos.x += stepRangeX*5;
-			m_CombatPos.y += stepRangeY*5;
-			dt=dt/5;
-			// SetDir(m_Dir);
-		}
+		// 	m_CombatPos.x += stepRangeX*5;
+		// 	m_CombatPos.y += stepRangeY*5;
+		// 	//dt=dt/5;
+		// 	// SetDir(m_Dir);
+		// }
+		// if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+		// {
+		// 	m_PlayerFrames[m_ActionID].OnUpdate(dt);
+		// 	if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		// 	{
+		// 		m_WeaponFrames[m_ActionID].OnUpdate(dt);
+		// 	}
+		// }
+		m_pFSM->Update();
 		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 		{
 			m_PlayerFrames[m_ActionID].OnUpdate(dt);
@@ -312,21 +323,8 @@ void Player::OnDraw(SpriteRenderer * renderer, int px,int py)
 			TextRenderer::GetInstance()->RenderText(m_NickName,px - m_NickName.length()*1.8,SCREEN_HEIGHT-py-32,0.5f,green);
 		}
 	}
-
 }
 
-void Player::PlayAction(int action,int dir)
-{
-	SetActionID(action);
-	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
-	{
-		m_PlayerFrames[m_ActionID].ResetAnim(m_Dir);
-		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-		{
-			m_WeaponFrames[m_ActionID].ResetAnim(m_Dir);
-		}	
-	}
-}
 
 void Player::SetPos(double x, double y)
 {
@@ -379,4 +377,90 @@ void Player::SetDir(int dir)
 	// m_Dir = dir;
 }
 
+void PlayerCombatIdleState::Enter(Player* player) 
+{
+	player->SetActionID(4);
+}
+void PlayerCombatIdleState::Execute(Player* player) 
+{
+	if(player->GetID() == 7)
+	{
+		InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
+			[player](){
+				float x = 220.0f / 640 * SCREEN_WIDTH +70;
+				float y = 210.0f / 480 * SCREEN_HEIGHT+70;
+        		player->SetCombatTargetPos({x,y});
+				player->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
+			}
+		);
+	}
+};
 
+void PlayerCombatMoveState::Enter(Player* player) 
+{
+	player->SetActionID(11);
+}
+
+void PlayerCombatMoveState::Execute(Player* player) 
+{	
+	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
+	double localVelocity = player->GetVelocity()*dt;
+	if (GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) > localVelocity*localVelocity) {
+		int degree = GMath::Astar_GetAngle(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y);
+		//player->m_Dir = GMath::Astar_GetDir(degree);
+		double stepRangeX = cos(DegreeToRadian(degree));
+		double stepRangeY = sin(DegreeToRadian(degree));
+		player->m_CombatPos.x += stepRangeX*5;
+		player->m_CombatPos.y += stepRangeY*5;
+		// SetDir(player->m_Dir);
+	}
+	else
+	{
+		player->GetFSM()->ChangeState(PlayerCombatAttackState::GetInstance());
+	}
+	
+}
+void PlayerCombatAttackState::Enter(Player* player) 
+{
+	player->SetActionID(6);
+}
+void PlayerCombatAttackState::Execute(Player* player) 
+{
+	if(player->m_PlayerFrames.find(6)!= player->m_PlayerFrames.end() )
+	{
+		auto& frame = player->m_PlayerFrames[6];
+		if(frame.IsNextFrameRestart())
+		{
+			float x = 525.0f / 640 * SCREEN_WIDTH ;
+			float y = 285.0f / 480 * SCREEN_HEIGHT;
+			player->SetCombatTargetPos({x,y});
+			player->GetFSM()->ChangeState(PlayerCombatBackState::GetInstance());
+		}
+	}
+	else
+	{
+		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
+	}
+}
+void PlayerCombatBackState::Enter(Player* player) 
+{
+	player->SetActionID(13);
+}
+void PlayerCombatBackState::Execute(Player* player) 
+{
+	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
+	double localVelocity = player->GetVelocity()*dt;
+	if (GMath::Astar_GetDistanceSquare(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y) > localVelocity*localVelocity) {
+		int degree = GMath::Astar_GetAngle(player->m_CombatPos.x, player->m_CombatPos.y, player->m_CombatTargetPos.x, player->m_CombatTargetPos.y);
+		//player->m_Dir = GMath::Astar_GetDir(degree);
+		double stepRangeX = cos(DegreeToRadian(degree));
+		double stepRangeY = sin(DegreeToRadian(degree));
+		player->m_CombatPos.x += stepRangeX*5;
+		player->m_CombatPos.y += stepRangeY*5;
+		// SetDir(player->m_Dir);
+	}
+	else
+	{
+		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
+	}
+}

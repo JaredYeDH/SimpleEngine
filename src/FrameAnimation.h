@@ -28,6 +28,7 @@ public:
 	~FrameAnimation();
 
 	int GetCurrentFrame() { return m_CurrentFrame;}
+	int GetLastFrame() { return m_LastFrame;}
 	int GetFrameCount() { return m_FrameCount;}
 	int GetCurrentGroup() { return m_CurrentGroup;}
 
@@ -58,9 +59,10 @@ public:
 
 	void OnUpdate(double dt);
 	void Draw(SpriteRenderer* renderer,int x, int y);
-
+	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};
 	int m_FrameCount;
 	int m_CurrentFrame;
+	int m_LastFrame;
 	int m_CurrentGroup;
 	int m_GroupFrameCount;
 	int m_KeyX;
@@ -70,6 +72,7 @@ public:
 	int m_Width;
 	int m_Height;
 	bool m_bLoop;
+	bool m_bIsNextFrameRestart;
 
 	double m_DeltaTime;
 	bool m_bVisible;
