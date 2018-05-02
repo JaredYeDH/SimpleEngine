@@ -11,6 +11,7 @@ SkillManager::SkillManager()
 	utils::tsv skillTSV(Environment::GetTsvPath("magic"));
 	m_Skills.clear();
 	for(int i=0;i<skillTSV.rows.size()-1;i++)
+	// for(int i=0;i<4;i++)
 	{	
 		auto row = skillTSV.cols[i];
 		int id = std::stoi(row[0]);

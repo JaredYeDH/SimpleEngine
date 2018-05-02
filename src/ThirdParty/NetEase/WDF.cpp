@@ -57,9 +57,15 @@ namespace NetEase {
 	std::shared_ptr<Sprite2> WDF::LoadSprite(uint32 id)
 	{
 		std::fstream file(mFilePath, ios::in | ios::binary);
-		
+		// if(!file)
+        // {
+        //     std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
+        //     sp->Error = true;
+        //     return sp;
+        // }
         
 		WAS::Header header;
+        memset(&header,0,sizeof(WAS::Header));
 		auto sprite = std::make_shared<Sprite2>();
 
 		Index index = mIndencies[mIdToPos[id]];
@@ -74,6 +80,9 @@ namespace NetEase {
 
 		file.seekg(wasOffset, ios::beg);
 		file.read((char*)&header, sizeof(header));
+
+		
+
 		sprite->mID = std::to_string(id);
 		sprite->mPath = mFileName+"/"+sprite->mID;
 		sprite->mGroupSize = header.group;
@@ -82,6 +91,8 @@ namespace NetEase {
 		sprite->mHeight = header.height;
 		sprite->mKeyX = header.key_x;
 		sprite->mKeyY = header.key_y;
+
+		
 		sprite->mFrames = new Sprite2::Sequence*[header.group];
         memset(sprite->mFrames, 0, sizeof(Sprite2::Sequence*)*header.group);
 		for (int i = 0; i < header.group; i++)
@@ -99,6 +110,8 @@ namespace NetEase {
             return sp;
 			//exit(EXIT_FAILURE);
 		}
+
+		
 
 		// ?��????????????????12
 		if (header.len != 12)
@@ -119,6 +132,8 @@ namespace NetEase {
 		}
 
 		int frameTotalSize = header.group * header.frame;
+		// std::cout <<"frameTotalSize: "<< frameTotalSize<<std::endl;
+
 		uint32* frameIndexes = new uint32[frameTotalSize];
 		file.read((char*)frameIndexes, frameTotalSize * 4);
 
@@ -137,6 +152,7 @@ namespace NetEase {
 
 
 		for (int i = 0; i<frameTotalSize; i++)
+		// for (int i = frameTotalSize/2; i< frameTotalSize/2+1; i++)
 		{
 			int gpos = i / (header.frame);
 			int cpos = i % (header.frame);
@@ -144,17 +160,49 @@ namespace NetEase {
 			Sprite2::Sequence& frame = sprite->mFrames[gpos][cpos];
 
 			WAS::FrameHeader tempFreamHeader;
-            tempFreamHeader.key_x=0;
-            tempFreamHeader.key_y=0;
-            tempFreamHeader.width=0;
-            tempFreamHeader.height=0;
-
+            memset(&tempFreamHeader,0,sizeof(	WAS::FrameHeader ));
 
             file.seekg(wasOffset + frameHeadOffset + frameIndexes[i], ios::beg);
 			file.read((char*)&tempFreamHeader, sizeof(WAS::FrameHeader));
 
-            if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15) )
+            if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15)
+            //    ||tempFreamHeader.key_x >= (1<<15) || tempFreamHeader.key_y >= (1 <<15)
+               )
             {
+				
+//				for (int i = 0; i < header.group; i++)
+//				{
+//					if(sprite->mFrames[i])
+//					{
+//                        if(sprite->mFrames[i]->src)
+//                        {
+//                            delete[] sprite->mFrames[i]->src;
+//                            sprite->mFrames[i]->src=nullptr;
+//                        }
+//
+//						delete[] sprite->mFrames[i];
+//                        sprite->mFrames[i] = nullptr;
+//					}
+//					
+//				}
+//                if(sprite->mFrames)
+//                {
+//                    delete[] sprite->mFrames;
+//                    sprite->mFrames=nullptr;
+//                }
+//
+				
+//				if(frameLine)
+//				{
+//					delete[] frameLine;
+//					frameLine = nullptr;
+//				}
+//				if(lineData)
+//				{
+//					delete[] lineData;
+//					lineData = nullptr;
+//				}
+//
                 std::cout <<"w:" << std::dec<< tempFreamHeader.width <<" \t h:" << tempFreamHeader.height << std::endl;
                 std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
 				std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
@@ -208,13 +256,27 @@ namespace NetEase {
 				DataHandler((char*)lineData, pBmpStart, pixelOffset, pixelLen);
 
 			}
-			 //sprite.SaveImage(i);
+			 //sprite->SaveImage(i);
 		}
 		file.close();
 		sprite->Error= false;
 		return sprite;
 	}
 
+	std::vector<std::shared_ptr<Sprite2>> WDF::LoadAllSprite()
+	{
+		std::vector<std::shared_ptr<Sprite2>> v;
+		for (int i = 0; i<mHeader.number; i++)
+		{
+			
+			auto p = LoadSprite(mIndencies[i].hash);
+			if(!p->Error)
+			{
+				v.push_back(p);
+			}
+		}
+		return v;
+	}
 
 
 	void WDF::DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen)

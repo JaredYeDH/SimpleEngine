@@ -6,9 +6,9 @@ FrameAnimation::FrameAnimation()
 {
 	m_LastFrame = -1;
 	m_CurrentFrame = 0;
-	m_CurrentGroup = 0;
-	m_GroupFrameCount = 0;
-	m_FrameCount = 0;
+	m_CurrentGroup = 1;
+	m_GroupFrameCount = 1;
+	m_FrameCount = 1;
 	m_DeltaTime = 0;
 	m_bIsNextFrameRestart = false;
 	m_bVisible = false;
@@ -34,24 +34,24 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 	
 	m_Sprites.clear();
 
+  //  m_Sprites.resize(m_FrameCount);
 	for (int i = 0; i< m_FrameCount ; i++) {
 		int gpos = i / m_GroupFrameCount;
 		int cpos = i % m_GroupFrameCount;
-		
-		String tPath = sprite->mPath+"/"+std::to_string(i);
-			Texture* t = TextureManager::GetInstance()->LoadTexture(
+
+//        if(sprite->mFrames &&sprite->mFrames[gpos] && sprite->mFrames[gpos][cpos].src)
+//        {
+            String tPath = sprite->mPath+"/"+std::to_string(i);
+            Texture* t = TextureManager::GetInstance()->LoadTexture(
 			tPath,
 			sprite->mWidth,sprite->mHeight,true,(uint8*)&(sprite->mFrames[gpos][cpos].src[0])
 			);
-
-		// Texture * t= new Texture(
-		// 		sprite->mWidth,
-		// 		sprite->mHeight,
-		// 		true, 
-		// 		(uint8*)&(sprite->mFrames[gpos][cpos].src[0]) 
-		// 		);
-
-		m_Sprites.push_back(tPath);
+        m_Sprites.push_back(tPath);
+//            m_Sprites[i]=tPath;
+//        }else
+//        {
+//            m_Sprites[i]="";
+//        }
 	}
 	m_bVisible = true;
 	m_bLoop = true;
@@ -70,7 +70,7 @@ void FrameAnimation::SetFrameTimeBase(double base)
 }
 
 
-FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
+FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs) 
 {
 	this->m_LastFrame = rhs.m_LastFrame;
 	this->m_CurrentFrame = rhs.m_CurrentFrame;
@@ -83,9 +83,9 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_KeyY = rhs.m_KeyY;
 	this->m_Width = rhs.m_Width;
 	this->m_Height = rhs.m_Height;
-	
-	this->m_Sprites = rhs.m_Sprites;
-	this->m_bVisible = rhs.m_bVisible;
+
+    this->m_Sprites = rhs.m_Sprites;
+    this->m_bVisible = rhs.m_bVisible;
 	this->m_bLoop = rhs.m_bLoop;
 	this->m_Pos = rhs.m_Pos;
 	this->m_FrameTime = rhs.m_FrameTime;
@@ -116,14 +116,18 @@ String FrameAnimation::GetFramePath(int index = -1)
 
 void FrameAnimation::SetCurrentGroup(int group)
 {
-	m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
-	m_CurrentGroup = group;
+    // if(m_GroupFrameCount!=0)
+    // {
+	   m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
+	   m_CurrentGroup = group;
+    // }
 	//m_DeltaTime = 0;
 }
 
 
 void FrameAnimation::OnUpdate(double dt)
 {
+	// if(true)return;
 	m_DeltaTime += dt;
 	m_bIsNextFrameRestart = false;
 	m_bCurrentFrameChangedInUpdate = false;
@@ -178,6 +182,7 @@ void FrameAnimation::SetVisible(bool visible)
 
 void FrameAnimation::Draw()
 {
+	// m_CurrentFrame = m_Sprites.size()/2;
 	if (m_CurrentFrame >= m_Sprites.size()) return;
     SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
 	auto path = m_Sprites[m_CurrentFrame];

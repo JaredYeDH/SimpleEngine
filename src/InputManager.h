@@ -67,3 +67,4 @@ private:
 	static std::map<int,std::function<void()>> s_ClickEvents;
 };
 
+#define INPUT_MANAGER_INSTANCE InputManager::GetInstance()

@@ -6,6 +6,10 @@
 #include "../TextRenderer.h"
 #include "../Bitmap.h"
 #include "Combat.h"
+#include "FrameAnimation.h"
+#include "ThirdParty/NetEase/Sprite2.h"
+#include "ThirdParty/NetEase/WDF.h"
+#include "ThirdParty/NetEase/WAS.h"
 // #include "../tsv.h"
 
 // #include "animation_database.h"
@@ -22,16 +26,28 @@ struct Test2
 	int b;
 };
 
+std::vector<FrameAnimation> g_SkillFrame(100);
 
+std::vector<std::shared_ptr<Sprite2>> g_AllSprites;
+static NetEase::WDF* g_Loader = nullptr;
+std::vector<uint32> g_WASIDs; 
+bool g_bChangeLock  = false;
 AlphaSence::AlphaSence()
 :m_Render()
 {
-	SKILL_MANAGER_INSTANCE;
-	Test2 t2;
-	std::cout << "t2:" << std::hex << &t2
-		<< "\t t2.dd" << &t2.dd
-		<< "\t t2.b" << &t2.b
-		<< "\t t2.dd.a" << &t2.dd.a << std::endl;
+	// SKILL_MANAGER_INSTANCE;
+	// Test2 t2;
+	// std::cout << "t2:" << std::hex << &t2
+	// 	<< "\t t2.dd" << &t2.dd
+	// 	<< "\t t2.b" << &t2.b
+	// 	<< "\t t2.dd.a" << &t2.dd.a << std::endl;
+	g_Loader =new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
+	// g_AllSprites = g_Loader->LoadAllSprite();
+	g_WASIDs =  g_Loader->GetAllWASIDs();
+
+	
+	// g_SkillFrame =loader->LoadSprite(0x091ADDC7);
+
 
 	//TestTimer
 	//TimerManager::GetInstance()->CreateTimer("Deda2", 1000, true, false, [this](){
@@ -77,9 +93,9 @@ AlphaSence::AlphaSence()
        		
 	// }
 
-	Bitmap bitmap;
+	// Bitmap bitmap;
 	//bitmap.CreateBitmapFile(201 ,201, 8, "D:\\a.bmp");
-	BitmapFile f;
+	// BitmapFile f;
 	//bitmap.Load("F:\\svn\\misc\\2d_logicmap\\2\\areas_0_-43916_18934_85194_47922",f);
 	//bitmap.Save("D:\\a.bmp", f);
 
@@ -90,41 +106,50 @@ AlphaSence::~AlphaSence()
 	
 }
 
-bool toggle = false;
-bool s = false;
+static int g_CurrentSprite = -1;
 void AlphaSence::Update() 
 {
+	//if(g_bChangeLock) return;
+	double dt = ENGINE_INSTANCE->GetDeltaTime();
+	for(auto& f : g_SkillFrame)
+		f.OnUpdate(dt);
 	
     // lua_settop(L,0);
     // lua_getglobal(L,"OnUpdate");
     // lua_pcall(L,0,0,0);
-
-	if (InputManager::GetInstance()->IsKeyDown(GLFW_KEY_LEFT_SUPER)  )
-	{	
+    INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_1,[]()
+	{
+		if(g_CurrentSprite >= g_WASIDs.size())
+			g_CurrentSprite = 0;
 		
+//        g_SkillFrame.clear();
+		g_bChangeLock = true;
+		int cnt = 0;
+		while(true && g_CurrentSprite < g_WASIDs.size())
+		{
+
+			auto res = g_Loader->LoadSprite(g_WASIDs[g_CurrentSprite++]);
+			if(!res->Error)
+			{
+				g_SkillFrame[cnt] = FrameAnimation( res );
+				int x = cnt % 12 ;
+				int y = cnt / 12 ;
+				g_SkillFrame[cnt].SetPos({x*120,y*120});
+				cnt++;
+				if(cnt == 80)
+				{
+					g_bChangeLock = false;
+					return;
+				}
+					
+			}
 			
-		if(InputManager::GetInstance()->IsKeyDown(GLFW_KEY_E))
-		{
-			if(s ) return ;
-			s = true;
-			toggle = !toggle;				
-			// toggle = !toggle;
-		
-		// img->T().pos.x++;
-		// img->T().pos.y += 2;
-		// if (img->T().pos.y > 500)
-		// {
-		// 	img->T().pos.x=0;
-		// 	img->T().pos.y = 0;
-		// }	
 		}
+        g_bChangeLock = false;
+        return;
 
-		if(InputManager::GetInstance()->IsKeyUp(GLFW_KEY_E))
-		{
-			//img->SetVisible(toggle);
-			//s=false;
-		}
-	}
+		
+	});
 
 	
 }
@@ -133,6 +158,9 @@ void AlphaSence::Update()
 
 void AlphaSence::Draw() 
 {
+	if(g_bChangeLock) return;
+	for(auto& f : g_SkillFrame)
+		f.Draw();
 	//textRenderer->Draw();
 	//m_Render.Render();
 }

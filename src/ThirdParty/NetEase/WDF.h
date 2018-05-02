@@ -36,6 +36,16 @@ namespace NetEase {
 		// Sprite LoadSprite(int id);
 		WAS GetWAS(uint32 id);
 		std::shared_ptr<Sprite2> LoadSprite(uint32 id);
+		std::vector<uint32> GetAllWASIDs()
+		{
+			std::vector<uint32> ids;
+			for(int i=0;i<mHeader.number;i++)
+			{
+				ids.push_back(mIndencies[i].hash);
+			}
+			return ids;
+		}
+		std::vector<std::shared_ptr<Sprite2>> LoadAllSprite();
 		~WDF();
 
 	public:
