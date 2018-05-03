@@ -44,7 +44,8 @@ AlphaSence::AlphaSence()
 	g_Loader =new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
 	// g_AllSprites = g_Loader->LoadAllSprite();
 	g_WASIDs =  g_Loader->GetAllWASIDs();
-
+	 g_Loader->SaveWAS(0xC12C2663);
+	auto p = g_Loader->LoadSprite(0xC12C2663);
 	
 	// g_SkillFrame =loader->LoadSprite(0x091ADDC7);
 

@@ -31,10 +31,12 @@ namespace NetEase {
 	public:
 		WDF();
 		WDF(std::string path) :mFilePath(path) { Init(); }
-		void DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen);
+		
+		void DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen,int y, bool& copyline);
 		void Init();
 		// Sprite LoadSprite(int id);
 		WAS GetWAS(uint32 id);
+		void SaveWAS(uint32 id);
 		std::shared_ptr<Sprite2> LoadSprite(uint32 id);
 		std::vector<uint32> GetAllWASIDs()
 		{

@@ -18,7 +18,12 @@ public:
 	};
 	FrameAnimation* GetRandomSkill(){
         std::cout << "m_RandomId ::" << m_RandomID << std::endl;
-		return &m_Skills[m_RandomID];
+		int i = 0 ;
+		for(auto& it : m_Skills)
+		{
+			if(i++ == m_RandomID) return &(it.second);
+		}
+		return nullptr;
 	};
 
 	void SetRandomSkillID(){ 
@@ -30,6 +35,7 @@ protected:
 	SkillManager();
 private:
 	int m_RandomID;
+	std::map<int,int> m_SkillsIDMap;
 	std::map<int,FrameAnimation> m_Skills;
 };
 #define SKILL_MANAGER_INSTANCE SkillManager::GetInstance()
