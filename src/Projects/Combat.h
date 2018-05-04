@@ -18,17 +18,17 @@ public:
 	};
 	FrameAnimation* GetRandomSkill(){
         std::cout << "m_RandomId ::" << m_RandomID << std::endl;
-		int i = 0 ;
+		
 		for(auto& it : m_Skills)
 		{
-			if(i++ == m_RandomID) return &(it.second);
+			if(it.first == m_RandomID) return &(it.second);
 		}
 		return nullptr;
 	};
 
 	void SetRandomSkillID(){ 
 		m_RandomID=RANDOM_INSTANCE->NextInt(0,m_Skills.size()-1);
-		// m_RandomID=21;
+		// m_RandomID=111;
 	};
 
 protected:

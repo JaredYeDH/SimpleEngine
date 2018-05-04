@@ -41,13 +41,14 @@ AlphaSence::AlphaSence()
 	// 	<< "\t t2.dd" << &t2.dd
 	// 	<< "\t t2.b" << &t2.b
 	// 	<< "\t t2.dd.a" << &t2.dd.a << std::endl;
-	g_Loader =new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
+	g_Loader =  new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
 	// g_AllSprites = g_Loader->LoadAllSprite();
 	g_WASIDs =  g_Loader->GetAllWASIDs();
-	 g_Loader->SaveWAS(0xC12C2663);
-	auto p = g_Loader->LoadSprite(0xC12C2663);
+	// g_Loader->SaveWAS(0x9EC0624E);
+	// auto p = g_Loader->LoadSprite(0x2EB3476E);
+	g_SkillFrame.clear();
 	
-	// g_SkillFrame =loader->LoadSprite(0x091ADDC7);
+ 	g_SkillFrame.push_back (FrameAnimation(  g_Loader->LoadSprite(0x0E30CD44)));
 
 
 	//TestTimer

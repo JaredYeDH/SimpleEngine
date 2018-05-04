@@ -79,9 +79,10 @@ public:
 	double m_DeltaTime;
 	bool m_bVisible;
 	bool m_bCurrentFrameChangedInUpdate;
-
+	int m_LastNotBlankFrame;
 
 	double m_FrameTime;
 	double m_FrameTimeBase;
 	std::vector<String> m_Sprites;
+	std::vector<int> m_IsBlankFrame;
 };

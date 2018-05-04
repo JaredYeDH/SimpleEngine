@@ -23,6 +23,7 @@ public:
 		int height;
 		uint32 format;
 		uint32* src;
+		bool IsBlank;
 	};
 
 	int mGroupSize;		//������

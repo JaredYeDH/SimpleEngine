@@ -5,6 +5,7 @@ FrameAnimation::FrameAnimation()
 :m_Pos({0,0})
 {
 	m_LastFrame = -1;
+    m_LastNotBlankFrame = 0;
 	m_CurrentFrame = 0;
 	m_CurrentGroup = 1;
 	m_GroupFrameCount = 1;
@@ -13,6 +14,7 @@ FrameAnimation::FrameAnimation()
 	m_bIsNextFrameRestart = false;
 	m_bVisible = false;
 	m_bLoop = false;
+	m_IsBlankFrame.clear();
 	m_Sprites.clear();
 }
 
@@ -20,6 +22,7 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 :m_Pos({0,0})
 {
 	m_LastFrame = -1;
+    m_LastNotBlankFrame =0;
 	m_CurrentFrame = 0;
 	m_CurrentGroup = 0;
 	m_GroupFrameCount = sprite->mFrameSize;
@@ -33,7 +36,7 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 	m_Height = sprite->mHeight;
 	
 	m_Sprites.clear();
-
+	m_IsBlankFrame.clear();
   //  m_Sprites.resize(m_FrameCount);
 	for (int i = 0; i< m_FrameCount ; i++) {
 		int gpos = i / m_GroupFrameCount;
@@ -47,6 +50,8 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 			sprite->mWidth,sprite->mHeight,true,(uint8*)&(sprite->mFrames[gpos][cpos].src[0])
 			);
         m_Sprites.push_back(tPath);
+		m_IsBlankFrame.push_back(  sprite->mFrames[gpos][cpos].IsBlank  );
+		
 //            m_Sprites[i]=tPath;
 //        }else
 //        {
@@ -72,9 +77,9 @@ void FrameAnimation::SetFrameTimeBase(double base)
 
 FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs) 
 {
-	this->m_LastFrame = rhs.m_LastFrame;
-	this->m_CurrentFrame = rhs.m_CurrentFrame;
-	this->m_CurrentGroup = rhs.m_CurrentGroup;
+	this->m_LastFrame = 0;
+	this->m_CurrentFrame = 0;
+	this->m_CurrentGroup = 0;
 	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
 	this->m_FrameCount = rhs.m_FrameCount;
 	this->m_DeltaTime = rhs.m_DeltaTime;
@@ -85,6 +90,7 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_Height = rhs.m_Height;
 
     this->m_Sprites = rhs.m_Sprites;
+	this->m_IsBlankFrame = rhs.m_IsBlankFrame;
     this->m_bVisible = rhs.m_bVisible;
 	this->m_bLoop = rhs.m_bLoop;
 	this->m_Pos = rhs.m_Pos;
@@ -135,7 +141,12 @@ void FrameAnimation::OnUpdate(double dt)
 	{
 		m_bCurrentFrameChangedInUpdate = true;
 		m_DeltaTime = m_DeltaTime - m_FrameTime;
+
 		m_LastFrame = m_CurrentFrame;
+        if(m_LastFrame>=0&& !m_IsBlankFrame[m_LastFrame] )
+        {
+            m_LastNotBlankFrame = m_LastFrame;
+        }
 		m_CurrentFrame++;
 		if(m_GroupFrameCount!=0 && m_CurrentFrame % m_GroupFrameCount == 0 )
 		{
@@ -146,6 +157,10 @@ void FrameAnimation::OnUpdate(double dt)
 			}*/
 			m_bIsNextFrameRestart = true;
 			m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
+            if(m_LastFrame>=0&& !m_IsBlankFrame[m_LastFrame] )
+            {
+                m_LastNotBlankFrame = m_LastFrame;
+            }
 			m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
 		}
 	}
@@ -185,7 +200,13 @@ void FrameAnimation::Draw()
 	// m_CurrentFrame = m_Sprites.size()/2;
 	if (m_CurrentFrame >= m_Sprites.size()) return;
     SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
-	auto path = m_Sprites[m_CurrentFrame];
+	int frameToDraw = m_CurrentFrame;
+	if(m_LastNotBlankFrame < m_IsBlankFrame.size() && m_IsBlankFrame[m_CurrentFrame] )
+	{
+		frameToDraw = m_LastNotBlankFrame  ;
+	}
+
+	auto path = m_Sprites[frameToDraw];
 	auto* t = TextureManager::GetInstance()->GetTexture(path);
 	renderer->DrawFrameSprite(t,
 		glm::vec2(m_Pos.x, m_Pos.y),

@@ -201,14 +201,14 @@ void Player::OnUpdate(double dt)
 				m_WeaponFrames[m_ActionID].OnUpdate(dt);
 			}
 		}
-		if(m_SkillFrame.IsNextFrameRestart())
-		{
-			m_bSkillFrameShow = false;
-		}
 		if(m_bSkillFrameShow)
 		{
 			m_SkillFrame.OnUpdate(dt);
 		}
+		if(m_SkillFrame.IsNextFrameRestart())
+		{
+			m_bSkillFrameShow = false;
+		}	
 	}else
 	{
 		m_UpdateDelta += dt;

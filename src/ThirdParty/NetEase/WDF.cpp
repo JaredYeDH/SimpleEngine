@@ -197,8 +197,9 @@ namespace NetEase {
 
 			// file.read((char*)frameLine, tempFreamHeader.height * 4);
 
+            // std::cout <<"frame:  " << i << " width:" << frame.width << std::endl;
 			uint32* pBmpStart = frame.src;//=frame.src+pixels*3;
-			bool copyLine = true;
+			bool copyLine = true;	
 			for (int j = 0; j< tempFreamHeader.height; j++)
 			{
 				pBmpStart = frame.src + sprite->mWidth*(j);
@@ -233,8 +234,10 @@ namespace NetEase {
 				pBmpStart += (sprite->mKeyY - frame.key_y)*sprite->mWidth;
 
 				DataHandler((char*)lineData, pBmpStart, pixelOffset, pixelLen,j,copyLine);
-
 			}
+			
+            //int psize = pBmpStart-frame.src;
+            //std::cout << " psize:" << psize << std::endl;
 			if(copyLine)
 			{
 				for (int j = 0; j + 1< header.height; j+=2)
@@ -245,7 +248,21 @@ namespace NetEase {
 				}
 			}
 
-			 //sprite->SaveImage(i);
+			frame.IsBlank = true;
+			for(int xx=0;xx<pixels;xx++)
+			{
+
+				if(frame.src[xx] !=0)
+				{
+                    std::cout <<frame.src[xx] << std::endl;
+					frame.IsBlank = false;
+					break;
+				}
+			}
+		
+			 
+			// std::cout << " is blank :" << frame.IsBlank <<" frame:"<< i << std::endl;
+			//  sprite->SaveImage(i);
 		}
 		//file.close();
 		sprite->Error= false;
@@ -398,8 +415,9 @@ namespace NetEase {
 		}
 		if (*pData == 0)
 		{
-			uint8 Repeat = 0;
+			uint32 Repeat = 0;
 			Repeat = PixelLen - Pixels;
+            // std::cout <<" pixLen : "<< pixelLen <<" line:" << y <<" repeate:" << (PixelLen - Pixels) << " copy line:"<< copyline<< std::endl;
 			for (int i = 0; i < Repeat; i++)
 			{
 				if (Pixels < PixelLen)
