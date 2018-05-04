@@ -254,7 +254,7 @@ namespace NetEase {
 
 				if(frame.src[xx] !=0)
 				{
-                    std::cout <<frame.src[xx] << std::endl;
+                    // std::cout <<frame.src[xx] << std::endl;
 					frame.IsBlank = false;
 					break;
 				}
