@@ -143,7 +143,7 @@ void FrameAnimation::OnUpdate(double dt)
 		m_DeltaTime = m_DeltaTime - m_FrameTime;
 
 		m_LastFrame = m_CurrentFrame;
-        if(m_LastFrame>=0&& !m_IsBlankFrame[m_LastFrame] )
+        if(m_LastFrame>=0&& m_LastFrame<m_IsBlankFrame.size()&& !m_IsBlankFrame[m_LastFrame] )
         {
             m_LastNotBlankFrame = m_LastFrame;
         }
@@ -157,7 +157,7 @@ void FrameAnimation::OnUpdate(double dt)
 			}*/
 			m_bIsNextFrameRestart = true;
 			m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
-            if(m_LastFrame>=0&& !m_IsBlankFrame[m_LastFrame] )
+            if(m_LastFrame>=0&&m_LastFrame<m_IsBlankFrame.size()&& !m_IsBlankFrame[m_LastFrame] )
             {
                 m_LastNotBlankFrame = m_LastFrame;
             }
