@@ -134,6 +134,8 @@ void FrameAnimation::SetCurrentGroup(int group)
 void FrameAnimation::OnUpdate(double dt)
 {
 	// if(true)return;
+	if(m_IsBlankFrame[m_CurrentFrame])
+		dt = dt * 2;
 	m_DeltaTime += dt;
 	m_bIsNextFrameRestart = false;
 	m_bCurrentFrameChangedInUpdate = false;
