@@ -1,3 +1,0 @@
-Content-Length: 386
-
-{"seq":3,"type":"response","request_seq":3,"command":"setBreakpoints","success":true,"body":{"breakpoints":[{"verified":true,"line":1,"id":1},{"verified":true,"line":2,"id":2},{"verified":true,"line":6,"id":3},{"verified":true,"line":7,"id":4},{"verified":true,"line":10,"id":5},{"verified":true,"line":13,"id":6},{"verified":true,"line":15,"id":7},{"verified":true,"line":18,"id":8}]}}
