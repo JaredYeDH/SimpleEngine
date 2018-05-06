@@ -176,7 +176,7 @@ namespace NetEase {
                )
             {
                 std::cout <<"w:" << std::dec<< tempFreamHeader.width <<" \t h:" << tempFreamHeader.height << std::endl;
-                std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
+                // std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
 				std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
 				sp->Error = true;
 				file.close();

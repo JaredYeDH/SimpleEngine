@@ -43,6 +43,24 @@ public:
 	bool HandleMessage(const Telegram& msg) override;
 
 public:
+// collapse
+// angry
+// cry
+// idle_combat
+// sayhi
+// attack
+// conjure
+// salute
+// walk
+// attacked
+// runto
+// dance
+// runback
+// defend
+// idle
+// wave
+// sit
+// bow
 	enum ActionName : int 
 	{
 		Idle = 15,		
@@ -100,6 +118,8 @@ public:
 	void MoveTo(GameMap* gameMapPtr, int param2, int param3);
 	void SetVelocity(int velocity) { m_MoveVelocity = velocity; };
 	double GetVelocity() { return  m_MoveVelocity ;};
+	
+	
 
 	FrameAnimation& GetCurrentPlayerFrame()
 	{
