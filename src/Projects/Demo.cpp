@@ -70,7 +70,7 @@ Player* Demo::m_StriderPtr = nullptr;
 
 
 CombatSystem* s_CombatSystem;
-bool s_IsCombat = true;
+bool s_IsCombat = false;
 Demo::Demo()
 	:m_IsTestNpc0(true)
 {
@@ -93,13 +93,15 @@ Demo::Demo()
 	m_OtherPtr->SetPos(990, 650);
 	m_OtherPtr->SetBox();
 	
-
-	std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
-	FrameAnimation combatBG(sp);
-	Renderer2D::GetInstance()->AddObject(new Image(
-		combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
+	if(s_IsCombat){
+		std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF,0x708C11A0);
+		FrameAnimation combatBG(sp);
+		Renderer2D::GetInstance()->AddObject(new Image(
+			combatBG.GetFramePath(0),Vec2(0,0),Vec2(s_ScreenWidth,s_ScreenHeight))
 		);
 
+	}
+	
 	//TestServer();
 
 	s_CombatSystem = new CombatSystem();
@@ -112,6 +114,7 @@ Demo::Demo()
         p->SetIsCombat(true);
 		p->SetNickName(nickname);
 		p->ChangeWeapon();
+		
 		return p;
 	};
     s_CombatSystem->AddSelf(0,f(3,415.0f / 640 * SCREEN_WIDTH,275.0f / 480 * SCREEN_HEIGHT,L"己方组0"));
@@ -314,6 +317,8 @@ void Demo::ProcessInput()
 		m_StriderPtr->ResetDir(dir);
 	}
 
+
+
 }
 
 ImVec4 clear_color = ImColor(114, 144, 154);
@@ -361,7 +366,7 @@ void Demo::Draw()
 		
 		m_OtherPtr->OnDraw( m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
 		
-		m_GameMapPtr->DrawMask(m_StriderPtr->GetX(), m_StriderPtr->GetY());
+		m_GameMapPtr->DrawMask(m_StriderPtr->GetX(), m_StriderPtr->GetY() , m_StriderPtr->GetCurrentPlayerFrame());
 	}
 	
 	/*for (Player* npc : m_NPCs)

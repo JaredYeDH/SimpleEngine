@@ -33,7 +33,7 @@ m_MoveList(),
 m_BackupMoveList(),
 m_MoveToCalled(false),
 m_AnimDB(),
-m_bInCombat(true),
+m_bInCombat(false),
 m_CombatPos({0.0f,0.0f}),
 m_CombatTargetPos({0.0f,0.0f})
 {
@@ -306,7 +306,6 @@ void Player::HandleMoveToCalled()
     }
     
 }
-
 
 void Player::OnDraw(int px,int py)
 {	
