@@ -366,7 +366,7 @@ void Demo::Draw()
 		
 		m_OtherPtr->OnDraw( m_OtherPtr->GetX() + mapOffsetX,m_OtherPtr->GetY() + mapOffsetY);
 		
-		m_GameMapPtr->DrawMask(m_StriderPtr->GetX(), m_StriderPtr->GetY() , m_StriderPtr->GetCurrentPlayerFrame());
+		m_GameMapPtr->DrawMask(m_StriderPtr->GetX(), m_StriderPtr->GetY() );
 	}
 	
 	/*for (Player* npc : m_NPCs)
