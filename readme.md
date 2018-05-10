@@ -1,64 +1,63 @@
-# 近期目标
+### Notice
 
-由于项目还不稳定，暂时不会有文档。
-目前正在加紧开发lua debugger。
-战斗也开了个头。
-接下来打算：
-1. 开发完luaDebugger
-2. 完善战斗系统
-3. 完善简易GUI
+this project is not suitable for you to commit now. also, not so friendly for you to run. some fundamental works haven't done yet. thanks for you watching this project. when I am done those works, let's make a complete 2D turn-based game together!!!
 
-以上搞定的话，就会抓紧时间写文档开源了。
+### RoadMaps
 
-# C++/OpenGL 梦幻西游
+1. vscode debugger plugin for lua debugging
+2. improve GenMake.sh
+3. separate core game and engine
+4. divide c and lua's work
+5. add a gui-system
 
-个人学习练手项目
+### Introduction
 
-### 编译指南
+this project is intend to build a relative complete 2D game. using only C++ and OpenGL,fully source code built.
 
-1. 安装好git和cmake,然后敲命令
+this project is using CMake as build system. the author is worked on both Windows and Mac. this repo has 3 projects. one is SimpleEngine, the second one is external and the third is debugger. this external is used to build libs which used by SimpleEngine and debugger.
+
+external project contains third party libs. its CMakeLists.txt is in the external/  dir. including:
+
+1. asio 	(for async network)
+2. assimp 	(doesn't use now)
+3. freetype (font lib)
+4. glew,glm,glfw	(for OpenGL)
+5. imgui	(for debugging)
+6. SOIL		(image file read)
+7. nlohmann	(json lib)
+8. lua53,luasocket,lua-cjson,mobdebug
+
+debugger project is not complete now. its CMakeLists.txt is in the debugger/  dir.
+
+SimpleEngine is our main project. its CMakeLists.txt in the repo root dir(SimpleEngine/).
+
+### How to build
+
+1. install git and cmake
 		
 		git clone --recursive https://github.com/oceancx/SimpleEngine
 
-2. 用cmake打开external里面的CMakeLists.txt来编译库，一路默认生成项目工程，然后目标选INSTALL进行构建。成功后external下会多出include/和lib/文件夹
+2. build external project. 
+using cmake.exe open external/CMakeLists,set the generate project folder as external/build. then always using the default setting, until Xcode project or visual studio project was generated. using the IDE open the project, and build INSTALL.(which will automaticly copy libs and include files to external/libs and external/include )
 
-3. 用cmake打开SimpleEngine下的CMakeLists.txt来构建目标程序，一路默认生成项目工程，然后目标选SimpleEngine进行构建，成功后会生成可执行程序SimpleEngine。
+3. build SimpleEngine project.
+first, in SimpleEngine/, sh GenMake.sh. then using cmake.exe open SimpleEngine/CMakeLists, set the generate project folder as SimpleEngine/build. always using the default setting, until Xcode project or visual studio project was generated.using the IDE open the project, and build SimpleEngine.
 	
+4. download resource. [baidu yun disk](https://pan.baidu.com/s/1o7Gn0t8), unzip to SimpleEngine/Data.
 
-4. 下载资源压缩包：[百度云盘](https://pan.baidu.com/s/1o7Gn0t8)，直接在SimpleEngine/下解压即可,你会看到Data/文件夹被创建
+5. run SimpleEngine.
 
-5. 运行SimpleEngine。
+### Program Entrance
 
-### 相关资料
-未整理，不过里面东西很多。https://pan.baidu.com/s/1kV9qrEB
-### 程序入口
+program.cpp -> Window.cpp -> Game.cpp -> Engine.cpp -> Demo.cpp.
 
-1. main函数在program.cpp中
-2. Window负责初始化Game，Game负责初始化Engine，Engine负责初始化Sence，Sence就是游戏的内容了。
-3. 此Repo暂时还不稳定，稳定之后会发布相关文档，包括资源文件的id对应表，以及显示资源文件的工具，还有资源读取的相关源码，还有各种参考资料，汗。。。。
+### Extra Resource
 
+https://pan.baidu.com/s/1kV9qrEB
 
-### 注意
+### Glance
 
-项目近期改动比较频繁，对大家协同开发不是很友好，等版本稳定后，再请大家多多关注哈。
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/1.gif" width="50%" height="50%">
 
-目前打算做：
-
-1. 整理好项目目录，分别整合成server client sharelib 三个project 
-2. 写好VsCode Debugger插件
-3. 完善简单的GUI库
-
-### 项目核心价值观
-
-1. 做一个完整的MMORPG游戏，包括客户端，服务端，引擎，UI等等。
-2. C++/Lua为主要语言，C++底层，Lua逻辑。OpenGL渲染。
-3. 依赖的库全部要能源码构建，每一个依赖库为一个cmake target。可以一键编译安装所有库（.h 和 .lib)
-4. 纯手工打造MMO的运动系统和战斗系统。
-
-
-### 截图
-
-<img src="https://github.com/oceancx/SimpleEngine/blob/develop/ScreenShots/screenshot1.png" width="50%" height="50%">
-
-<img src="https://github.com/oceancx/SimpleEngine/blob/develop/ScreenShots/screenshot2.png" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/2.gif" width="50%" height="50%">
 

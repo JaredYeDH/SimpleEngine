@@ -70,7 +70,7 @@ Player* Demo::m_StriderPtr = nullptr;
 
 
 CombatSystem* s_CombatSystem;
-bool s_IsCombat = false;
+bool s_IsCombat = true;
 Demo::Demo()
 	:m_IsTestNpc0(true)
 {
