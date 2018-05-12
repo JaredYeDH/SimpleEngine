@@ -45,6 +45,6 @@ public:
 	}
 	static std::string GetMapPath(std::string path)
 	{
-		return GetPath() + "/Data/scene/" + path;
+		return GetPath() + "/Data/scene/" + path +".map";
 	}
 };

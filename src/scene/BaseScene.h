@@ -8,12 +8,11 @@ class BaseScene
 public:
 	BaseScene(int id,String name);
 	~BaseScene();
-	void Init();
-	void Update();
-	void Draw();
+	virtual void Init();
+	virtual void Update();
+	virtual void Draw();
 private:
 	int m_ID;
 	String m_Name;
-	
-	IUpdateDraw * mSence;
+
 };

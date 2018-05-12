@@ -1,4 +1,4 @@
-#include "GameScene.h"
+#include "Scene.h"
 
 #include "FrameAnimation.h"
 #include "Logger.h"
@@ -13,10 +13,36 @@
 static Player * m_StriderPtr = nullptr;
 static Player * m_OtherPtr = nullptr;
 
-void GameScene::OnEvent(int button, int action, int mods)
+//void Scene::OnMove(MoveMessage msg)
+//{
+//	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
+//	//if (m_StriderPtr->IsMove())return;
+//	m_OtherPtr->SetPos(msg.m_Src.x, msg.m_Src.y);
+//	m_OtherPtr->SetBox();
+//	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x) / 20, (msg.m_Dest.y) / 20);
+//}
+
+bool s_IsCombat = true;
+Scene::Scene(int id,String name)
+	:BaseScene(id,name),
+	m_IsTestNpc0(true)
+
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
+
+	
+
+
+}
+
+Scene::~Scene()
+{
+    
+}
+
+void Scene::Init()
+{
+m_IsTestNpc0 = false;
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this](){
 		int halfScreenWidth = GetScreenWidth() / 2;
 		int halfScreenHeight = GetScreenHeight() / 2;
 
@@ -36,27 +62,7 @@ void GameScene::OnEvent(int button, int action, int mods)
 		dest.y = -mapOffsetY + mouseY;
 
 		m_StriderPtr->MoveTo(m_GameMapPtr, (-mapOffsetX + mouseX) / 20, (-mapOffsetY + mouseY) / 20);
-	}
-}
-
-//void GameScene::OnMove(MoveMessage msg)
-//{
-//	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
-//	//if (m_StriderPtr->IsMove())return;
-//	m_OtherPtr->SetPos(msg.m_Src.x, msg.m_Src.y);
-//	m_OtherPtr->SetBox();
-//	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x) / 20, (msg.m_Dest.y) / 20);
-//}
-
-
-// CombatSystem* s_CombatSystem;
-bool s_IsCombat = true;
-GameScene::GameScene()
-	:m_IsTestNpc0(true)
-{
-
-	m_IsTestNpc0 = false;
-	InputManager::GetInstance()->SetMouseEvent(this);
+	});
 
 	m_GameMapPtr = new GameMap(0);
 
@@ -85,16 +91,9 @@ GameScene::GameScene()
 	//TestServer();
 	COMBAT_SYSTEM_INSTANCE;
 	// s_CombatSystem = new CombatSystem();
-
-
 }
 
-GameScene::~GameScene()
-{
-    
-}
-
-void GameScene::Update()
+void Scene::Update()
 {
 	if (s_IsCombat)
 	{
@@ -126,7 +125,7 @@ void GameScene::Update()
 
 }
 
-void GameScene::ProcessInput()
+void Scene::ProcessInput()
 {
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_T) && m_IsTestNpc0)
 	{
@@ -272,7 +271,7 @@ void GameScene::ProcessInput()
 ImVec4 clear_color = ImColor(114, 144, 154);
 bool show_test_window = true;
 bool show_another_window = false;
-void GameScene::Draw()
+void Scene::Draw()
 {
 	m_GameMapPtr->Draw(m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	Renderer2D::GetInstance()->Render();
@@ -353,7 +352,7 @@ void GameScene::Draw()
 	//ImGui::Render();
 }
 
-// void GameScene::TestServer()
+// void Scene::TestServer()
 // {
 // 	asio::ip::tcp::iostream s("www.boost.org", "http");
 // 	s.expires_from_now(std::chrono::seconds(60));

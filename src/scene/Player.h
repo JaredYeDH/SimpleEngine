@@ -3,7 +3,6 @@
 #include "defines.h"
 #include "FrameAnimation.h"
 #include "Pos.h"
-#include "Config.h"
 #include "GameMap.h"
 #include "tsv.h"
 #include "Logger.h"

@@ -47,6 +47,7 @@ public:
     void SetMouseEvent(IMouseEvent* event){ s_IMouseEvent = event; }
 
 	void RegisterOnKeyClickEvent(int keyCode,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
+	// void RegisterOnMouseClickEvent(int button,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
 private:
 	InputManager();
 	~InputManager();

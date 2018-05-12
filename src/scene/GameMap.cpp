@@ -3,7 +3,6 @@
 #include <SOIL/SOIL.h>
 #include <random>
 #include <iostream>
-#include "Config.h"
 #include "Environment.h"
 #include "../global.h"
 #include "Astar/include/InputHandler.h"
@@ -11,10 +10,8 @@
 #include "../simple_engine.h"
 
 GameMap::GameMap(uint32 mapId)
-{ 	/*读取配置*/
-	Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
-	config.Print();
-	std::string fileName = config.GetMapPath(config.mDict["map"][mapId]);
+{
+	std::string fileName = Environment::GetMapPath("1001");
 
 	mXyqMap = new NetEase::MAP(fileName);
 

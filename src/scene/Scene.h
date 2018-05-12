@@ -8,19 +8,19 @@
 #include "core/Texture.h"
 #include "GameMap.h"
 #include "Player.h"
+#include "BaseScene.h"
 
-
-
-class GameScene : public IUpdateDraw, public IMouseEvent
+class Scene   : public BaseScene
 {
 public:
-	GameScene();
-	~GameScene();
+	Scene(int id,String name);
+	~Scene();
 	int GetScreenWidth() { return SCREEN_WIDTH;}
 	int GetScreenHeight() { return SCREEN_HEIGHT;}
+	void Init() override;
 	void Update() override;
 	void Draw() override;
-	void OnEvent(int button, int action, int mods) override;
+
 private:
 	void ProcessInput();
 	

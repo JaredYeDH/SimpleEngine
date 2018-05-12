@@ -13,6 +13,20 @@ std::map<int,std::function<void()>> InputManager::s_ClickEvents = {};
 
 void InputManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+    if(action == GLFW_PRESS){
+        s_Keys[button] = true;
+    }
+    
+    if(action == GLFW_RELEASE)
+    {   
+        if(s_Keys[button] && s_ClickEvents.find(button)!=s_ClickEvents.end())
+        {
+            s_ClickEvents[button]();
+        //    s_ClickEvents.erase(button);
+        }
+        s_Keys[button] = false;	
+    }
+
     if(s_IMouseEvent != nullptr)
     {
         s_IMouseEvent->OnEvent(button,action,mods);
@@ -41,7 +55,7 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
         if(s_Keys[key] && s_ClickEvents.find(key)!=s_ClickEvents.end())
         {
             s_ClickEvents[key]();
-            s_ClickEvents.erase(key);
+       //     s_ClickEvents.erase(key);
         }
         s_Keys[key] = false;	
     }

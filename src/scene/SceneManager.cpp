@@ -10,7 +10,7 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 	{
 		int id = std::stoi(row[0]);
 		String name = row[1];
-		m_Scenes[id] = new BaseScene(id,name);
+		m_Scenes[id] = new Scene(id,name);
 	}
 
 	if(m_Scenes.size() > 0)

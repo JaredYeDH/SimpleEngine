@@ -1,5 +1,5 @@
 #include "BaseScene.h"
-#include "GameScene.h"
+#include "Scene.h"
 
 BaseScene::BaseScene(int id,String name)
 :m_ID(id),m_Name(name)
@@ -12,15 +12,10 @@ BaseScene::~BaseScene()
 }
 void BaseScene::Init()
 {
-	//mSence = new TestNetwork();
-	//mSence = new AlphaSence();
-	mSence = new GameScene();
 }
 void BaseScene::Update()
 {
-	mSence->Update();
 }
 void BaseScene::Draw()
 {
-	mSence->Draw();
 }
