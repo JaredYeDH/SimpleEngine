@@ -9,7 +9,6 @@
 #include <utility>
 #include "asio.hpp"
 #include "DebugServer.h"
-#include "server.hpp"
 #include <mutex>
 #include <thread>
 #include "DebuggerCore.h"
