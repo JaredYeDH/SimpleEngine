@@ -17,16 +17,16 @@ public:
 
 	~Engine();
 	void Init();
-	void Update(double dt);
+	void Update();
 	void Draw();
 	void Destroy();
-	void SetClient(Client* client);
 	double GetDeltaTime() { return m_DeltaTime; }
 	double GetDeltaTimeMilliseconds() { return m_DeltaTime * 1000; }
 	void DispatchMove(MoveMessage msg);
 private:
 	Engine();
 	double m_DeltaTime;
+	double m_LastTime;
 	IUpdateDraw * mSence;
 };
 

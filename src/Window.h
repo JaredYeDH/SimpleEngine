@@ -3,26 +3,23 @@
 #include "Game.h"
 #include "Singleton.h"
 
-
-/*用于控制Game 负责Game的Init Update Draw*/
 class Window : public Singleton<Window>
 {
 public:
-	friend Singleton<Window>;
-	Window(int w,int h);
+	Window();
 	~Window();
 	
+	void Init(int w,int h);
 	void Show();
-	GLFWwindow* GetGLFWwindow();
-	static int GetWidth();
-	 static int GetHeight();
 
-
+	GLFWwindow* GetGLFWwindow(){ return m_pWindow;};
+	int GetWidth() { return m_Width;};
+	int GetHeight(){ return m_Height;};
 private:
-	static int m_Width;
-	static int m_Height;
-	GLFWwindow *p_Window;
-	Game* p_Game;
-	
-	
+	int m_Width;
+	int m_Height;
+	GLFWwindow *m_pWindow;
 };
+
+
+#define WINDOW_INSTANCE Window::GetInstance()

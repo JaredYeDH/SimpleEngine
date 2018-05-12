@@ -6,42 +6,15 @@
 #include "InputManager.h"
 #include "imgui_impl_glfw_gl3.h"
 
-int Window::m_Width=0;
-int Window::m_Height=0;
-Window::Window(int width,int height)
+Window::Window()
+:m_Width(0),m_Height(0)
 {
-	m_Width = width;
-	m_Height = height;
-    // Init GLFW
 	glfwInit();
-    // Set all the required options for GLFW
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    // Create a GLFWwindow object that we can use for GLFW's functions
-	p_Window = glfwCreateWindow(width, height, WINDOW_TITLE, nullptr, nullptr);
-	glfwMakeContextCurrent(p_Window);
-
-    // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
-	glewExperimental = GL_TRUE;
-    // Initialize GLEW to setup the OpenGL Function pointers
-	glewInit();
-
-	ImGui_ImplGlfwGL3_Init(p_Window,true);
-
-    // Define the viewport dimensions
-	// int width, height;
-	glfwGetFramebufferSize(p_Window, &width, &height);
-	glViewport(0, 0, width, height);
-
-    glfwSetInputMode(p_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-    p_Game = new Game(width,height,WINDOW_TITLE);
-    InputManager::GetInstance()->Init(p_Window);
-	p_Game->Start();
 }
 
 Window::~Window()
@@ -49,51 +22,42 @@ Window::~Window()
 	
 }
 
-GLfloat deltaTime = 0;
-GLfloat lastFrame = 0.0f;
+void Window::Init(int w,int h)
+{
+	m_Width = w ;
+	m_Height = h;
+	
+	m_pWindow = glfwCreateWindow(m_Width, m_Height, WINDOW_TITLE, nullptr, nullptr);
+	if(!m_pWindow) return;
+
+	glfwMakeContextCurrent(m_pWindow);
+	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	glfwGetFramebufferSize(m_pWindow, &m_Width, &m_Height);
+	glViewport(0, 0, m_Width, m_Height);
+
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	ImGui_ImplGlfwGL3_Init(m_pWindow,true);
+}
+
 void Window::Show()
 {	
-	 // Game loop
-    while (!glfwWindowShouldClose(p_Window))
+	GAME_INSTANCE->Start();
+
+    while (!glfwWindowShouldClose(m_pWindow))
     {
-        GLfloat currentFrame = glfwGetTime();
-       
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-      
-        // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
-    	glfwPollEvents();
+		glfwPollEvents();
+
 		ImGui_ImplGlfwGL3_NewFrame();
+		GAME_INSTANCE->Update();
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        p_Game->Update(deltaTime);
-
-        p_Game->Draw();		
-
-		ImGui::Render();
-        // Swap the screen buffers
-        glfwSwapBuffers(p_Window);
+		GAME_INSTANCE->Draw();
+        glfwSwapBuffers(m_pWindow);
     }
-    
-    p_Game->End();
-    // Terminate GLFW, clearing any resources allocated by GLFW.
+	
+	GAME_INSTANCE->End();
     glfwTerminate();
 }
 
-
-GLFWwindow* Window::GetGLFWwindow()
-{
-    return p_Window;
-}
-
-int Window::GetWidth()
-{
-	return m_Width;
-}
-
-int Window::GetHeight()
-{
-	return m_Height;
-}

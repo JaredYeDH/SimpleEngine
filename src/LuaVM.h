@@ -28,6 +28,9 @@ public:
     
     void doLuaString(std::string luastring)
     {
+        // LuaVM::GetInstance()->doLuaString(R"(
+    //               print("hello world");
+    //               )" );
         luaL_dostring(L,luastring.c_str());
     }
     //  c++ call lua demo

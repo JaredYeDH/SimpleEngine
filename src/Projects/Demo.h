@@ -38,11 +38,8 @@ public:
 	void Draw() override;
 	void OnEvent(int button, int action, int mods) override;
 
-	void SetClient(Client* clientPtr);
 	void OnMove(MoveMessage msg);
 
-	static int g_Id;
-	static int g_Id2;
 private:
 	void ProcessInput();
 	void TestServer();

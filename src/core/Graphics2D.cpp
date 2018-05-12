@@ -21,8 +21,8 @@ Graphics2D::Graphics2D()
     fPath = Environment::GetShaderPath("LineShader.fs");
     m_ShaderPtr = new Shader(vPath, fPath);
 
-    int windowWidth = Window::GetWidth();
-    int windowHeight = Window::GetHeight();
+    int windowWidth = WINDOW_INSTANCE-> GetWidth();
+    int windowHeight = WINDOW_INSTANCE->GetHeight();
     
     m_OrthoMat = glm::ortho(0.0f, windowWidth*1.0f, windowHeight*1.0f, 0.0f, -1.0f, 1.0f);
     m_ShaderPtr->Bind();

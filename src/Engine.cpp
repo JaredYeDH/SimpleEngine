@@ -9,6 +9,7 @@
 #include "Network/Message.h"
 #include "LuaVM.h"
 
+#include "imgui_impl_glfw_gl3.h"
 
 Engine::~Engine()
 {
@@ -17,15 +18,14 @@ Engine::~Engine()
 
 
 Engine::Engine()
-: Singleton<Engine>()
+:m_LastTime(0),m_DeltaTime(0)
 {
-
+	
 }
-
 
 void Engine::Init()
 {
-	
+	INPUT_MANAGER_INSTANCE->Init();
 	LuaVM::GetInstance()->Init();
 	// LuaVM::GetInstance()->doLuaString(R"(
     //               print("hello world");
@@ -44,13 +44,15 @@ void Engine::Init()
 	LuaVM::GetInstance()->OnGameInit();
 }
 
-void Engine::Update(double dt)
+void Engine::Update()
 {
-    m_DeltaTime = dt;
+	double now = glfwGetTime();
+    m_DeltaTime = now - m_LastTime;
+	m_LastTime = now;
 	
 	TimerManager::GetInstance()->Update();
     mSence->Update();
-	LuaVM::GetInstance()->OnGameUpdate(dt);
+	LuaVM::GetInstance()->OnGameUpdate(m_DeltaTime);
 
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_F5) )
 	{
@@ -59,9 +61,15 @@ void Engine::Update(double dt)
 }
 
 void Engine::Draw()
-{ 
+{ 	
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	
     mSence->Draw();
+
 	LuaVM::GetInstance()->OnGameDraw();
+	
+	ImGui::Render();
 }
 
 void Engine::Destroy()
@@ -73,8 +81,4 @@ void Engine::DispatchMove(MoveMessage msg)
 {
 	static_cast<Demo*>(mSence)->OnMove(msg);
 }
-void Engine::SetClient(Client* client)
-{
 
-	static_cast<Demo*>(mSence)->SetClient(client);
-}

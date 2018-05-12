@@ -35,31 +35,14 @@ void Demo::OnEvent(int button, int action, int mods)
 		dest.x = -mapOffsetX + mouseX;
 		dest.y = -mapOffsetY + mouseY;
 
-		MoveMessage msg(Demo::g_Id, src, dest, "hello");
-		msg.EncodeBody();
-		msg.EncodeHeader();
-		m_ClientPtr->Write(msg);
-
 		m_StriderPtr->MoveTo(m_GameMapPtr, (-mapOffsetX + mouseX) / 20, (-mapOffsetY + mouseY) / 20);
 	}
 }
 
-
-void Demo::SetClient(Client* clientPtr)
-{
-	m_ClientPtr = clientPtr;
-}
-
-
 void Demo::OnMove(MoveMessage msg)
 {
-	if (msg.m_Pid == g_Id)return;
-
 	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
-
 	//if (m_StriderPtr->IsMove())return;
-
-
 	m_OtherPtr->SetPos(msg.m_Src.x, msg.m_Src.y);
 	m_OtherPtr->SetBox();
 	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x) / 20, (msg.m_Dest.y) / 20);

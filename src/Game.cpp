@@ -1,11 +1,9 @@
 #include "Game.h"	
 
 
-Game::Game(int w,int h,std::string title)
+Game::Game()
 {
-	mResWidth =  w;
-	mResHeight = h;
-	mTitle = title;
+
 }
 
 Game::~Game()
@@ -16,23 +14,20 @@ Game::~Game()
 
 void Game::Start()
 {
-	Engine::GetInstance()->Init();
- 
+	ENGINE_INSTANCE->Init();
 }
 
-void  Game::Update(double dt)
+void  Game::Update()
 {
-	Engine::GetInstance()->Update(dt);
+	ENGINE_INSTANCE->Update();
 }
 
 void  Game::Draw()
 {
-
-	Engine::GetInstance()->Draw();
-
+	ENGINE_INSTANCE->Draw();
 }
 
 void  Game::End()
 {
-	Engine::GetInstance()->Destroy();
+	ENGINE_INSTANCE->Destroy();
 }

@@ -1,5 +1,5 @@
 #include "InputManager.h"
-
+#include "Window.h"
 bool InputManager::s_Keys[1024] = {0};
 int InputManager::s_KeyStates[1024]{0};
 
@@ -81,9 +81,9 @@ InputManager::~InputManager()
 	m_pWindow = nullptr;
 }
 
-void InputManager::Init(GLFWwindow* window)
+void InputManager::Init()
 {
-	m_pWindow = window;
+	m_pWindow = WINDOW_INSTANCE->GetGLFWwindow();
 }
 
 void InputManager::SetKeyCallback()
