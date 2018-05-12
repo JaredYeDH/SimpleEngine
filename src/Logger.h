@@ -23,11 +23,17 @@ public:
 		std::cout << "LogPrint:" << log << std::endl;
 	}
 
-private:
-	Logger() : Singleton<Logger>() {}
-	~Logger();
+public:
+	Logger() {}
+	~Logger(){};
 	
 };
+
+#define LOG_PRINT(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
+
+#define LOG_ERROR(str) Logger::GetInstance()->Error(str)
+
+#define LOG_WARN(str) Logger::GetInstance()->Warning(str)
 
 enum LogLevel : byte
 {
@@ -37,8 +43,8 @@ enum LogLevel : byte
 	Debug
 };
 
-#define LOG(...) \
-	Logger::XXXPrint( \
-		__VA_ARGS__) 
+// #define LOG(...) \
+// 	Logger::XXXPrint( \
+// 		__VA_ARGS__) 
 
 static const std::string STARENGINE_LOG_TAG = "STARENGINE";

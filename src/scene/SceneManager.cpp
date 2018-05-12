@@ -1,5 +1,15 @@
 #include "SceneManager.h"
-#include "Projects/Demo.h"
+#include "../Projects/Demo.h"
+
+SceneManager::SceneManager()
+{
+	
+}
+
+SceneManager::~SceneManager()
+{
+
+}
 
 void SceneManager::Init() 
 {

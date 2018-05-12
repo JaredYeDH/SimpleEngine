@@ -3,12 +3,9 @@
 #include "SpriteBatch.h"
 #include "CubeBatch.h"
 #include "InputManager.h"
-#include "Projects/TestSence.h"
-#include "Projects/AlphaSence.h"
-#include "Projects/Demo.h"
 #include "Network/Message.h"
 #include "LuaVM.h"
-#include "SceneManager.h"
+#include "scene/SceneManager.h"
 
 
 Engine::Engine()

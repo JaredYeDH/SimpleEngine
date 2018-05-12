@@ -3,7 +3,6 @@
 #include "defines.h"
 #include "Singleton.h"
 #include "IUpdateDraw.h"
-#include "Network/Client.h"
 #include "Network/Message.h"
 #include "Time/TimerManager.h"
 

@@ -84,4 +84,4 @@ struct TGA_FILE_HEADER
 	#undef _T
 #endif
 
-#define _T(x) x
+#define _T(x) std::string(x)

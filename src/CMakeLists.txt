@@ -115,10 +115,10 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install)
 
 
 set(SRC_CPP_FILES
-Actor.cpp
-Actor.h
-ActorManager.cpp
-ActorManager.h
+actor/Actor.cpp
+actor/Actor.h
+actor/ActorManager.cpp
+actor/ActorManager.h
 algorithm.cpp
 astar/include/InputHandler.h
 astar/include/Node.h
@@ -214,10 +214,11 @@ Resource.cpp
 Resource.h
 ResourceManager.cpp
 ResourceManager.h
-SceneManager.cpp
-SceneManager.h
-sences/BaseSence.cpp
-sences/BaseSence.h
+scene/BaseScene.cpp
+scene/BaseScene.h
+scene/SceneManager.cpp
+scene/SceneManager.h
+simple_engine.h
 Singleton.h
 Singleton.inl
 Sprite.cpp

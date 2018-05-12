@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "defineTypes.h"
 #include "Environment.h"
+#include "simple_engine.h"
 
 template<typename Out>
 inline void split(const std::string &s, char delim, Out result) {
@@ -24,16 +25,21 @@ namespace utils
 	{
 	public:
 		tsv(String path)
+		:tabRows(0)
 		{
-			std::string file_content;
-			std::ifstream fs;
-			// fs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-			fs.open(path.c_str());
+			std::ifstream fs(path);
+			if(!fs)
+			{
+				LOG_ERROR("tsv(String path) error!");
+				return;
+			};
+			
+			fs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 			std::stringstream  ss;
 			ss << fs.rdbuf();
 			fs.close();
-			file_content = ss.str();			
 			
+			std::string file_content = ss.str();		
 			rows = split(file_content, LINE_SAPARATOR);
 			int i=0;
 			for(auto& line : rows)
@@ -45,6 +51,7 @@ namespace utils
 				else
 				{	
 					cols[i-1] = split(line, '\t');
+					tabRows.push_back(cols[i-1]);
 				}
 				i++;
 			}
@@ -65,6 +72,7 @@ namespace utils
 			}
 			std::cout << std::endl;
 		}
+
 		String val(int row,int col) 
 		{
             if(row <0 || row >= rows.size() || col < 0 || col >= titles.size())return "";
@@ -74,8 +82,11 @@ namespace utils
 		{
 			return cols[id-1];
 		}
+		
+
         std::map<int,std::vector<String>> cols;
 		std::vector<String> titles;
+		std::vector<std::vector<String>> tabRows;
         std::vector<String> rows;
 	};
 };
