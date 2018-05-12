@@ -1,4 +1,4 @@
-#include "Demo.h"
+#include "GameScene.h"
 
 #include "FrameAnimation.h"
 #include "Logger.h"
@@ -10,10 +10,10 @@
 #include "../combat/Combat.h"
 #include "../Message.h"
 
-float Demo::s_ScreenWidth = SCREEN_WIDTH;
-float Demo::s_ScreenHeight = SCREEN_HEIGHT;
+static Player * m_StriderPtr = nullptr;
+static Player * m_OtherPtr = nullptr;
 
-void Demo::OnEvent(int button, int action, int mods)
+void GameScene::OnEvent(int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
@@ -23,8 +23,8 @@ void Demo::OnEvent(int button, int action, int mods)
 		int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
 		int mapOffsetY = halfScreenHeight - m_StriderPtr->GetY();
 
-		mapOffsetX = GMath::Clamp(mapOffsetX, -m_GameMapPtr->GetWidth() + s_ScreenWidth, 0);
-		mapOffsetY = GMath::Clamp(mapOffsetY, -m_GameMapPtr->GetHeight() + s_ScreenHeight, 0);
+		mapOffsetX = GMath::Clamp(mapOffsetX, -m_GameMapPtr->GetWidth() + SCREEN_WIDTH, 0);
+		mapOffsetY = GMath::Clamp(mapOffsetY, -m_GameMapPtr->GetHeight() + SCREEN_HEIGHT, 0);
 
 		double mouseX = InputManager::GetInstance()->GetMouseX();
 		double mouseY = InputManager::GetInstance()->GetMouseY();
@@ -39,22 +39,19 @@ void Demo::OnEvent(int button, int action, int mods)
 	}
 }
 
-void Demo::OnMove(MoveMessage msg)
-{
-	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
-	//if (m_StriderPtr->IsMove())return;
-	m_OtherPtr->SetPos(msg.m_Src.x, msg.m_Src.y);
-	m_OtherPtr->SetBox();
-	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x) / 20, (msg.m_Dest.y) / 20);
-}
-
-Player* Demo::m_OtherPtr = nullptr;
-Player* Demo::m_StriderPtr = nullptr;
+//void GameScene::OnMove(MoveMessage msg)
+//{
+//	if (m_OtherPtr == nullptr || m_StriderPtr == nullptr)return;
+//	//if (m_StriderPtr->IsMove())return;
+//	m_OtherPtr->SetPos(msg.m_Src.x, msg.m_Src.y);
+//	m_OtherPtr->SetBox();
+//	m_OtherPtr->MoveTo(m_GameMapPtr, (msg.m_Dest.x) / 20, (msg.m_Dest.y) / 20);
+//}
 
 
 // CombatSystem* s_CombatSystem;
 bool s_IsCombat = true;
-Demo::Demo()
+GameScene::GameScene()
 	:m_IsTestNpc0(true)
 {
 
@@ -63,8 +60,8 @@ Demo::Demo()
 
 	m_GameMapPtr = new GameMap(0);
 
-	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
-	m_BlockTexturePtr = new Texture(blockPath);
+//	auto blockPath = Environment::GetAbsPath("Resource/Assets/wall.jpg");
+//	m_BlockTexturePtr = new Texture(blockPath);
 
 	m_StriderPtr = new Player(3);
 	m_StriderPtr->SetPos(2300, 1700);
@@ -80,7 +77,7 @@ Demo::Demo()
 		std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF, 0x708C11A0);
 		FrameAnimation combatBG(sp);
 		Renderer2D::GetInstance()->AddObject(new Image(
-			combatBG.GetFramePath(0), Vec2(0, 0), Vec2(s_ScreenWidth, s_ScreenHeight))
+			combatBG.GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 		);
 
 	}
@@ -92,12 +89,12 @@ Demo::Demo()
 
 }
 
-Demo::~Demo()
+GameScene::~GameScene()
 {
-	m_ClientPtr->Close();
+    
 }
 
-void Demo::Update()
+void GameScene::Update()
 {
 	if (s_IsCombat)
 	{
@@ -129,7 +126,7 @@ void Demo::Update()
 
 }
 
-void Demo::ProcessInput()
+void GameScene::ProcessInput()
 {
 	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_T) && m_IsTestNpc0)
 	{
@@ -275,7 +272,7 @@ void Demo::ProcessInput()
 ImVec4 clear_color = ImColor(114, 144, 154);
 bool show_test_window = true;
 bool show_another_window = false;
-void Demo::Draw()
+void GameScene::Draw()
 {
 	m_GameMapPtr->Draw(m_StriderPtr->GetX(), m_StriderPtr->GetY());
 	Renderer2D::GetInstance()->Render();
@@ -286,8 +283,8 @@ void Demo::Draw()
 	}
 	else
 	{
-		int screenWidth = Demo::GetScreenWidth();
-		int screenHeight = Demo::GetScreenHeight();
+		int screenWidth = GetScreenWidth();
+		int screenHeight = GetScreenHeight();
 		int halfScreenWidth = screenWidth / 2;
 		int halfScreenHeight = screenHeight / 2;
 		int mapOffsetX = halfScreenWidth - m_StriderPtr->GetX();
@@ -356,21 +353,21 @@ void Demo::Draw()
 	//ImGui::Render();
 }
 
-void Demo::TestServer()
-{
-	asio::ip::tcp::iostream s("www.boost.org", "http");
-	s.expires_from_now(std::chrono::seconds(60));
-	s << "GET / HTTP/1.0\r0.2cm\n";
-	s << "Host: www.boost.org\r\n";
-	s << "Accept: */*\r\n";
-	s << "Connection: close\r\n\r\n";
-	std::string header;
-	while (std::getline(s, header) && header != "\r")
-		std::cout << header << "\n";
-	std::cout << s.rdbuf();
-	if (!s)
-	{
-		std::cout << "Socket error: " << s.error().message() << "\n";
-		return;
-	}
-}
+// void GameScene::TestServer()
+// {
+// 	asio::ip::tcp::iostream s("www.boost.org", "http");
+// 	s.expires_from_now(std::chrono::seconds(60));
+// 	s << "GET / HTTP/1.0\r0.2cm\n";
+// 	s << "Host: www.boost.org\r\n";
+// 	s << "Accept: */*\r\n";
+// 	s << "Connection: close\r\n\r\n";
+// 	std::string header;
+// 	while (std::getline(s, header) && header != "\r")
+// 		std::cout << header << "\n";
+// 	std::cout << s.rdbuf();
+// 	if (!s)
+// 	{
+// 		std::cout << "Socket error: " << s.error().message() << "\n";
+// 		return;
+// 	}
+// }

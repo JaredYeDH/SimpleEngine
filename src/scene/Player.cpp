@@ -1,11 +1,12 @@
 #include "Player.h"
 #include "ResourceManager.h"
-#include "Demo.h"
 #include "Logger.h"
 #include "global.h"
 #include "../Message.h"
 #include "../combat/Combat.h"
 #include "../Random.h"
+#include "../simple_engine.h"
+#include "../Engine.h"
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94

@@ -49,7 +49,7 @@ first, in SimpleEngine/, sh GenMake.sh. then using cmake.exe open SimpleEngine/C
 
 ### Program Entrance
 
-program.cpp -> Window.cpp -> Game.cpp -> Engine.cpp -> Demo.cpp.
+program.cpp -> Window.cpp -> Game.cpp -> Engine.cpp -> SceneManager.cpp -> GameScene.cpp
 
 ### Extra Resource
 

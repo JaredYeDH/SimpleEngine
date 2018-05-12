@@ -205,10 +205,10 @@ scene/BaseScene.cpp
 scene/BaseScene.h
 scene/Config.cpp
 scene/Config.h
-scene/Demo.cpp
-scene/Demo.h
 scene/GameMap.cpp
 scene/GameMap.h
+scene/GameScene.cpp
+scene/GameScene.h
 scene/Heap.h
 scene/mhxy.h
 scene/Player.cpp

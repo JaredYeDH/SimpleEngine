@@ -1,5 +1,4 @@
 #include "SceneManager.h"
-#include "Demo.h"
 
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),

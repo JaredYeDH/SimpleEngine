@@ -5,11 +5,10 @@
 #include <iostream>
 #include "Config.h"
 #include "Environment.h"
-#include "Demo.h"
-
+#include "../global.h"
 #include "Astar/include/InputHandler.h"
 
-
+#include "../simple_engine.h"
 
 GameMap::GameMap(uint32 mapId)
 { 	/*读取配置*/
@@ -31,7 +30,7 @@ GameMap::GameMap(uint32 mapId)
 
 	mMapTileWidth = 320;
 	mMapTileHeight= 240;
-    mMapTileCoef = Demo::GetScreenWidth()/2/mMapTileWidth+1;
+    mMapTileCoef = SCREEN_WIDTH/2/mMapTileWidth+1;
 	mMapTiles.clear();
 	
 // 	for (int i = 0; i<mXyqMap->UnitSize(); i++)
@@ -266,8 +265,8 @@ GameMap::~GameMap()
 void GameMap::Draw(int playerX,int playerY)
 {
 	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
-	int screenWidth = Demo::GetScreenWidth();
-	int screenHeight = Demo::GetScreenHeight();
+	int screenWidth = SCREEN_WIDTH;
+	int screenHeight = SCREEN_HEIGHT;
 	int halfScreenWidth = screenWidth / 2;
 	int halfScreenHeight = screenHeight / 2;
 
@@ -319,8 +318,8 @@ void GameMap::DrawCell(int cur_x, int cur_y)
 	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
     int minx,maxx,miny,maxy;
     int posx,posy;
-	int screenWidth = Demo::GetScreenWidth();
-	int screenHeight = Demo::GetScreenHeight();
+	int screenWidth = SCREEN_WIDTH;
+	int screenHeight = SCREEN_HEIGHT;
 	int halfScreenWidth = screenWidth / 2;
 	int halfScreenHeight = screenHeight / 2;
 
@@ -359,8 +358,8 @@ void GameMap::DrawCell(int cur_x, int cur_y)
 void GameMap::DrawMask(int playerX, int playerY)
 {
 	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
-	int screenWidth = Demo::GetScreenWidth();
-	int screenHeight = Demo::GetScreenHeight();
+	int screenWidth = SCREEN_WIDTH;
+	int screenHeight = SCREEN_HEIGHT;
 	int halfScreenWidth = screenWidth / 2;
 	int halfScreenHeight = screenHeight / 2;
 
