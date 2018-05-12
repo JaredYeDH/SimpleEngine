@@ -3,6 +3,7 @@
 #include "../global.h"
 #include "../Message.h"
 #include "../simple_engine.h"
+#include "../animation/FrameAnimation.h"
 
 SkillManager::SkillManager()
 {

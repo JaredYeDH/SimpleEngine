@@ -1,13 +1,13 @@
 #pragma once
 #include "../defines.h"
-#include "../ThirdParty/NetEase/MAP.h"
-#include "../SpriteRenderer.h"
-#include "Heap.h"
-#include "Astar.h"
+#include "../simple_engine.h"
 
-#include <list>
+#include "../astar/Heap.h"
+#include "../astar/Astar.h"
+
 #include "../image.h"
 #include "../Pos.h"
+
 /*
 游戏地图类的封装
 */

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "defines.h"
-#include "FrameAnimation.h"
 #include "Pos.h"
-#include "GameMap.h"
+#include "../scene/GameMap.h"
 #include "tsv.h"
 #include "Logger.h"
-#include "animation_database.h"
+#include "../animation/animation_database.h"
+#include "../animation/FrameAnimation.h"
 #include "../State.h"
 #include "../Message.h"
 

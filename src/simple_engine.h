@@ -7,9 +7,11 @@
 #include "../thirdparty/netease/sprite2.h"
 #include "../thirdparty/netease/wdf.h"
 #include "../thirdparty/netease/was.h"
+#include "../thirdparty/netease/map.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "TextRenderer.h"
+#include "SpriteRenderer.h"
 #include "GMath.h"
 #include "global.h"
 

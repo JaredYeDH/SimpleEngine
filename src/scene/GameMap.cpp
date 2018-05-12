@@ -1,13 +1,7 @@
 #include "GameMap.h"
-#include "Astar.h"
-#include <SOIL/SOIL.h>
-#include <random>
-#include <iostream>
-#include "Environment.h"
-#include "../global.h"
-#include "Astar/include/InputHandler.h"
 
-#include "../simple_engine.h"
+#include "../astar/include/InputHandler.h"
+
 
 GameMap::GameMap(uint32 mapId)
 {

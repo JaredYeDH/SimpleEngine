@@ -7,6 +7,7 @@
 #include "../Random.h"
 #include "../simple_engine.h"
 #include "../Engine.h"
+#include "../animation/FrameAnimation.h"
 //
 //map 1501.map
 //shape.wdf 49386FCE 54F3FC94

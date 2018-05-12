@@ -2,10 +2,10 @@
 
 #include "../defines.h"
 #include "../defineTypes.h"
-#include "../scene/Player.h"
+#include "../actor/Player.h"
 #include "../tsv.h"
 #include "../Singleton.h"
-#include "FrameAnimation.h"
+#include "../animation/FrameAnimation.h"
 #include "../Random.h"
 
 class SkillManager : public Singleton<SkillManager>

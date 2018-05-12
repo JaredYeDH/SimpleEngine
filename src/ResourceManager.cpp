@@ -7,7 +7,6 @@
  ** option) any later version.
  ******************************************************************/
 #include "ResourceManager.h"
-#include <SOIL/SOIL.h>
 #include "image.h"
 #include "Environment.h"
 
