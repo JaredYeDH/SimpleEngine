@@ -7,14 +7,14 @@ class DebuggerCore
 public:
 	DebuggerCore();
 	~DebuggerCore();
-	bool breaked();
+	bool breaked(lua_State*L);
 	bool hasBreakPoint(const char* source);
 	static void OnHookLine(lua_State* L, lua_Debug* ar);
 	void SetHook(lua_State*L);
 	static void DebugHookLoop(lua_State* L, lua_Debug* ar);
 	bool hitBreakPointTest(lua_Debug* ar, int currentline);
 	void SetBreaked(bool isBreak) {
-		m_Breaked = isBreak;
+		m_TrapWait = isBreak;
 	};
 	static DebuggerCore* GetInstance()
 	{
@@ -113,6 +113,9 @@ public:
 		}
 		return{};
 	}
+	void step_in();
+	void step_out();
+	void step_over();
 	inline static void format_path(String& path)
 	{
 		if (path[0] == '@')
@@ -128,4 +131,5 @@ private:
 	static MessageHandler* m_handler;
 	std::vector<Json> m_Sources;
 	std::map<String, Json> m_AllBreakPoints;
+	lua_State* m_L;
 };

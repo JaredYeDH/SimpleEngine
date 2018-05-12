@@ -1246,7 +1246,7 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 				stopEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
 				handler->SendEvent(stopEvent.js);
 
-
+				DebuggerCore::GetInstance()->SetBreaked(true);
 
 
 
@@ -1325,19 +1325,28 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			DebuggerCore::GetInstance()->SetBreaked(false);
 		}
 		else if (command == "next") {
-			/*vs::Response rsp;
+			vs::Response rsp;
 			rsp.setRq(request);
-			handler->SendResponse(rsp.js);*/
+			handler->SendResponse(rsp.js);
+			DebuggerCore::GetInstance()->step_over();
 		}
 		else if (command == "stepIn") {
 			vs::Response rsp;
 			rsp.setRq(request);
 			handler->SendResponse(rsp.js);
+			DebuggerCore::GetInstance()->step_in();
 		}
 		else if (command == "stepOut") {
 			vs::Response rsp;
 			rsp.setRq(request);
 			handler->SendResponse(rsp.js);
+			DebuggerCore::GetInstance()->step_out();
+		}
+		else if (command == "stepOver") {
+			vs::Response rsp;
+			rsp.setRq(request);
+			handler->SendResponse(rsp.js);
+			DebuggerCore::GetInstance()->step_over();
 		}
 		else if (command == "stepBack") {
 
@@ -1367,14 +1376,14 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 			vs::Response rsp;
 
-			std::string str = R"#({"body":{"stackFrames":[{"column":0,"id":0,"line":%d,"name":"--(0)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":1,"line":%d,"name":"local(1)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":2,"line":%d,"name":"function(2)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":3,"line":%d,"name":"debugger_loop(server)(3)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}}],"totalFrames":4},"command":"stackTrace","request_seq":9,"seq":21,"success":true,"type":"response"})#";
+			std::string str = R"#({"body":{"stackFrames":[{"column":0,"id":0,"line":%d,"name":"--(0)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\vscode-mock-debug\\src\\tests\\main.lua","sourceReference":0}},{"column":0,"id":1,"line":%d,"name":"local(1)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\vscode-mock-debug\\src\\tests\\main.lua","sourceReference":0}},{"column":0,"id":2,"line":%d,"name":"function(2)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\vscode-mock-debug\\src\\tests\\main.lua","sourceReference":0}},{"column":0,"id":3,"line":%d,"name":"debugger_loop(server)(3)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\vscode-mock-debug\\src\\tests\\main.lua","sourceReference":0}}],"totalFrames":4},"command":"stackTrace","request_seq":9,"seq":21,"success":true,"type":"response"})#";
 
 			char cstr[1024];
 			sprintf(cstr, str.c_str(), handler->CurrentLine, handler->CurrentLine, handler->CurrentLine, handler->CurrentLine);
 
-			rsp.js = Json::parse( std::string(cstr));
-			
-			
+			rsp.js = Json::parse(std::string(cstr));
+
+
 			rsp.setRq(request);
 
 

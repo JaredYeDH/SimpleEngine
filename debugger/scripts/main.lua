@@ -31,6 +31,71 @@ function OnGameUpdate()
     local d = 1
     local e = 4
 
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+    do 
+        local c = 3 
+        local d = 1
+        local e = 4
+    end
+
 end
 
 function DoSomething()
