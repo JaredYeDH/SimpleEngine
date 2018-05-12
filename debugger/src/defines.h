@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#define WORK_DIR "/Users/oceancx/MHXY/SimpleEngine/server"
+#define WORK_DIR "D:/Github/SimpleEngine/debugger"
 
 
 typedef int64_t 	int64;

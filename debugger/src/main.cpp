@@ -76,7 +76,8 @@ int main(int argc, char* argv[])
 		lua_register(L, "lua_sleep", lua_sleep);
 		lua_register(L, "lua_run_loop", lua_run_loop);
 
-		std::string main_script_path = (std::string(WORK_DIR) + "/scripts/main.lua").c_str();
+		//std::string(WORK_DIR) + "/scripts/main.lua"
+		std::string main_script_path = std::string("D:\\Github\\vscode-mock-debug\\src\\tests\\main.lua").c_str();
 		std::cout << main_script_path << std::endl;;
 		int ec = luaL_dofile(L, main_script_path.c_str());
 		if (ec) {
@@ -89,7 +90,6 @@ int main(int argc, char* argv[])
 															  */
 		instance->SetHandler(handler);
 		instance->SetHook(L);
-
 
 		while (true)
 		{

@@ -43,7 +43,8 @@ public:
 
 	void Send(Message msg);
 	void StopOnBreakPointEvent(Json bp);
-
+	bool m_ConfigDone;
+	int CurrentLine = 0;
 private:
 	DebugServer* m_Server;
 	MessageDispatcher* m_Dispatcher;

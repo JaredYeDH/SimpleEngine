@@ -72,19 +72,24 @@ void DebuggerCore::OnHookLine(lua_State* L, lua_Debug* ar)
 		if (path[0] == '@')
 			path = path.substr(1);
 		std::replace(path.begin(), path.end(), '\\', '/');
-
-		if (dbgCore->hit_bp(path,ar->currentline))
+		if (m_handler->m_ConfigDone)
 		{
-			dbgCore->m_Breaked = true;
-			Json bp = dbgCore->get_bp(path, ar->currentline);
-			m_handler->StopOnBreakPointEvent(bp);	
-		}
+			if (dbgCore->hit_bp(path, ar->currentline))
+			{
+				dbgCore->m_Breaked = true;
+				Json bp = dbgCore->get_bp(path, ar->currentline);
+				m_handler->StopOnBreakPointEvent(bp);
+				m_handler->CurrentLine = ar->currentline;
+			}
 
-		while (dbgCore->m_Breaked)
-		{
-			m_handler->Loop(L);
-			Sleep(10);
+			
+			while (dbgCore->m_Breaked)
+			{
+				m_handler->Loop(L);
+				Sleep(10);
+			}
 		}
+		
 	}
 	else
 	{

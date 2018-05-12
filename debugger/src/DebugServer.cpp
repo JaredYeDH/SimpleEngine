@@ -1,7 +1,7 @@
 #include "DebugServer.h"
 #include "DebuggerCore.h"
 
-#define MAIN_THREAD_ID 0
+#define MAIN_THREAD_ID 1
 std::deque<Message> g_ReadQueue;
 std::deque<Message> g_WriteQueue;
 
@@ -543,10 +543,10 @@ namespace vs
 			js["event"] = "stopped";
 			auto& body = js["body"];
 			body["reason"] = "";
-			body["description"] = "";
+			//	body["description"] = "";
 			body["threadId"] = MAIN_THREAD_ID;
-			body["text"] = "";
-			body["allThreadsStopped"] = true;
+			//	body["text"] = "";
+			//	body["allThreadsStopped"] = true;
 		}
 	};
 	struct ContinuedEvent : public Event {
@@ -1014,7 +1014,8 @@ namespace vs
 		{
 			js["command"] = "threads";
 			auto& body = js["body"];
-			body["threads"] = Json::array({ Thread().js });
+			body["threads"] = Json::object();
+			// body["threads"] =
 		}
 	};
 	struct ModulesRequest : public Request {
@@ -1147,8 +1148,8 @@ Message::Message(std::string msg, int type)
 void Message::log()
 {
 	/*std::cout << "msg id:" << id << std::endl
-		<< " type:" << type << std::endl
-		<< " content:" << content << std::endl;*/
+	<< " type:" << type << std::endl
+	<< " content:" << content << std::endl;*/
 	std::cout << content << std::endl;
 }
 
@@ -1194,7 +1195,7 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			vs::InitializeResponse resp;
 			resp.setRq(request);
 			resp.js["body"] = {
-				{ "supportsConfigurationDoneRequest",false },
+				{ "supportsConfigurationDoneRequest",true },
 				{ "supportsEvaluateForHovers",true },
 				{ "supportsStepBack",true }
 			};
@@ -1207,16 +1208,16 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			//TODO here should start the program
 			/*std::thread startRuntime([]() {});*/
 
-			
+
 
 			String rqstr = request.dump();
-			vs::LaunchResponse rsp;
+			/*	vs::LaunchResponse rsp;
 			rsp.setRq(Json::parse(rqstr));
-			handler->SendResponse(rsp.js);
-			handler->StopOnBreakPointEvent({});
+			handler->SendResponse(rsp.js);*/
+			/*handler->StopOnBreakPointEvent({});*/
 
 
-			vs::StoppedEvent stepEvent;
+			/*	vs::StoppedEvent stepEvent;
 			stepEvent.js["event"] = "stopped";
 			stepEvent.js["body"]["reason"] = "step";
 			stepEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
@@ -1225,33 +1226,35 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 
 
-			 stepEvent;
+			stepEvent;
 			stepEvent.js["event"] = "stopped";
 			stepEvent.js["body"]["reason"] = "resume";
 			stepEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
 			handler->SendEvent(stepEvent.js);
-			DebuggerCore::GetInstance()->SetBreaked(false);
+			DebuggerCore::GetInstance()->SetBreaked(false);*/
 
-			onConfidoneFunc = [handler, rqstr ]()
+			onConfidoneFunc = [handler, rqstr]()
 			{
-			
-				/*vs::StoppedEvent stopEvent;
-				stopEvent.js["event"] = "stopped";
-				stopEvent.js["body"]["reason"] = "entry";
-				stopEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
-				handler->SendEvent(stopEvent.js);*/
-				
-				
-				
-
-			
 				vs::LaunchResponse rsp;
 				rsp.setRq(Json::parse(rqstr));
 				handler->SendResponse(rsp.js);
-				handler->StopOnBreakPointEvent({});
 
 
-			//	handler->SendEvent(pauseEvent.js);
+				vs::StoppedEvent stopEvent;
+				stopEvent.js["event"] = "stopped";
+				stopEvent.js["body"]["reason"] = "entry";
+				stopEvent.js["body"]["threadId"] = MAIN_THREAD_ID;
+				handler->SendEvent(stopEvent.js);
+
+
+
+
+
+
+				//	handler->StopOnBreakPointEvent({});
+
+
+				//	handler->SendEvent(pauseEvent.js);
 
 				//DebuggerCore::GetInstance()->SetBreaked(false);
 			};
@@ -1280,7 +1283,7 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			//server->doWrite(wrapMsg(newResponse,"reso"));
 			Json args = request["arguments"];
 			String path = args["source"]["path"];
-			DebuggerCore::GetInstance()->SetSources(path,args["source"]);
+			DebuggerCore::GetInstance()->SetSources(path, args["source"]);
 			DebuggerCore::GetInstance()->SetAllBreakPoints(path, args["breakpoints"]);
 			DebuggerCore::GetInstance()->VerifyAllBreakPoints();
 
@@ -1303,14 +1306,15 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			handler->SendResponse(rsp.js);
 		}
 		else if (command == "configurationDone") {
+
 			vs::ConfigurationDoneResponse rsp;
 			rsp.setRq(request);
 			handler->SendResponse(rsp.js);
 
 			if (onConfidoneFunc)
 				onConfidoneFunc();
-			
-			
+
+			handler->m_ConfigDone = true;
 		}
 		else if (command == "continue") {
 
@@ -1360,15 +1364,28 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 		}
 		else if (command == "stackTrace") {
+
 			vs::Response rsp;
-			rsp.js = Json::parse(R"#({"body":{"stackFrames":[{"column":0,"id":0,"line":1,"name":"--(0)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":1,"line":1,"name":"local(1)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":2,"line":1,"name":"function(2)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":3,"line":1,"name":"debugger_loop(server)(3)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\server\\scripts\\main.lua","sourceReference":0}}],"totalFrames":4},"command":"stackTrace","request_seq":9,"seq":21,"success":true,"type":"response"})#");
+
+			std::string str = R"#({"body":{"stackFrames":[{"column":0,"id":0,"line":%d,"name":"--(0)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":1,"line":%d,"name":"local(1)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":2,"line":%d,"name":"function(2)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}},{"column":0,"id":3,"line":%d,"name":"debugger_loop(server)(3)","source":{"adapterData":"mock-adapter-data","name":"main.lua","path":"D:\\Github\\SimpleEngine\\debugger\\scripts\\main.lua","sourceReference":0}}],"totalFrames":4},"command":"stackTrace","request_seq":9,"seq":21,"success":true,"type":"response"})#";
+
+			char cstr[1024];
+			sprintf(cstr, str.c_str(), handler->CurrentLine, handler->CurrentLine, handler->CurrentLine, handler->CurrentLine);
+
+			rsp.js = Json::parse( std::string(cstr));
+			
+			
 			rsp.setRq(request);
+
+
 
 			handler->SendResponse(rsp.js);
 		}
 		else if (command == "scopes") {
 			vs::Response rsp;
-			rsp.js = Json::parse(R"#({"seq":23,"type":"response","request_seq":11,"command":"scopes","success":true,"body":{"scopes":[{"name":"Local","variablesReference":1000,"expensive":false},{"name":"Global","variablesReference":1001,"expensive":true}]}})#");
+			String str = R"#({"seq":23,"type":"response","request_seq":11,"command":"scopes","success":true,"body":{"scopes":[{"name":"Local","variablesReference":1000,"expensive":false},{"name":"Global","variablesReference":1001,"expensive":true}]}})#";
+
+			rsp.js = Json::parse(str);
 			rsp.setRq(request);
 
 			handler->SendResponse(rsp.js);
@@ -1390,13 +1407,13 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 			vs::ThreadsResponse rsp;
 			rsp.setRq(request);
 			Json threads_js = Json::array({
-				{ 
-					{"id",MAIN_THREAD_ID},
-					{"name","thread 1"}
+				{
+					{ "id",MAIN_THREAD_ID },
+					{ "name","thread 1" }
 				}
 			});
-			rsp.js["body"] = {
-				"threads", threads_js
+			rsp.js["body"]["threads"] = {
+				threads_js
 			};
 			handler->SendResponse(rsp.js);
 		}
@@ -1433,7 +1450,7 @@ void MessageDispatcher::Dispatch(lua_State* L, Message _msg, MessageHandler* han
 
 
 MessageHandler::MessageHandler(DebugServer* server)
-	:m_Server(server)
+	:m_Server(server), m_ConfigDone(false), CurrentLine(1)
 {
 	m_Dispatcher = new MessageDispatcher();
 }
@@ -1466,7 +1483,7 @@ void MessageHandler::Loop(lua_State*L)
 			g_WriteQueueMutex.unlock();
 			std::cout << "[g_WriteQueue Log!!!!!!!!!!!!!]" << std::endl;
 			msg.log();
-			std::cout <<  std::endl;
+			std::cout << std::endl;
 			if (m_Server)
 			{
 				m_Server->Write(msg);
@@ -1488,8 +1505,8 @@ void MessageHandler::StopOnBreakPointEvent(Json bp)
 	vs::StoppedEvent ev;
 	ev.js["event"] = "stopped";
 	ev.js["body"] = {
-		{"reason","breakpoint"},
-		{"threadId",MAIN_THREAD_ID}
+		{ "reason","breakpoint" },
+		{ "threadId",MAIN_THREAD_ID }
 	};
 	SendEvent(ev.js);
 }
