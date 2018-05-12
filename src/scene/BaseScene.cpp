@@ -1,5 +1,5 @@
 #include "BaseScene.h"
-#include "../projects/Demo.h"
+#include "Demo.h"
 
 BaseScene::BaseScene(int id,String name)
 :m_ID(id),m_Name(name)

@@ -6,9 +6,7 @@
 #include "core/Texture.h"
 #include "InputManager.h"
 #include "../SpriteRenderer.h"
-#include "../ThirdParty/NetEase/Sprite2.h"
-#include "../ThirdParty/NetEase/WDF.h"
-#include "../ThirdParty/NetEase/WAS.h"
+
 #include "GameMap.h"
 #include "../Environment.h"
 #include "../ResourceManager.h"

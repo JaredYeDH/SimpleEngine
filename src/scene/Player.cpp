@@ -4,7 +4,7 @@
 #include "Logger.h"
 #include "global.h"
 #include "../Message.h"
-#include "Combat.h"
+#include "../combat/Combat.h"
 #include "../Random.h"
 //
 //map 1501.map

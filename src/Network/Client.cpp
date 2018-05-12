@@ -1,6 +1,5 @@
 #include "Client.h"
 #include "../Engine.h"
-#include "../Projects/Demo.h"
 
 void Client::DoReadBody()
 {

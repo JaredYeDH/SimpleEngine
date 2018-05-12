@@ -5,7 +5,7 @@
 
 #include "../TextRenderer.h"
 #include "../Bitmap.h"
-#include "Combat.h"
+#include "../combat/Combat.h"
 #include "FrameAnimation.h"
 #include "ThirdParty/NetEase/Sprite2.h"
 #include "ThirdParty/NetEase/WDF.h"

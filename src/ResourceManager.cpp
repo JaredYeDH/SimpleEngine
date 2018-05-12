@@ -9,16 +9,14 @@
 #include "ResourceManager.h"
 #include <SOIL/SOIL.h>
 #include "image.h"
-#include "Projects/Config.h"
 #include "Environment.h"
 
 ResourceManager::ResourceManager()
 	:Singleton<ResourceManager>()
 {
-	Config config(Environment::GetAbsPath("Resource/tables/config.txt"));
 
-	m_ShapeWdfPtr = new NetEase::WDF(config.GetWdfPath("shape.wdf"));
-	m_ShapeWd3Ptr = new NetEase::WDF(config.GetWdfPath("shape.wd3"));
+	m_ShapeWdfPtr = new NetEase::WDF(Environment::GetWDFPath("shape.wdf"));
+	m_ShapeWd3Ptr = new NetEase::WDF(Environment::GetWDFPath("shape.wd3"));
 
 	std::string vPath = Environment::GetAbsPath("Shader/sprite.vs");
 	std::string fPath = Environment::GetAbsPath("Shader/sprite.fs");

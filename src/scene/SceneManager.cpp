@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "../Projects/Demo.h"
+#include "Demo.h"
 
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),
@@ -7,7 +7,6 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 {
 	m_Scenes.clear();
 
-//	m_MapTSV = utils::tsv(Environment::GetTsvPath("map"));
 	for(auto& row : m_MapTSV.tabRows)
 	{
 		int id = std::stoi(row[0]);
@@ -17,7 +16,6 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 
 	if(m_Scenes.size() > 0)
 	{
-
 		m_pCurrentScene = m_Scenes.begin()->second;
 		m_pCurrentScene->Init();
 	}

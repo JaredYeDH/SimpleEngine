@@ -2,7 +2,7 @@
 
 #include "../defines.h"
 #include "../defineTypes.h"
-#include "Player.h"
+#include "../scene/Player.h"
 #include "../tsv.h"
 #include "../Singleton.h"
 #include "FrameAnimation.h"
@@ -44,7 +44,7 @@ private:
 #define SKILL_MANAGER_INSTANCE SkillManager::GetInstance()
 
 
-class CombatSystem
+class CombatSystem : public Singleton<CombatSystem>
 {
 public:
 	CombatSystem();
@@ -59,3 +59,5 @@ private:
 	std::vector<Player*> m_Ourselves;
 	std::vector<Player*> m_Enemies;
 };
+
+#define COMBAT_SYSTEM_INSTANCE CombatSystem::GetInstance()
