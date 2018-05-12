@@ -9,7 +9,7 @@ void MessageDispatcher::Discharge(BaseGameEntity* pReceiver, const Telegram& msg
 }
 
 
-void MessageDispatcher::DispatchMessage(int delay,
+void MessageDispatcher::DispatchMessageX(int delay,
 	int sender,
 	int receiver,
 	int msgType,

@@ -220,7 +220,7 @@ public:
 	virtual void Enter(Player* ){};
     virtual void Execute(Player* player){};
  	virtual void Exit(Player* ) {};
-	virtual bool OnMessage(Player* , const Telegram& ) {};
+	virtual bool OnMessage(Player*, const Telegram&) { return false; };
 };
 
 class PlayerCombatIdleState : public BasePlayerCombatState, public Singleton<PlayerCombatIdleState>

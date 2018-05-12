@@ -473,7 +473,7 @@ void PlayerCombatAttackState::Execute(Player* player)
 		auto& weaponFrame = player->GetCurrentWeaponFrame();
 		if(playerFrame.IsCurrentFrameChangedInUpdate() && playerFrame.GetLastFrame() % playerFrame.GetGroupFrameCount()== 3)
 		{
-			MESSAGE_DISPATCHER_INSTANCE->DispatchMessage(2,player->GetID(),player->GetTargetID(),MSG_PlayerCombatBeAttackedState,nullptr);
+			MESSAGE_DISPATCHER_INSTANCE->DispatchMessageX(2,player->GetID(),player->GetTargetID(),(int)MSG_PlayerCombatBeAttackedState,nullptr);
 		}
 		
 		if(playerFrame.IsNextFrameRestart())
@@ -622,7 +622,7 @@ void PlayerCombatCastAttackState::Execute(Player* player)
 			for (auto it = enemySet.begin(); it != enemySet.end(); ++it)
 			{
 				int enemy = *it;
-				MESSAGE_DISPATCHER_INSTANCE->DispatchMessage(i,player->GetID(),enemy,MSG_PlayerCombatBeCastAttackedState,nullptr);	
+				MESSAGE_DISPATCHER_INSTANCE->DispatchMessageX(i,player->GetID(),enemy,MSG_PlayerCombatBeCastAttackedState,nullptr);	
 				i=i+2;
 			}
 			

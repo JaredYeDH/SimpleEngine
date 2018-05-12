@@ -3,6 +3,7 @@
 #include "defineTypes.h"
 #include "Singleton.h"
 
+
 class BaseGameEntity;
 
 enum GameMessageType
@@ -50,7 +51,7 @@ private:
 	}
 public:
 	
-	void DispatchMessage(int delay,
+	void DispatchMessageX(int delay,
 	int sender,
 	int receiver,
 	int msgType,

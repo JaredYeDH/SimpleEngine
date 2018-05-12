@@ -71,6 +71,8 @@ void Window::Show()
         p_Game->Update(deltaTime);
 
         p_Game->Draw();		
+
+		ImGui::Render();
         // Swap the screen buffers
         glfwSwapBuffers(p_Window);
     }
