@@ -1,9 +1,9 @@
 #pragma once
 #include "defines.h"
 #include "defineTypes.h"
-#include "simple_engine.h"
+#include "../simple_engine.h"
+#include "BaseScene.h"
 
-#include "IUpdateDraw.h"
 class SceneManager : public Singleton<SceneManager>
 {
 public:
@@ -13,8 +13,10 @@ public:
 	void Update();
 	void Draw();
 private:
-	IUpdateDraw * mSence;
-		
+	
+	std::map<int,BaseScene*> m_Scenes;
+	BaseScene* m_pCurrentScene;
+	utils::tsv m_MapTSV;
 };
 
 #define SCENE_MANAGER_INSTANCE SceneManager::GetInstance()
