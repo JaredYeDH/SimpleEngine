@@ -20,6 +20,7 @@ public:
             std::cout <<" load dofile error!" << std::endl;
             return ;
         }
+        OnGameInit();
     }
     void Close()
     {
@@ -70,3 +71,5 @@ public:
 private:
     static lua_State* L;
 };
+
+#define LUAVM_INSTANCE LuaVM::GetInstance()

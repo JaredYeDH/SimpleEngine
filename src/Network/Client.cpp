@@ -11,7 +11,7 @@ void Client::DoReadBody()
 		if (!ec)
 		{
 			m_ReadMessage.DecodeBody();
-			Engine::GetInstance()->DispatchMove(m_ReadMessage);
+			//Engine::GetInstance()->DispatchMove(m_ReadMessage);
 			std::cout.write(m_ReadMessage.Body(), m_ReadMessage.BodyLength());
 			std::cout << "\n";
 			DoReadHeader();

@@ -46,3 +46,5 @@ private:
 	TimerManager& operator=(const TimerManager& yRef);
 	TimerManager& operator=(TimerManager&& yRef);
 };
+
+#define TIMER_MANAGER_INTANCE TimerManager::GetInstance()

@@ -84,6 +84,10 @@ InputManager::~InputManager()
 void InputManager::Init()
 {
 	m_pWindow = WINDOW_INSTANCE->GetGLFWwindow();
+    SetKeyCallback();
+    SetScrollCallback();
+    SetMouseCallback();
+    SetMouseButtonCallback();
 }
 
 void InputManager::SetKeyCallback()
