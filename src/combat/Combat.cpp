@@ -4,30 +4,8 @@
 #include "../Message.h"
 #include "../simple_engine.h"
 #include "../animation/FrameAnimation.h"
-
-SkillManager::SkillManager()
-{
-	m_RandomID=-1;
-	m_RandomIndex = 0;
-	utils::tsv skillTSV(Environment::GetTsvPath("magic"));
-	m_Skills.clear();
-	for(int i=0;i<skillTSV.rows.size()-1;i++)
-	// for(int i=0;i<4;i++)
-	{	
-		auto row = skillTSV.cols[i];
-		int id = std::stoi(row[0]);
-		auto _was_id = row[2];
-		uint32 was_id= std::stoul(_was_id, 0, 16);
-
-        std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::PackFile::MagicWDF, was_id);
-		if(!sp->Error)
-		{
-			m_Skills[id] = FrameAnimation(sp);
-		}
-	}
-}
-
-
+#include "Skill.h"
+#include "../actor/PlayerState.h"
 
 CombatSystem::CombatSystem()
 : m_Ourselves(10,nullptr),

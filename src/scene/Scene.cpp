@@ -8,7 +8,7 @@
 #include "../combat/Combat.h"
 
 static Player * m_StriderPtr = nullptr;
-bool s_IsCombat = true;
+bool s_IsCombat = false;
 
 Scene::Scene(int id,String name)
 :BaseScene::BaseScene(id,name)
@@ -21,10 +21,10 @@ Scene::~Scene()
 
 void Scene::Init()
 {
-	m_GameMapPtr = new GameMap(0);
+	m_GameMapPtr = new GameMap(m_ID);
 
 	m_StriderPtr = new Player(3);
-	m_StriderPtr->SetPos(2300, 1700);
+	m_StriderPtr->SetPos(500, 500);
 	m_StriderPtr->SetBox();
 	m_StriderPtr->SetNickName(L"Ocean-\u85cf\u5fc3");	//藏心
 	m_StriderPtr->SetActionID(15);

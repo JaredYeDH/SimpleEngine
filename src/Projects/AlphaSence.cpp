@@ -10,6 +10,8 @@
 #include "ThirdParty/NetEase/Sprite2.h"
 #include "ThirdParty/NetEase/WDF.h"
 #include "ThirdParty/NetEase/WAS.h"
+#include "../combat/Skill.h"
+
 // #include "../tsv.h"
 
 // #include "animation_database.h"

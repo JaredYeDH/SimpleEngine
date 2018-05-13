@@ -11,7 +11,7 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void Draw();
-private:
+protected:
 	int m_ID;
 	String m_Name;
 

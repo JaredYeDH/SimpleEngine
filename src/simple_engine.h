@@ -14,5 +14,6 @@
 #include "SpriteRenderer.h"
 #include "GMath.h"
 #include "global.h"
+#include "Random.h"
 
 

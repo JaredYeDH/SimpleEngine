@@ -121,6 +121,8 @@ actor/ActorManager.cpp
 actor/ActorManager.h
 actor/Player.cpp
 actor/Player.h
+actor/PlayerState.cpp
+actor/PlayerState.h
 algorithm.cpp
 animation/animation_database.h
 animation/FrameAnimation.cpp
@@ -138,6 +140,8 @@ Bitmap.cpp
 Bitmap.h
 combat/Combat.cpp
 combat/Combat.h
+combat/Skill.cpp
+combat/Skill.h
 components/BaseComponent.cpp
 components/BaseComponent.h
 components/TransformComponent.cpp

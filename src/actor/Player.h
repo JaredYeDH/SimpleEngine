@@ -7,33 +7,13 @@
 #include "Logger.h"
 #include "../animation/animation_database.h"
 #include "../animation/FrameAnimation.h"
+
 #include "../State.h"
-#include "../Message.h"
-
-
-
-class PlayerCombatIdleState;
-class PlayerCombatMoveState;
-class PlayerCombatBackState;
-class PlayerCombatAttackState;
-class PlayerCombatCastAttackState;
-class PlayerCombatBeCastAttackedState;
-class PlayerCombatBeAttackedState;
-class PlayerCombatGlobalState;
-
 
 
 class Player  : public BaseGameEntity
 {
 private:
-	friend class PlayerCombatIdleState;
-	friend class PlayerCombatMoveState;
-	friend class PlayerCombatBackState;
-	friend class PlayerCombatAttackState;
-	friend class PlayerCombatBeAttackedState;
-	friend class PlayerCombatCastAttackState;
-	friend class PlayerCombatGlobalState;
-	friend class PlayerCombatBeCastAttackedState;
 
 	StateMachine<Player>* m_pFSM;
 public:
@@ -79,7 +59,8 @@ public:
 	void ResetDir(int dir);
 	void SetDir(int dir);
 	void ReverseDir();
-	
+	double GetCombatDistSquare();
+	double GetCombatAngle();
 	void SetActionID(int state) { 
 		m_ActionID = state; 
 		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
@@ -101,6 +82,8 @@ public:
 	void SetCombatPos(Pos pos){m_CombatPos = pos;};
 	Pos GetCombatPos(){ return m_CombatPos;};
 
+    Pos GetCombatTargetPos(){ return m_CombatTargetPos;};
+
 	void SetBox();
 	double GetX() { return m_Pos.x; }
 	double GetY() { return m_Pos.y; }
@@ -118,6 +101,11 @@ public:
 	void SetVelocity(int velocity) { m_MoveVelocity = velocity; };
 	double GetVelocity() { return  m_MoveVelocity ;};
 	
+	std::map<int,FrameAnimation>& GetPlayerFrames()
+	{
+		return m_PlayerFrames;
+	};
+
 	
 
 	FrameAnimation& GetCurrentPlayerFrame()
@@ -212,77 +200,4 @@ private:
 	}
 };
 
-
-class BasePlayerCombatState :  public State<Player> 
-{
-public:
-	virtual void Enter(Player* ){};
-    virtual void Execute(Player* player){};
- 	virtual void Exit(Player* ) {};
-	virtual bool OnMessage(Player*, const Telegram&) { return false; };
-};
-
-class PlayerCombatIdleState : public BasePlayerCombatState, public Singleton<PlayerCombatIdleState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-};
-
-
-class PlayerCombatMoveState : public BasePlayerCombatState, public Singleton<PlayerCombatMoveState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-	bool OnMessage(Player* , const Telegram& ) override;
-private:
-	bool m_bSent;
-};
-class PlayerCombatAttackState : public BasePlayerCombatState, public Singleton<PlayerCombatAttackState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-};
-
-class PlayerCombatCastAttackState : public BasePlayerCombatState, public Singleton<PlayerCombatCastAttackState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-};
-
-
-class PlayerCombatBackState : public BasePlayerCombatState, public Singleton<PlayerCombatBackState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-};
-
-
-class PlayerCombatBeAttackedState : public BasePlayerCombatState, public Singleton<PlayerCombatBeAttackedState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-
-};
-
-class PlayerCombatBeCastAttackedState : public BasePlayerCombatState, public Singleton<PlayerCombatBeCastAttackedState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-
-};
-
-class PlayerCombatGlobalState : public BasePlayerCombatState, public Singleton<PlayerCombatGlobalState>
-{
-public:	
-    void Execute(Player* player) override;
-	void Enter(Player* player) override;
-	bool OnMessage(Player* , const Telegram& ) override;
-};
 

@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-
+#include "../Random.h"
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),
 m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
@@ -9,13 +9,16 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 	for(auto& row : m_MapTSV.tabRows)
 	{
 		int id = std::stoi(row[0]);
-		String name = row[1];
+        String name = row.size()>1?row[1]:"";
 		m_Scenes[id] = new Scene(id,name);
 	}
 
 	if(m_Scenes.size() > 0)
 	{
-		m_pCurrentScene = m_Scenes.begin()->second;
+		int randomMapID = RANDOM_INSTANCE->NextInt(0,m_Scenes.size()-1);
+		auto iter = m_Scenes.begin();
+		for(;randomMapID>=0;iter++,randomMapID--);
+		m_pCurrentScene = iter->second;
 		m_pCurrentScene->Init();
 	}
 	

@@ -5,7 +5,7 @@
 
 GameMap::GameMap(uint32 mapId)
 {
-	std::string fileName = Environment::GetMapPath("1001");
+	std::string fileName = Environment::GetMapPath(std::to_string(mapId));
 
 	mXyqMap = new NetEase::MAP(fileName);
 
@@ -223,25 +223,26 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
     int currentNode = 0;
     int nextNode = 1;
     std::list<Pos> smoothMoveList;
-    smoothMoveList.push_back(moveList[currentNode]);
-    while(nextNode!=moveList.size())
+    if(moveList.size()>0)
     {
-    	int lastNextNode = nextNode;
-        while(nextNode!=moveList.size() && CanArriveDirect(moveList[currentNode],moveList[nextNode]) )
-        {
-        	lastNextNode = nextNode;
-        	nextNode++;
-        }
-        currentNode=lastNextNode;
         smoothMoveList.push_back(moveList[currentNode]);
+        while(nextNode!=moveList.size())
+        {
+            int lastNextNode = nextNode;
+            while(nextNode!=moveList.size() && CanArriveDirect(moveList[currentNode],moveList[nextNode]) )
+            {
+                lastNextNode = nextNode;
+                nextNode++;
+            }
+            currentNode=lastNextNode;
+            smoothMoveList.push_back(moveList[currentNode]);
+        }
+        for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
+            Pos node = *i;
+            cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;
+            
+        }
     }
-
-    for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
-		Pos node = *i;
-		cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;
-        
-	}
-
 	return smoothMoveList;
 
 }
