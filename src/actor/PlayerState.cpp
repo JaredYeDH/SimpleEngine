@@ -84,7 +84,6 @@ void PlayerMoveState::Execute(Player* player)
 			player->SetBoxX(d.x);
 			player->SetBoxY(d.y);
 			m_MoveList.pop_front();
-			
 		}
 	}
 	else
@@ -103,7 +102,7 @@ void PlayerCombatMoveState::Enter(Player* player)
 {
 	m_bSent = false;
 	player->SetActionID(11);
-	player->SetPos(player->GetCombatPos());
+	
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
     Pos combatPos =player->GetCombatPos();
@@ -124,17 +123,12 @@ void PlayerCombatMoveState::Execute(Player* player)
 	double localVelocity = player->GetVelocity()*dt;
     Pos combatPos =player->GetCombatPos();
     Pos targetPos =player->GetCombatTargetPos();
-
     double dist_sqr = player->GetCombatDistSquare();
-	//double time_base = 1.0/60*4;
 	if (dist_sqr > localVelocity*localVelocity) {
 		int degree = player->GetCombatAngle() ;
-		//player->m_Dir = GMath::Astar_GetDir(degree);
 		double stepRangeX = cos(DegreeToRadian(degree));
 		double stepRangeY = sin(DegreeToRadian(degree));
         player->SetCombatPos(combatPos.x + stepRangeX*localVelocity , combatPos.y + stepRangeY*localVelocity);
-
-		// SetDir(player->m_Dir);
 	}
 	else
 	{
@@ -159,23 +153,20 @@ void PlayerCombatAttackState::Enter(Player* player)
 	weaponFrame->SetFrameTimeBase(1.0/60*5);
 	weaponFrame->ResetFrameTimeByGroupCount(playerFrame->GetGroupFrameCount());
 }
+
 void PlayerCombatAttackState::Execute(Player* player) 
 {
 	if(player->GetPlayerFrames().find(6)!= player->GetPlayerFrames().end() )
 	{
-		
 		auto* playerFrame = player->GetCurrentPlayerFrame();
 		auto* weaponFrame = player->GetCurrentWeaponFrame();
 		if(playerFrame->IsCurrentFrameChangedInUpdate() && playerFrame->GetLastFrame() % playerFrame->GetGroupFrameCount()== 3)
 		{
 			MESSAGE_DISPATCHER_INSTANCE->DispatchMessageX(2,player->GetID(),player->GetTargetID(),(int)MSG_PlayerCombatBeAttackedState,nullptr);
 		}
-		
 		if(playerFrame->IsNextFrameRestart())
 		{
-			// player->SetCombatPos(player->GetPos());			
-			player->SetCombatTargetPos(player->GetPos());
-
+			//player->SetCombatPos(player->GetPos());			
 			player->GetFSM()->ChangeState(PlayerCombatBackState::GetInstance());
 		}
 	}
@@ -186,6 +177,9 @@ void PlayerCombatAttackState::Execute(Player* player)
 }
 void PlayerCombatBackState::Enter(Player* player) 
 {
+	player->SetCombatTargetPos(player->GetPos());
+	player->ReverseDir();
+
 	player->SetActionID(13);
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
@@ -195,29 +189,32 @@ void PlayerCombatBackState::Enter(Player* player)
 	double localVelocity = player->GetVelocity();
 	playerFrame->SetFrameTimeBase(d/localVelocity);
 	weaponFrame->SetFrameTimeBase(d/localVelocity);
-	player->ReverseDir();
+	
 	weaponFrame->ResetFrameTimeByGroupCount(playerFrame->GetGroupFrameCount());
+	
 }
+
 void PlayerCombatBackState::Execute(Player* player) 
 {
 	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 	double localVelocity = player->GetVelocity()*dt;
 	if (player->GetCombatDistSquare() > localVelocity*localVelocity) {
 		int degree = player->GetCombatAngle();
-		//player->m_Dir = GMath::Astar_GetDir(degree);
 		double stepRangeX = cos(DegreeToRadian(degree));
 		double stepRangeY = sin(DegreeToRadian(degree));
 		Pos combatPos = player->GetCombatPos();
 		player->SetCombatPos( combatPos.x +  stepRangeX*localVelocity,combatPos.y +  stepRangeY*localVelocity);
-		
-		// SetDir(player->m_Dir);
 	}
 	else
 	{
-		player->ReverseDir();
 		player->GetFSM()->ChangeState(PlayerCombatIdleState::GetInstance());
 	}
 }
+void PlayerCombatBackState::Exit(Player* player) 
+{
+	player->ReverseDir();
+}
+	
 
 
 void PlayerCombatBeAttackedState::Enter(Player* player) 
@@ -321,7 +318,6 @@ void PlayerCombatCastAttackState::Execute(Player* player)
 				MESSAGE_DISPATCHER_INSTANCE->DispatchMessageX(i,player->GetID(),enemy,MSG_PlayerCombatBeCastAttackedState,nullptr);	
 				i=i+2;
 			}
-			
 		}
 		
 		if(playerFrame->IsNextFrameRestart())

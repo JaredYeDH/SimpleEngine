@@ -72,6 +72,7 @@ class PlayerCombatBackState : public BasePlayerCombatState, public Singleton<Pla
 public:	
     void Execute(Player* player) override;
 	void Enter(Player* player) override;
+	void Exit(Player* ) override;
 };
 
 

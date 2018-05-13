@@ -20,6 +20,7 @@ public:
 	void ResetDirAll(int dir);
 	void ResetDir(int dir);
 	void SetDir(int dir);
+	int GetDir(){return m_Dir;};
 	void ReverseDir();
 	double GetCombatDistSquare();
 	double GetCombatAngle();
@@ -36,6 +37,9 @@ public:
 	void SetCombatPos(double x, double y) {m_CombatPos.x=x;m_CombatPos.y=y;};
 	void SetCombatPos(Pos pos){m_CombatPos = pos;};
 	Pos GetCombatPos(){ return m_CombatPos;};
+
+	void SetCombatBackupPos(Pos pos){m_CombatPosBackup= pos;};
+	Pos GetCombatBackupPos(){ return m_CombatPosBackup;};
 
     Pos GetCombatTargetPos(){ return m_CombatTargetPos;};
 
@@ -100,6 +104,7 @@ private:
 	int m_Dir;
 	Pos m_Pos;
 	Pos m_CombatPos;
+	Pos m_CombatPosBackup;
 	Pos m_CombatTargetPos;
     BoxPos m_Box;
 	std::list<Pos> m_MoveList;

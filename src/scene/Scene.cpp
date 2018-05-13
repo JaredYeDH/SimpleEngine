@@ -91,30 +91,30 @@ void Scene::Update()
 
 }
 
-int amout = 10;
+int amout = 1;
 void Scene::ProcessInput()
 {
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_W,[this]()
+	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_W))
 	{
 		m_StriderPtr->TranslateY(-amout);
-	});
+	};
 
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_A,[this]()
+	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_A))
 	{
 		m_StriderPtr->TranslateX(-amout);
-	});
+	};
 
 
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_S,[this]()
+	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_S))
 	{
 		m_StriderPtr->TranslateY(amout);
-	});
+	};
 
 
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_D,[this]()
+	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_D))
 	{
 		m_StriderPtr->TranslateX(amout);
-	});
+	};
 
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_F,[this]()
 	{

@@ -12,18 +12,16 @@ CombatSystem::CombatSystem()
 m_Enemies(10,nullptr)
 {
 	SKILL_MANAGER_INSTANCE;
-
-
 	auto f = [](int role_id, double x, double y, std::wstring nickname)
 	{
 		Player* p = new Player(role_id);
 		p->SetActionID(4);
+		p->SetPos(x, y);
 		p->SetCombatPos(x, y);
 		p->SetCombatTargetPos({ x*1.0f,y*1.0f });
 		p->SetIsCombat(true);
 		p->SetNickName(nickname);
 		p->ChangeWeapon();
-
 		return p;
 	};
 	AddSelf(0, f(3, 415.0f / 640 * SCREEN_WIDTH, 275.0f / 480 * SCREEN_HEIGHT, L"\u5df1\u65b9\u7ec40")); //己方组
