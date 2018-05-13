@@ -77,16 +77,12 @@ void CombatSystem::Update()
 {
 	ProcessInput();
 
-	
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
 			[this](){
 				int selfID = RANDOM_INSTANCE->NextInt(0,9);
 				int enemyID = RANDOM_INSTANCE->NextInt(0,9);
 				auto& self = m_Ourselves[selfID];
 				auto& enemy = m_Enemies[enemyID];
-				// double dist_sqr = GMath::Astar_GetDistanceSquare(self->GetCombatPos().x, self->GetCombatPos().y, 
-				// enemy->GetCombatPos().x, enemy->GetCombatPos().y) ;
-				// double d = std::sqrt(dist_sqr);
 				int degree = GMath::Astar_GetAngle(self->GetCombatPos().x, self->GetCombatPos().y, 
 				enemy->GetCombatPos().x + 90 , enemy->GetCombatPos().y + 60);
 				int dir = GMath::Astar_GetDir(degree);	

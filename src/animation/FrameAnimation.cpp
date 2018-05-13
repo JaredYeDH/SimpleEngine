@@ -37,26 +37,16 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
 	
 	m_Sprites.clear();
 	m_IsBlankFrame.clear();
-  //  m_Sprites.resize(m_FrameCount);
 	for (int i = 0; i< m_FrameCount ; i++) {
 		int gpos = i / m_GroupFrameCount;
 		int cpos = i % m_GroupFrameCount;
-
-//        if(sprite->mFrames &&sprite->mFrames[gpos] && sprite->mFrames[gpos][cpos].src)
-//        {
-            String tPath = sprite->mPath+"/"+std::to_string(i);
+        String tPath = sprite->mPath+"/"+std::to_string(i);
             Texture* t = TextureManager::GetInstance()->LoadTexture(
 			tPath,
 			sprite->mWidth,sprite->mHeight,true,(uint8*)&(sprite->mFrames[gpos][cpos].src[0])
 			);
         m_Sprites.push_back(tPath);
-		m_IsBlankFrame.push_back(  sprite->mFrames[gpos][cpos].IsBlank  );
-		
-//            m_Sprites[i]=tPath;
-//        }else
-//        {
-//            m_Sprites[i]="";
-//        }
+		m_IsBlankFrame.push_back(sprite->mFrames[gpos][cpos].IsBlank  );
 	}
 	m_bVisible = true;
 	m_bLoop = true;
@@ -122,18 +112,13 @@ String FrameAnimation::GetFramePath(int index = -1)
 
 void FrameAnimation::SetCurrentGroup(int group)
 {
-    // if(m_GroupFrameCount!=0)
-    // {
-	   m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
-	   m_CurrentGroup = group;
-    // }
-	//m_DeltaTime = 0;
+	m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
+	m_CurrentGroup = group;
 }
 
 
 void FrameAnimation::OnUpdate(double dt)
 {
-	// if(true)return;
 	if(m_CurrentFrame <m_IsBlankFrame.size()&& m_IsBlankFrame[m_CurrentFrame])
 		dt = dt * 2;
 	m_DeltaTime += dt;
@@ -152,11 +137,6 @@ void FrameAnimation::OnUpdate(double dt)
 		m_CurrentFrame++;
 		if(m_GroupFrameCount!=0 && m_CurrentFrame % m_GroupFrameCount == 0 )
 		{
-			/*m_CurrentGroup++;
-			if (m_CurrentGroup >= 8)
-			{
-				m_CurrentGroup = 0;
-			}*/
 			m_bIsNextFrameRestart = true;
 			m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
             if(m_LastFrame>=0&&m_LastFrame<m_IsBlankFrame.size()&& !m_IsBlankFrame[m_LastFrame] )
@@ -188,7 +168,7 @@ void FrameAnimation::ResetAnim(int group)
 	SetCurrentGroup(group);
 	m_DeltaTime = 0;	
 	m_bIsNextFrameRestart = false;
-		// m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
+	// m_CurrentFrame = (m_CurrentGroup)* m_GroupFrameCount;
 }
 
 void FrameAnimation::SetVisible(bool visible)

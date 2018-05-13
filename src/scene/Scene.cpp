@@ -42,7 +42,7 @@ void Scene::Init()
 	}
 	else 
 	{
-		InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this](){
+		INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this](){
 			int halfScreenWidth = SCREEN_WIDTH / 2;
 			int halfScreenHeight = SCREEN_HEIGHT / 2;
 
@@ -52,8 +52,8 @@ void Scene::Init()
 			mapOffsetX = GMath::Clamp(mapOffsetX, -m_GameMapPtr->GetWidth() + SCREEN_WIDTH, 0);
 			mapOffsetY = GMath::Clamp(mapOffsetY, -m_GameMapPtr->GetHeight() + SCREEN_HEIGHT, 0);
 
-			double mouseX = InputManager::GetInstance()->GetMouseX();
-			double mouseY = InputManager::GetInstance()->GetMouseY();
+			double mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
+			double mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
 
 			IntPos src, dest;
 			src.x = m_StriderPtr->GetX();
@@ -68,6 +68,8 @@ void Scene::Init()
 
 void Scene::Update()
 {
+	ProcessInput();
+
 	if (s_IsCombat)
 	{
 		COMBAT_SYSTEM_INSTANCE->Update();
@@ -76,9 +78,6 @@ void Scene::Update()
 	{
 		double dt = ENGINE_INSTANCE->GetDeltaTime();
 		m_StriderPtr->OnUpdate(dt);
-
-		ProcessInput();
-
 		if (m_IsChangeState)
 		{
 			m_ChangeStateTimeInterval += dt;
@@ -92,128 +91,54 @@ void Scene::Update()
 
 }
 
+int amout = 10;
 void Scene::ProcessInput()
 {
-
-	int amout = 1;
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_W))
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_W,[this]()
 	{
 		m_StriderPtr->TranslateY(-amout);
-		Logger::Print("cur_x:%lf cur_y:%lf\n", m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	}
+	});
 
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_A))
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_A,[this]()
 	{
 		m_StriderPtr->TranslateX(-amout);
-		Logger::Print("cur_x:%lf cur_y:%lf\n", m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	}
+	});
 
 
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_S))
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_S,[this]()
 	{
 		m_StriderPtr->TranslateY(amout);
-		Logger::Print("cur_x:%lf cur_y:%lf\n", m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	}
+	});
 
 
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_D))
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_D,[this]()
 	{
 		m_StriderPtr->TranslateX(amout);
-		Logger::Print("cur_x:%lf cur_y:%lf\n", m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	}
+	});
 
-	int dir = 0;
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_3) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_3))
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_F,[this]()
 	{
-		dir = static_cast<int>(FrameAnimation::Dir::S_E);
-		m_StriderPtr->SetDir(dir);
-	}
+		s_IsCombat=!s_IsCombat;
+	});
 
-	// if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_1)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_1))
-	// {
-	// 	dir = static_cast<int>(FrameAnimation::Dir::S_W);
-	// 	m_StriderPtr->SetDir(dir);
-	// }
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_7) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_7))
-	{
-
-		dir = static_cast<int>(FrameAnimation::Dir::N_W);
-		m_StriderPtr->SetDir(dir);
-	}
-
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_9) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_9))
-	{
-		dir = static_cast<int>(FrameAnimation::Dir::N_E);
-		m_StriderPtr->SetDir(dir);
-	}
-
-
-	// if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_2)  || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_2))
-	// {
-	// 	dir = static_cast<int>(FrameAnimation::Dir::S);
-	// 	m_StriderPtr->SetDir(dir);
-	// }
-
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_4) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_4))
-	{
-		dir = static_cast<int>(FrameAnimation::Dir::W);
-		m_StriderPtr->SetDir(dir);
-	}
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_8) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_8))
-	{
-
-		dir = static_cast<int>(FrameAnimation::Dir::N);
-		m_StriderPtr->SetDir(dir);
-	}
-
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_6) || InputManager::GetInstance()->IsKeyUp(GLFW_KEY_6))
-	{
-		dir = static_cast<int>(FrameAnimation::Dir::E);
-		m_StriderPtr->SetDir(dir);
-	}
-
-
-
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1,
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_1,
 		[this]() {
 		m_StriderPtr->ChangeAction();
 	}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_2,
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_2,
 		[this]() {
 		m_StriderPtr->ChangeRole();
 
 	}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_3,
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_3,
 		[this]() {
 		m_StriderPtr->ChangeWeapon();
 	}
 	);
-
-	if (InputManager::GetInstance()->IsKeyUp(GLFW_KEY_KP_5) && !m_IsChangeState)
-	{
-		m_IsChangeState = true;
-
-		if (m_StriderPtr->GetActionID() == Player::Moving)
-		{
-			m_StriderPtr->SetActionID(Player::Idle);
-		}
-		else
-		{
-			m_StriderPtr->SetActionID(Player::Moving);
-		}
-		m_StriderPtr->ResetDir(dir);
-	}
-
 }
 
 void Scene::Draw()

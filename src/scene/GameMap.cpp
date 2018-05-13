@@ -239,8 +239,7 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
         }
         for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
             Pos node = *i;
-            cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;
-            
+            // cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;  
         }
     }
 	return smoothMoveList;

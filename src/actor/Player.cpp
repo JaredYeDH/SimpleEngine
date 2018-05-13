@@ -20,7 +20,6 @@ m_IsMove(false),
 m_MoveVelocity(400),
 m_MoveList(),
 m_BackupMoveList(),
-m_MoveToCalled(false),
 m_AnimDB(),
 m_bInCombat(false),
 m_CombatPos({0.0f,0.0f}),
@@ -175,16 +174,16 @@ void Player::SaveFrame(int index)
 void Player::OnUpdate(double dt)
 {
 	m_pFSM->Update();
+	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	{
+		m_PlayerFrames[m_ActionID].OnUpdate(dt);
+		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		{
+			m_WeaponFrames[m_ActionID].OnUpdate(dt);
+		}
+	}
 	if(m_bInCombat)
 	{
-		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
-		{
-			m_PlayerFrames[m_ActionID].OnUpdate(dt);
-			if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-			{
-				m_WeaponFrames[m_ActionID].OnUpdate(dt);
-			}
-		}
 		if(m_bSkillFrameShow)
 		{
 			m_SkillFrame.OnUpdate(dt);
@@ -323,9 +322,9 @@ void Player::SetSkillFrame(FrameAnimation* anim)
 
 void Player::LogInfo()
 {
-	utils::tsv m_RoleTSV(Environment::GetTsvPath("role")),
-	utils::tsv m_WeaponTSV(Environment::GetTsvPath("weapon")),
-	utils::tsv m_ActionTSV(Environment::GetTsvPath("action")),
+    utils::tsv m_RoleTSV(Environment::GetTsvPath("role"));
+    utils::tsv m_WeaponTSV(Environment::GetTsvPath("weapon"));
+    utils::tsv m_ActionTSV(Environment::GetTsvPath("action"));
 
 	Logger::Print("Role:%s Weapon:%s Action:%s\n",
 	m_RoleTSV.query(m_RoleID)[1].c_str(),

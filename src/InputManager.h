@@ -4,9 +4,6 @@
 #include "Event/Event.h"
 #include <functional>
 
-/*
-管理输入 包括：鼠标移动，滚动 键盘按键等
-*/
 struct MousePos
 {
 	double x,y;
@@ -31,15 +28,11 @@ public:
     void SetMouseCallback();
     void SetMouseButtonCallback();
 
-    // bool IsKeyDown(int keyCode) { return s_KeyStates[keyCode] == GLFW_PRESS; }
-    // bool IsKeyUp(int keyCode) { return s_KeyStates[keyCode] == GLFW_RELEASE; }
-
 	bool IsKeyDown(int keyCode) { return s_Keys[keyCode]; }
     bool IsKeyUp(int keyCode) { return s_Keys[keyCode]; }
 	
 
 	int GetKeyState(int keyCode) { return s_KeyStates[keyCode]; }
-	//void BindKey(int keyCode, const std::function<void(int key,Object2D& )> & func  );
 
     double GetMouseX() { return s_MousePos.x; }
     double GetMouseY() { return s_MousePos.y; }
@@ -47,7 +40,6 @@ public:
     void SetMouseEvent(IMouseEvent* event){ s_IMouseEvent = event; }
 
 	void RegisterOnKeyClickEvent(int keyCode,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
-	// void RegisterOnMouseClickEvent(int button,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
 private:
 	InputManager();
 	~InputManager();

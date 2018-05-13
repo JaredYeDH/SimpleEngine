@@ -36,17 +36,7 @@ void PlayerIdleState::Enter(Player* player)
 
 void PlayerIdleState::Execute(Player* player) 
 {
-	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
-	auto* playerFrame = player->GetCurrentPlayerFrame();
-	if(playerFrame!=nullptr)
-	{
-		playerFrame->OnUpdate(dt);
-		auto* weaponFrame = player->GetCurrentWeaponFrame();
-		if(weaponFrame)
-		{
-			weaponFrame->OnUpdate(dt);
-		}
-	}
+
 }
 
 bool PlayerIdleState::OnMessage(Player* player, const Telegram& msg) 
@@ -68,7 +58,6 @@ void PlayerMoveState::Execute(Player* player)
 	auto& m_MoveList = player->GetMoveList();
 	if (!m_MoveList.empty())
 	{
-		m_Moving = true;
 		double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 		double localVelocity = player->GetVelocity()*dt;
 		Pos d = m_MoveList.front();
@@ -103,19 +92,6 @@ void PlayerMoveState::Execute(Player* player)
 		player->SetBox();
 		player->GetFSM()->ChangeState(PlayerIdleState::GetInstance());
 	}
-
-	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
-	auto* playerFrame = player->GetCurrentPlayerFrame();
-	if(playerFrame!=nullptr)
-	{
-		playerFrame->OnUpdate(dt);
-		auto* weaponFrame = player->GetCurrentWeaponFrame();
-		if(weaponFrame)
-		{
-			weaponFrame->OnUpdate(dt);
-		}
-	}
-		
 }
 
 bool PlayerMoveState::OnMessage(Player* player, const Telegram& msg) 

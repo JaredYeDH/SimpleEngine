@@ -13,20 +13,9 @@
 #include "../combat/Skill.h"
 
 // #include "../tsv.h"
-
 // #include "animation_database.h"
 Image* img;
 TextRenderer* textRenderer;
-
-struct Test1
-{
-	int a;
-};
-struct Test2
-{
-	Test1 dd;
-	int b;
-};
 
 std::vector<FrameAnimation> g_SkillFrame(100);
 
@@ -50,7 +39,7 @@ AlphaSence::AlphaSence()
 	// auto p = g_Loader->LoadSprite(0x2EB3476E);
 	g_SkillFrame.clear();
 	
- 	g_SkillFrame.push_back (FrameAnimation(  g_Loader->LoadSprite(0x0E30CD44)));
+ 	g_SkillFrame.push_back(FrameAnimation(  g_Loader->LoadSprite(0x0E30CD44)));
 
 
 	//TestTimer

@@ -38,13 +38,6 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
-    // if (action == GLFW_PRESS)
-    // {
-    //     s_KeyStates[key]=action;
-    // }else if(action == GLFW_RELEASE)
-    // {
-    //     s_KeyStates[key]=action;
-    // }
     
     if(action == GLFW_PRESS){
         s_Keys[key] = true;
@@ -123,11 +116,6 @@ void InputManager::SetMouseButtonCallback()
 {
     glfwSetMouseButtonCallback(m_pWindow, mouse_button_callback);
 }
-
-//void InputManager::BindKey(int keyCode, const std::function<void(int key,Object2D& )> & func  )
-//{
-    	
-//}
 
 
  
