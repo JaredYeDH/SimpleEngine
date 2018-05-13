@@ -10,29 +10,14 @@
 #include "../Engine.h"
 #include "../animation/FrameAnimation.h"
 #include "PlayerState.h"
-//
-//map 1501.map
-//shape.wdf 49386FCE 54F3FC94
-//shape.wd3 DF749306 1BEC0D8A
-
-// PlayerId : 1-12 
-// WeaponId : 0-160
-
-//shape.wdf A16A06FF 4FBA48B8 
-//shape.wd3 72013AF5 F2FB1AFA
-
 
 Player::Player(int roleID):
 m_RoleID(roleID),
 m_WeaponID(1),
 m_ActionID(1),
 m_HasWeapon(false),
-m_RoleTSV(Environment::GetTsvPath("role")),
-m_WeaponTSV(Environment::GetTsvPath("weapon")),
-m_ActionTSV(Environment::GetTsvPath("action")),
 m_IsMove(false),
 m_MoveVelocity(400),
-m_UpdateDelta(0),
 m_MoveList(),
 m_BackupMoveList(),
 m_MoveToCalled(false),
@@ -44,10 +29,9 @@ m_CombatTargetPos({0.0f,0.0f})
 	LogInfo();
 	ChangeRole(m_RoleID);
 	m_pFSM = new StateMachine<Player>(this);
-	m_pFSM->SetCurrentState(PlayerCombatIdleState::GetInstance());
+	m_pFSM->SetCurrentState(PlayerIdleState::GetInstance());
 	m_pFSM->SetGlobalState(PlayerCombatGlobalState::GetInstance());
 }
-
 
 Player::Player()
 :Player(0)
@@ -56,7 +40,6 @@ Player::Player()
 
 Player::~Player()
 {
-
 }
 
 double Player::GetCombatDistSquare()
@@ -64,11 +47,18 @@ double Player::GetCombatDistSquare()
 	return GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
 }
 
+double Player::GetMoveDestDistSquare(Pos dest)
+{
+	return GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y);
+}
 double Player::GetCombatAngle()
 {
 	return GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
 }
-
+double Player::GetMoveDestAngle(Pos dest)
+{
+	return GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
+}
 
 void Player::ReloadFrames()
 {
@@ -120,7 +110,6 @@ void Player::ChangeRole(int roleID)
 			}
 		}
 	}
-	
 }
 
 void Player::ChangeWeapon()
@@ -185,30 +174,9 @@ void Player::SaveFrame(int index)
 
 void Player::OnUpdate(double dt)
 {
+	m_pFSM->Update();
 	if(m_bInCombat)
 	{
-		
-        // double localVelocity = m_MoveVelocity*dt;
-		// if (GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y) > localVelocity*localVelocity) {
-		// 	int degree = GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
-		// 	//m_Dir = GMath::Astar_GetDir(degree);
-		// 	double stepRangeX = cos(DegreeToRadian(degree));
-		// 	double stepRangeY = sin(DegreeToRadian(degree));
-
-		// 	m_CombatPos.x += stepRangeX*5;
-		// 	m_CombatPos.y += stepRangeY*5;
-		// 	//dt=dt/5;
-		// 	// SetDir(m_Dir);
-		// }
-		// if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
-		// {
-		// 	m_PlayerFrames[m_ActionID].OnUpdate(dt);
-		// 	if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-		// 	{
-		// 		m_WeaponFrames[m_ActionID].OnUpdate(dt);
-		// 	}
-		// }
-		m_pFSM->Update();
 		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 		{
 			m_PlayerFrames[m_ActionID].OnUpdate(dt);
@@ -225,103 +193,9 @@ void Player::OnUpdate(double dt)
 		{
 			m_bSkillFrameShow = false;
 		}	
-	}else
-	{
-		m_UpdateDelta += dt;
-		if (m_UpdateDelta >= dt) {
-			m_UpdateDelta = 0;
-			if (m_IsMove) {
-				if (!m_MoveList.empty())
-				{
-					double localVelocity = m_MoveVelocity*dt;
-					Pos d = m_MoveList.front();
-					Pos dest;
-					dest.x = d.x * 20 + 10;
-					dest.y = d.y * 20 + 10;
-					
-					Logger::Print("Src X:%.1lf Y:%.1f \t Dest X:%.1lf Y:%.1lf vel:%.1lf dir:%d\n",m_Pos.x,m_Pos.y, dest.x,dest.y,localVelocity,m_Dir);
-
-					if (GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y) > localVelocity*localVelocity) {
-						int degree = GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
-						m_Dir = GMath::Astar_GetDir(degree);
-
-						double stepRangeX = cos(DegreeToRadian(degree));
-						double stepRangeY = sin(DegreeToRadian(degree));
-
-						TranslateX(stepRangeX * localVelocity);
-						TranslateY(stepRangeY * localVelocity);
-					
-						SetDir(m_Dir);
-					}
-					else {
-						Pos d = m_MoveList.front();
-
-						SetX(d.x * 20 + 10);
-						SetY(d.y * 20 + 10);
-						m_Box.x = d.x;
-						m_Box.y = d.y;
-						m_MoveList.pop_front();
-					//  HandleMoveToCalled();
-
-					}
-				}
-				else
-				{
-					m_IsMove = false;
-					SetActionID(Player::Idle);
-					//SetDir(m_Dir);
-					m_Box.x = GetBoxX();
-					m_Box.y = GetBoxY();
-				// HandleMoveToCalled();
-
-				}
-				//Logger::Print("boxX:%d boxY:%d x:%.1lf y:%.1lf dir:%d \n",GetBoxX(),GetBoxY(), GetX(),GetY(), m_Dir);
-			}
-
-		}
-
-
-		if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
-		{
-			m_PlayerFrames[m_ActionID].OnUpdate(dt);
-			if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-			{
-				m_WeaponFrames[m_ActionID].OnUpdate(dt);
-			}
-		}
-		
-		HandleMoveToCalled();
 	}
 }
 
-void Player::HandleMoveToCalled()
-{
-    if(m_MoveToCalled)
-    {
-        if(!m_BackupMoveList.empty())
-        {
-            m_MoveList=m_BackupMoveList;
-            m_IsMove=true;
-            Pos d = m_MoveList.front();
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetActionID(Player::Moving);
-        }
-        else
-        {
-            m_MoveList.clear();
-            m_IsMove=false;
-            Pos d(GetBoxX(),GetBoxY());
-
-            SetX(d.x * 20 + 10);
-            SetY(d.y * 20 + 10);
-            SetActionID(Player::Idle);
-        }
-        m_MoveToCalled=false;
-    }
-    
-}
 
 void Player::OnDraw(int px,int py)
 {	
@@ -358,7 +232,6 @@ void Player::OnDraw(int px,int py)
 	}
 }
 
-
 void Player::SetPos(double x, double y)
 {
 	m_Pos.x = x;
@@ -373,10 +246,10 @@ void Player::SetBox()
 
 void Player::MoveTo(GameMap* gameMapPtr, int destBoxX, int destBoxY)
 {
-	if(m_MoveToCalled)return;
 	m_BackupMoveList.clear();
-	m_BackupMoveList= gameMapPtr->Move(GetBoxX(), GetBoxY()  , destBoxX, destBoxY);
-    m_MoveToCalled=true;
+	m_BackupMoveList = gameMapPtr->Move(GetBoxX(), GetBoxY()  , destBoxX, destBoxY);
+	if(m_BackupMoveList.size() <=0)return;
+	m_pFSM->ChangeState(PlayerMoveState::GetInstance());
 }
 
 void Player::ResetDirAll(int dir)
@@ -396,7 +269,7 @@ void Player::ResetDir(int dir)
 
 	for (auto& weaponIt : m_WeaponFrames)
 		weaponIt.second.Reset(dir);	
-	// m_Dir = dir;
+	m_Dir = dir;
 }
 
 void Player::SetDir(int dir)
@@ -406,13 +279,57 @@ void Player::SetDir(int dir)
 
 	for (auto& weaponIt : m_WeaponFrames)
 		weaponIt.second.SetCurrentGroup(dir);	
-
-	// m_Dir = dir;
+	
+	m_Dir = dir;
 }
-
 
 bool Player::HandleMessage(const Telegram& msg) 
 {	
-	
 	return GetFSM()->HandleMessage(msg);
 };
+
+
+void Player::SetActionID(int state)
+{ 
+	m_ActionID = state; 
+	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
+	{
+		m_PlayerFrames[m_ActionID].ResetAnim(m_Dir);
+		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
+		{
+			m_WeaponFrames[m_ActionID].ResetAnim(m_Dir);
+		}
+	}
+}
+
+
+FrameAnimation* Player::GetCurrentPlayerFrame()
+{
+	return m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end()?&m_PlayerFrames[m_ActionID]:nullptr;
+};
+
+FrameAnimation* Player::GetCurrentWeaponFrame()
+{
+	return m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end()?&m_WeaponFrames[m_ActionID]:nullptr;
+};
+
+void Player::SetSkillFrame(FrameAnimation* anim)
+{
+	if(anim&&anim->GetSpritesCount() <= 0 ) return;
+	m_bSkillFrameShow = true;
+	m_SkillFrame =  *anim;
+	m_SkillFrame.ResetAnim(0);
+}
+
+void Player::LogInfo()
+{
+	utils::tsv m_RoleTSV(Environment::GetTsvPath("role")),
+	utils::tsv m_WeaponTSV(Environment::GetTsvPath("weapon")),
+	utils::tsv m_ActionTSV(Environment::GetTsvPath("action")),
+
+	Logger::Print("Role:%s Weapon:%s Action:%s\n",
+	m_RoleTSV.query(m_RoleID)[1].c_str(),
+	m_WeaponTSV.query(m_WeaponID)[1].c_str(),
+	m_ActionTSV.query(m_ActionID)[1].c_str()
+	);
+}

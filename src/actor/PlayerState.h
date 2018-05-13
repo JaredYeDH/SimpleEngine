@@ -19,13 +19,29 @@ public:
 	virtual bool OnMessage(Player*, const Telegram&) ;
 };
 
+
+class PlayerIdleState : public BasePlayerCombatState, public Singleton<PlayerIdleState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+	bool OnMessage(Player* , const Telegram& ) override;
+};
+
+class PlayerMoveState : public BasePlayerCombatState, public Singleton<PlayerMoveState>
+{
+public:	
+    void Execute(Player* player) override;
+	void Enter(Player* player) override;
+	bool OnMessage(Player* , const Telegram& ) override;
+};
+
 class PlayerCombatIdleState : public BasePlayerCombatState, public Singleton<PlayerCombatIdleState>
 {
 public:	
     void Execute(Player* player) override;
 	void Enter(Player* player) override;
 };
-
 
 class PlayerCombatMoveState : public BasePlayerCombatState, public Singleton<PlayerCombatMoveState>
 {
@@ -82,5 +98,21 @@ public:
 	void Enter(Player* player) override;
 	bool OnMessage(Player* , const Telegram& ) override;
 };
-
-
+// collapse
+// angry
+// cry
+// idle_combat
+// sayhi
+// attack
+// conjure
+// salute
+// walk
+// attacked
+// runto
+// dance
+// runback
+// defend
+// idle
+// wave
+// sit
+// bow

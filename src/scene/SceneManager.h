@@ -15,7 +15,7 @@ public:
 private:
 	
 	std::map<int,Scene*> m_Scenes;
-	BaseScene* m_pCurrentScene;
+	Scene* m_pCurrentScene;
 	utils::tsv m_MapTSV;
 };
 
