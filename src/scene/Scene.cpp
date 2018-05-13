@@ -26,7 +26,7 @@ void Scene::Init()
 	m_StriderPtr = new Player(3);
 	m_StriderPtr->SetPos(500, 500);
 	m_StriderPtr->SetBox();
-	m_StriderPtr->SetNickName(L"Ocean-\u85cf\u5fc3");	//藏心
+	m_StriderPtr->SetNickName(L"Ocean\u85cf\u5fc3");	//藏心
 	m_StriderPtr->SetActionID(15);
 
 

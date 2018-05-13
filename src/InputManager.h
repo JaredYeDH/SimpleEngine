@@ -37,7 +37,6 @@ public:
     double GetMouseX() { return s_MousePos.x; }
     double GetMouseY() { return s_MousePos.y; }
 
-    void SetMouseEvent(IMouseEvent* event){ s_IMouseEvent = event; }
 
 	void RegisterOnKeyClickEvent(int keyCode,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
 private:
@@ -56,7 +55,6 @@ private:
 
 	static MousePos s_MousePos;
 
-	static IMouseEvent * s_IMouseEvent;
 	static std::map<int,std::function<void()>> s_ClickEvents;
 };
 

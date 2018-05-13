@@ -225,7 +225,6 @@ SpriteRenderer.cpp
 SpriteRenderer.h
 State.cpp
 State.h
-TestLua.cpp
 TextRenderer.cpp
 TextRenderer.h
 TextureManager.cpp

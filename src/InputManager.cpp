@@ -7,8 +7,6 @@ bool InputManager::s_FirstMouse = true;
 
 MousePos InputManager::s_MousePos(0,0);
 
-IMouseEvent* InputManager::s_IMouseEvent(nullptr);
-
 std::map<int,std::function<void()>> InputManager::s_ClickEvents = {};
 
 void InputManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -27,10 +25,6 @@ void InputManager::mouse_button_callback(GLFWwindow* window, int button, int act
         s_Keys[button] = false;	
     }
 
-    if(s_IMouseEvent != nullptr)
-    {
-        s_IMouseEvent->OnEvent(button,action,mods);
-    }
 }
 
 void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, int action, int mode)
