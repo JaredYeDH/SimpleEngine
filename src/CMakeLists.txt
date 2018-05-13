@@ -200,8 +200,6 @@ objects/Object.inl
 Pos.h
 precompile.h
 program.cpp
-projects/AlphaSence.cpp
-projects/AlphaSence.h
 Random.cpp
 Random.h
 Resource.cpp
@@ -216,8 +214,6 @@ scene/Scene.cpp
 scene/Scene.h
 scene/SceneManager.cpp
 scene/SceneManager.h
-scene/TestSence.cpp
-scene/TestSence.h
 simple_engine.h
 Singleton.h
 Singleton.inl
