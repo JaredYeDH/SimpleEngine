@@ -54,7 +54,6 @@ void Engine::Draw()
     
 	LUAVM_INSTANCE->OnGameDraw();
 	
-	ImGui::Render();
 }
 
 void Engine::Destroy()

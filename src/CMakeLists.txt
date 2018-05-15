@@ -162,6 +162,8 @@ CubeBatch.cpp
 CubeBatch.h
 defines.h
 defineTypes.h
+editor/resource_viewer.cpp
+editor/resource_viewer.h
 Engine.cpp
 Engine.h
 Entity.cpp

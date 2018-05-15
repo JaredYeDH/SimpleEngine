@@ -8,7 +8,7 @@
 #include "../combat/Combat.h"
 
 static Player * m_StriderPtr = nullptr;
-bool s_IsCombat = false;
+bool s_IsCombat = true;
 
 Scene::Scene(int id,String name)
 :BaseScene::BaseScene(id,name)
@@ -36,7 +36,7 @@ void Scene::Init()
 
 		std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF, 0x708C11A0);
 		FrameAnimation combatBG(sp);
-		Renderer2D::GetInstance()->AddObject(new Image(
+		RENDERER_2D_INSTANCE->AddObject(new Image(
 			combatBG.GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 		);
 	}
@@ -144,7 +144,7 @@ void Scene::ProcessInput()
 void Scene::Draw()
 {
 	m_GameMapPtr->Draw(m_StriderPtr->GetX(), m_StriderPtr->GetY());
-	Renderer2D::GetInstance()->Render();
+	RENDERER_2D_INSTANCE->Render();
 
 	if (s_IsCombat)
 	{

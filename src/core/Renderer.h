@@ -9,6 +9,7 @@
 #include "core/Transform.h"
 #include "Object2D.h"
 #include "Graphics2D.h"
+#include "../Singleton.h"
 
 #define RENDER_VERTEX_ARRAY_GEN(VBO,VAO) \
 	glGenBuffers(1, &VBO); \
@@ -31,7 +32,7 @@
 		CODE 		\
 	RENDER_VERTEX_ARRAY_UNBIND
 
-class Renderer2D
+class Renderer2D : public Singleton<Renderer2D>
 {
 public:
 	
@@ -42,17 +43,12 @@ public:
 	void AddObject(Object2D* obj);
 	void RemoveObject(int index);
 
-	static Renderer2D* GetInstance()
-	{
-		static Renderer2D* instance = new Renderer2D();
-		return instance;
-	}
 
 private:
 	std::list<Object2D*> m_ObjectList;
 	Graphics2D m_Graphics;
 };
-
+#define RENDERER_2D_INSTANCE Renderer2D::GetInstance()
 
 class RenderThread
 {

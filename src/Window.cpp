@@ -49,11 +49,11 @@ void Window::Show()
     while (!glfwWindowShouldClose(m_pWindow))
     {
 		glfwPollEvents();
-
 		ImGui_ImplGlfwGL3_NewFrame();
 		GAME_INSTANCE->Update();
+		GAME_INSTANCE->Draw();	
 
-		GAME_INSTANCE->Draw();
+		ImGui::Render();
         glfwSwapBuffers(m_pWindow);
     }
 	
