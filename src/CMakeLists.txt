@@ -216,6 +216,8 @@ scene/Scene.cpp
 scene/Scene.h
 scene/SceneManager.cpp
 scene/SceneManager.h
+scene/SplashScene.cpp
+scene/SplashScene.h
 simple_engine.h
 Singleton.h
 Singleton.inl

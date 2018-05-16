@@ -11,6 +11,8 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void Draw();
+	String GetName(){return m_Name;};
+	int GetID(){return m_ID;};
 protected:
 	int m_ID;
 	String m_Name;

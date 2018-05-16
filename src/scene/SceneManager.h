@@ -12,10 +12,14 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void SwitchScene(String name);
+	void AddScene(String name ,BaseScene* scene) {   m_Scenes[name] = scene; };
+	void RemoveScene(String name) { m_Scenes.erase(name);   };
 private:
 	
-	std::map<int,Scene*> m_Scenes;
-	Scene* m_pCurrentScene;
+	std::map<String,BaseScene*> m_Scenes;
+	BaseScene* m_pCurrentScene;
+	BaseScene* m_pNextScene;
 	utils::tsv m_MapTSV;
 };
 

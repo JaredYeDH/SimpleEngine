@@ -10,7 +10,7 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 	{
 		int id = std::stoi(row[0]);
         String name = row.size()>1?row[1]:"";
-		m_Scenes[id] = new Scene(id,name);
+		m_Scenes[name] = new Scene(id,name);
 	}
 
 	if(m_Scenes.size() > 0)
@@ -19,8 +19,9 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 		auto iter = m_Scenes.begin();
 		for(;randomMapID>=0;iter++,randomMapID--);
 		m_pCurrentScene = iter->second;
-		m_pCurrentScene->Init();
+	//	m_pCurrentScene->Init();
 	}
+	m_pNextScene = nullptr;
 	
 }
 
@@ -34,8 +35,22 @@ void SceneManager::Init()
 	
 };
 
+void SceneManager::SwitchScene(String name)
+{
+	auto it = m_Scenes.find(name);
+	if(it!=m_Scenes.end())
+	{
+		m_pNextScene = it->second;
+	}
+}
+
 void SceneManager::Update() 
 {
+	if(m_pNextScene!=nullptr)
+	{
+		m_pCurrentScene = m_pNextScene;
+		m_pNextScene = nullptr;
+	}
 	if(m_pCurrentScene)
 	{
 		m_pCurrentScene->Update();

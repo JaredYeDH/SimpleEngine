@@ -6,6 +6,7 @@
 #include "Network/Message.h"
 #include "LuaVM.h"
 #include "scene/SceneManager.h"
+#include "scene/SplashScene.h"
 
 
 Engine::Engine()
@@ -26,6 +27,8 @@ void Engine::Init()
 	INPUT_MANAGER_INSTANCE->Init();
 		
 	SCENE_MANAGER_INSTANCE->Init();
+	SCENE_MANAGER_INSTANCE->AddScene("splash",new SplashScene(100,"splash"));
+	SCENE_MANAGER_INSTANCE->SwitchScene("splash");
 	
    	TIMER_MANAGER_INTANCE; //init
 	
