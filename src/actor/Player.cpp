@@ -322,9 +322,9 @@ void Player::SetSkillFrame(FrameAnimation* anim)
 
 void Player::LogInfo()
 {
-    utils::tsv m_RoleTSV(Environment::GetTsvPath("role"));
-    utils::tsv m_WeaponTSV(Environment::GetTsvPath("weapon"));
-    utils::tsv m_ActionTSV(Environment::GetTsvPath("action"));
+    utils::tsv m_RoleTSV(Environment::GetTSVPath("role"));
+    utils::tsv m_WeaponTSV(Environment::GetTSVPath("weapon"));
+    utils::tsv m_ActionTSV(Environment::GetTSVPath("action"));
 
 	Logger::Print("Role:%s Weapon:%s Action:%s\n",
 	m_RoleTSV.query(m_RoleID)[1].c_str(),

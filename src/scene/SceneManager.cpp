@@ -1,8 +1,11 @@
 #include "SceneManager.h"
 #include "../Random.h"
+#include "SplashScene.h"
+#include "WASViewerScene.h"
+
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),
-m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
+m_MapTSV(utils::tsv(Environment::GetTSVPath("map")))
 {
 	m_Scenes.clear();
 
@@ -21,7 +24,12 @@ m_MapTSV(utils::tsv(Environment::GetTsvPath("map")))
 		m_pCurrentScene = iter->second;
 	//	m_pCurrentScene->Init();
 	}
-	m_pNextScene = nullptr;
+
+	AddScene(new SplashScene(100,"Splash"));
+	AddScene(new WASViewerScene(101,"WASViewer"));
+	SwitchScene("Splash");
+
+//	m_pNextScene = nullptr;
 	
 }
 

@@ -8,7 +8,7 @@ SkillManager::SkillManager()
 {
 	m_RandomID=-1;
 	m_RandomIndex = 0;
-	utils::tsv skillTSV(Environment::GetTsvPath("magic"));
+	utils::tsv skillTSV(Environment::GetTSVPath("magic"));
 	m_Skills.clear();
 	for(int i=0;i<skillTSV.rows.size()-1;i++)
 	{	

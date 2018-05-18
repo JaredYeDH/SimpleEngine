@@ -32,7 +32,7 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::LoadShader(const std::string vShaderFile, const std::string fShaderFile, const std::string gShaderFile, std::string name)
 {
-    Shaders[name] =new Shader(vShaderFile,fShaderFile);
+    Shaders[name] = new Shader(vShaderFile,fShaderFile);
     std::cout << "LoadShader" << std::endl;
     // return Shaders[name];
 }

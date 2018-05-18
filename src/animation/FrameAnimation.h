@@ -59,7 +59,11 @@ public:
 	Texture* GetFrame(int index); 
 	String GetFramePath(int index); 
 	int GetSpritesCount(){ return m_Sprites.size();};
-
+	int SetPivotPos(Pos pos)
+	{
+		m_Pos.x = pos.x -m_Width/2;
+		m_Pos.y = pos.y -m_Height/2;
+	}
 	void OnUpdate(double dt);
 	void Draw();
 	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};

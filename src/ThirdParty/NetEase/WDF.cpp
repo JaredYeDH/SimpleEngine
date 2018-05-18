@@ -92,16 +92,7 @@ namespace NetEase {
 		sprite->mHeight = header.height;
 		sprite->mKeyX = header.key_x;
 		sprite->mKeyY = header.key_y;
-
 		
-		sprite->mFrames = new Sprite2::Sequence*[header.group];
-        memset(sprite->mFrames, 0, sizeof(Sprite2::Sequence*)*header.group);
-		for (int i = 0; i < header.group; i++)
-		{
-			sprite->mFrames[i] = new Sprite2::Sequence[header.frame];
-            memset(sprite->mFrames[i], 0, sizeof(Sprite2::Sequence)*header.frame);
-		}
-
 		if (header.flag != 0x5053)
 		{
 			cerr << "Sprite File Flag Error!" << endl;
@@ -111,6 +102,13 @@ namespace NetEase {
 			//exit(EXIT_FAILURE);
 		}
 
+		sprite->mFrames = new Sprite2::Sequence*[header.group];
+        memset(sprite->mFrames, 0, sizeof(Sprite2::Sequence*)*header.group);
+		for (int i = 0; i < header.group; i++)
+		{
+			sprite->mFrames[i] = new Sprite2::Sequence[header.frame];
+            memset(sprite->mFrames[i], 0, sizeof(Sprite2::Sequence)*header.frame);
+		}
 		
 
 		// ?��????????????????12

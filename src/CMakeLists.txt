@@ -218,6 +218,8 @@ scene/SceneManager.cpp
 scene/SceneManager.h
 scene/SplashScene.cpp
 scene/SplashScene.h
+scene/WASViewerScene.cpp
+scene/WASViewerScene.h
 simple_engine.h
 Singleton.h
 Singleton.inl

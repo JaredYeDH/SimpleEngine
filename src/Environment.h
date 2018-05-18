@@ -16,9 +16,14 @@ public:
 		return WORK_DIR;
 	}
 
-	static String GetTsvPath(String name)
+	static String GetTSVPath(String name)
 	{
 		return GetPath()+"/Resource/tables/"+name+".tsv";
+	}
+
+	static String GetTablePath(String name)
+	{
+		return GetPath()+"/Resource/tables/"+name;
 	}
 
 	static std::string GetAbsPath(std::string localPath)
@@ -46,5 +51,9 @@ public:
 	static std::string GetMapPath(std::string path)
 	{
 		return GetPath() + "/Data/scene/" + path +".map";
+	}
+	static std::string GetFontPath(std::string path)
+	{
+		return GetPath() + "/resource/font/" + path ;
 	}
 };

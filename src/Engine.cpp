@@ -27,12 +27,14 @@ void Engine::Init()
 	INPUT_MANAGER_INSTANCE->Init();
 		
 	SCENE_MANAGER_INSTANCE->Init();
-	SCENE_MANAGER_INSTANCE->AddScene("splash",new SplashScene(100,"splash"));
-	SCENE_MANAGER_INSTANCE->SwitchScene("splash");
+	
 	
    	TIMER_MANAGER_INTANCE; //init
 	
 	LUAVM_INSTANCE->Init();
+	
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF(Environment::GetFontPath("simsun.ttc").c_str(), 16.0f, NULL, io.Fonts->GetGlyphRangesChinese());
 }
 
 void Engine::Update()

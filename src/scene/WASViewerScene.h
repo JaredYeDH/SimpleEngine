@@ -10,7 +10,7 @@
 #include "../actor/Player.h"
 #include "BaseScene.h"
 
-class SplashScene  : public BaseScene
+class WASViewerScene  : public BaseScene
 {
 public:
 	enum State
@@ -19,14 +19,15 @@ public:
 		Game
 	};
 
-	SplashScene(int id,String name);
-	~SplashScene();
+	WASViewerScene(int id,String name);
+	void Reset(String wdf);
+	~WASViewerScene();
 	void Init() override;
 	void Update() override;
 	void Draw() override;
-	void Reset();
 private:
 	int m_State;
+	
 };
 
 

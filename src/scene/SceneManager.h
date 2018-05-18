@@ -13,7 +13,14 @@ public:
 	void Update();
 	void Draw();
 	void SwitchScene(String name);
-	void AddScene(String name ,BaseScene* scene) {   m_Scenes[name] = scene; };
+	void AddScene(BaseScene* scene) 
+	{ 
+		if(!scene) return ;
+		
+		if( m_Scenes.count( scene->GetName() ) > 0 ) return ;
+ 		m_Scenes[scene->GetName()]=scene;
+	};
+	BaseScene* GetScene(String name){return m_Scenes.count(name)>0?m_Scenes[name]:nullptr; }
 	void RemoveScene(String name) { m_Scenes.erase(name);   };
 private:
 	

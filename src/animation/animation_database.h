@@ -69,11 +69,11 @@ namespace utils
 		}
 
 		AnimDB()
-		:playerTSV(Environment::GetTsvPath("player")),
-		actionTSV(Environment::GetTsvPath("action")),
-		roleTSV(Environment::GetTsvPath("role")),
-		role_wasTSV(Environment::GetTsvPath("role_was")),
-		weaponTSV(Environment::GetTsvPath("weapon"))
+		:playerTSV(Environment::GetTSVPath("player")),
+		actionTSV(Environment::GetTSVPath("action")),
+		roleTSV(Environment::GetTSVPath("role")),
+		role_wasTSV(Environment::GetTSVPath("role_was")),
+		weaponTSV(Environment::GetTSVPath("weapon"))
 		{
 
 			m_Data.resize(role_wasTSV.rows.size()-1);
