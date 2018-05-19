@@ -34,7 +34,7 @@ void Scene::Init()
 	{
 		COMBAT_SYSTEM_INSTANCE;
 
-		std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::AddonWDF, 0x708C11A0);
+		std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::ADDONWDF, 0x708C11A0);
 		FrameAnimation combatBG(sp);
 		RENDERER_2D_INSTANCE->AddObject(new Image(
 			combatBG.GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))

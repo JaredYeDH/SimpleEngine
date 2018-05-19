@@ -17,7 +17,7 @@ SkillManager::SkillManager()
 		auto _was_id = row[2];
 		uint32 was_id= std::stoul(_was_id, 0, 16);
 
-        std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::PackFile::MagicWDF, was_id);
+        std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::MAGICWDF, was_id);
 		if(!sp->Error)
 		{
 			m_Skills[id] = FrameAnimation(sp);

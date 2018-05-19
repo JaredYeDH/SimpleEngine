@@ -63,3 +63,15 @@ void TextureManager::UnloadTexture(String path)
     }
 }
 
+
+void TextureManager::ClearAll()
+{
+    for(auto& it : m_Textures )
+    {
+        delete it.second;
+        it.second=nullptr;
+        
+    }
+
+    m_Textures.clear();
+}

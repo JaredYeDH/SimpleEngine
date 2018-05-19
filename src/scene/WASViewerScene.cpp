@@ -16,11 +16,16 @@ void SwitchFrameAnimation()
 	s_LastWASIndex = s_CurrentWASIndex;
 	if(s_CurrentWASIndex >= s_WASIDs.size()) return;
 	auto id = s_WASIDs[s_CurrentWASIndex];
-	if(id < 0 || s_LoadFrames.count(id) > 0)return;
+	if(id < 0 )return;
 	if(!s_pWDF) return;
-	auto sprite = s_pWDF->LoadSprite(id);
-	if(!sprite || sprite->Error){return;} 
-	s_LoadFrames[id] = new FrameAnimation(sprite);
+
+	std::shared_ptr<Sprite2>sprite=nullptr;
+	if(s_LoadFrames.count(id) <=0)
+	{
+		sprite = s_pWDF->LoadSprite(id);
+		if(!sprite || sprite->Error){return;} 
+		s_LoadFrames[id] = new FrameAnimation(sprite);
+	}
 	s_FrameAnimation = s_LoadFrames[id];
 	s_FrameAnimation->SetPivotPos({SCREEN_WIDTH/2 ,SCREEN_HEIGHT/2});
 	s_LastWASIndex = s_CurrentWASIndex;
@@ -44,7 +49,13 @@ void WASViewerScene::Reset(String wdf)
 	s_WASIDs.clear();
 	s_WASIDs = s_pWDF->GetAllWASIDs();
 
-
+	for(auto& it : s_LoadFrames)
+	{
+		delete it.second;
+		it.second = nullptr;
+	}
+	s_LoadFrames.clear();
+	TEXTURE_MANAGER_INSTANCE->ClearAll();
 
 	s_WASIDStrings.clear();
 

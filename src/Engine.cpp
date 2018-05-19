@@ -33,8 +33,13 @@ void Engine::Init()
 	
 	LUAVM_INSTANCE->Init();
 	
+	RESOURCE_MANAGER_INSTANCE;
+
+	SPRITE_RENDERER_INSTANCE;
+	
+	
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF(Environment::GetFontPath("simsun.ttc").c_str(), 16.0f, NULL, io.Fonts->GetGlyphRangesChinese());
+	io.Fonts->AddFontFromFileTTF(Environment::GetFontPath("msyh.ttf").c_str(), 14.0f, NULL, io.Fonts->GetGlyphRangesChinese());
 }
 
 void Engine::Update()

@@ -56,7 +56,12 @@ namespace NetEase {
 
 	std::shared_ptr<Sprite2> WDF::LoadSprite(uint32 id)
 	{
-		std::fstream file(mFilePath, ios::in | ios::binary);
+		std::ifstream file(mFilePath, ios::in | ios::binary);
+		//file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		if(!file)
+		{
+			return nullptr;
+		}
 		
 		WAS::Header header;
         memset(&header,0,sizeof(WAS::Header));
@@ -93,7 +98,14 @@ namespace NetEase {
 		sprite->mKeyX = header.key_x;
 		sprite->mKeyY = header.key_y;
 		
-		if (header.flag != 0x5053)
+
+		sprite->Error =  sprite->mGroupSize >= 10000;
+		sprite->Error =  sprite->mFrameSize >= 10000;
+		sprite->Error =  sprite->mWidth >= 10000;
+		sprite->Error =  sprite->mHeight >= 10000;
+		sprite->Error =  sprite->mKeyX >= 10000;
+		sprite->Error =  sprite->mKeyY >= 10000;
+		if (header.flag != 0x5053 || sprite->Error )
 		{
 			cerr << "Sprite File Flag Error!" << endl;
 			std::shared_ptr<Sprite2> sp = std::make_shared<Sprite2>();
@@ -169,9 +181,8 @@ namespace NetEase {
 
 			// file.read((char*)&tempFreamHeader, sizeof(WAS::FrameHeader));
 
-            if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15)
-            //    ||tempFreamHeader.key_x >= (1<<15) || tempFreamHeader.key_y >= (1 <<15)
-               )
+            if(tempFreamHeader.height >= (1<<15) || tempFreamHeader.width >= (1 <<15) 
+            	||tempFreamHeader.height < 0  || tempFreamHeader.width < 0)
             {
                 std::cout <<"w:" << std::dec<< tempFreamHeader.width <<" \t h:" << tempFreamHeader.height << std::endl;
                 // std::cout <<"read file error! was id:" << std::hex<< id << std::endl;
@@ -411,7 +422,7 @@ namespace NetEase {
 				break;
 			}
 		}
-		if (*pData == 0)
+		if (*pData == 0 && PixelLen >Pixels )
 		{
 			uint32 Repeat = 0;
 			Repeat = PixelLen - Pixels;

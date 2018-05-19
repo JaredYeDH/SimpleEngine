@@ -130,8 +130,15 @@ Button* pButton;
 void UIScene::Init()
 {
 	RENDERER_2D_INSTANCE->AddObject(new Line({ 0,0 }, {50,50}));
-	FrameAnimation* f = new FrameAnimation(RESOURCE_MANAGER_INSTANCE->LoadWdfSprite(0x49386FCE));
+	//0x1732c1ef 0x49386FCE
+	FrameAnimation* f = new FrameAnimation(RESOURCE_MANAGER_INSTANCE->LoadWASSprite( ResourceManager::WZIFEWDF ,0x1732c1ef));
 	pButton = new Button(f);
+
+	// RenderText(L"\u554a\u662f\u7684\u8bf7\u95ee\u8bf7\u95ee\u53bb\u95ee\u9a71\u868a\u5668\u4e3a\u5168\u5a01\u5168\u5a01\u5168\u5a01\u5168\u5a01\u6076\u8da3\u5473\u6076\u6c14",
+	// 	x, y,
+	// 	1,
+	// 	glm::vec3(1.0f, 1.0f,0));
+	TextRenderer::GetInstance();
 	
 }
 
@@ -140,10 +147,14 @@ void UIScene::Update()
 {
 	
 	pButton->m_Frame->OnUpdate();
+	
 }
 
 void UIScene::Draw()
 {
 	pButton->m_Frame->Draw();
+	
 	RENDERER_2D_INSTANCE->Render();
+
+	TextRenderer::GetInstance()->RenderPlotText(L"对！这个灵芝就可以！太好了，快请！",200,200,1.0,	glm::vec3(1.0f, 1.0f,1.0f) );
 }

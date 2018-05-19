@@ -29,10 +29,10 @@ public:
 	// ֡���ļ�ͷ
 	struct FrameHeader
 	{
-		uint32 key_x;			// ͼƬ�Ĺؼ�λX
-		uint32 key_y;			// ͼƬ�Ĺؼ�λY
-		uint32 width;			// ͼƬ�Ŀ�ȣ���λ����
-		uint32 height;			// ͼƬ�ĸ߶ȣ���λ����
+		int32 key_x;			// ͼƬ�Ĺؼ�λX
+		int32 key_y;			// ͼƬ�Ĺؼ�λY
+		int32 width;			// ͼƬ�Ŀ�ȣ���λ����
+		int32 height;			// ͼƬ�ĸ߶ȣ���λ����
 	};
 
 
