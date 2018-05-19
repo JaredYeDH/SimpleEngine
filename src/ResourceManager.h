@@ -64,3 +64,4 @@ private:
 	std::map<std::string, Texture*> Textures;
 
 };
+#define  RESOURCE_MANAGER_INSTANCE ResourceManager::GetInstance()

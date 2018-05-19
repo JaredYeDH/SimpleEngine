@@ -176,17 +176,17 @@ void Player::OnUpdate(double dt)
 	m_pFSM->Update();
 	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 	{
-		m_PlayerFrames[m_ActionID].OnUpdate(dt);
+		m_PlayerFrames[m_ActionID].OnUpdate();
 		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
 		{
-			m_WeaponFrames[m_ActionID].OnUpdate(dt);
+			m_WeaponFrames[m_ActionID].OnUpdate();
 		}
 	}
 	if(m_bInCombat)
 	{
 		if(m_bSkillFrameShow)
 		{
-			m_SkillFrame.OnUpdate(dt);
+			m_SkillFrame.OnUpdate();
 		}
 		if(m_SkillFrame.IsNextFrameRestart())
 		{

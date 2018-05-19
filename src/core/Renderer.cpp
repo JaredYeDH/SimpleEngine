@@ -11,6 +11,7 @@ Renderer2D::~Renderer2D()
 {
 }
 
+
 void Renderer2D::Render()
 {
     m_Graphics.Begin();

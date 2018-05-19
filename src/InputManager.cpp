@@ -8,11 +8,14 @@ bool InputManager::s_FirstMouse = true;
 MousePos InputManager::s_MousePos(0,0);
 
 std::map<int,std::function<void()>> InputManager::s_ClickEvents = {};
+std::map<int, std::function<void()>> InputManager::s_KeyDownEvents = {};
+std::map<int, std::function<void()>> InputManager::s_KeyUpEvents = {};
 
 void InputManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if(action == GLFW_PRESS){
         s_Keys[button] = true;
+		
     }
     
     if(action == GLFW_RELEASE)
@@ -22,9 +25,17 @@ void InputManager::mouse_button_callback(GLFWwindow* window, int button, int act
             s_ClickEvents[button]();
         //    s_ClickEvents.erase(button);
         }
+		
+		if (s_KeyUpEvents.find(button) != s_KeyUpEvents.end())
+		{
+			s_KeyUpEvents[button]();
+		}
+
         s_Keys[button] = false;	
     }
 
+	
+	
 }
 
 void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -68,6 +79,16 @@ void InputManager::MouseCallbackFunc(GLFWwindow* window, double xpos, double ypo
     
     s_MousePos.x = xpos;
     s_MousePos.y = ypos;
+
+	if (s_Keys[GLFW_MOUSE_BUTTON_LEFT])
+	{
+		if (s_KeyDownEvents.find(GLFW_MOUSE_BUTTON_LEFT) != s_KeyDownEvents.end())
+		{
+			s_KeyDownEvents[GLFW_MOUSE_BUTTON_LEFT]();
+		}
+	}
+
+	//std::cout << "MouseX:" << xpos << "\tMouseY:" << ypos << std::endl;
     
 }
 

@@ -2,6 +2,7 @@
 #include "../Random.h"
 #include "SplashScene.h"
 #include "WASViewerScene.h"
+#include "UIScene.h"
 
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),
@@ -27,7 +28,8 @@ m_MapTSV(utils::tsv(Environment::GetTSVPath("map")))
 
 	AddScene(new SplashScene(100,"Splash"));
 	AddScene(new WASViewerScene(101,"WASViewer"));
-	SwitchScene("Splash");
+	AddScene(new UIScene(102, "UIScene"));
+	SwitchScene("UIScene");
 
 //	m_pNextScene = nullptr;
 	
@@ -49,6 +51,7 @@ void SceneManager::SwitchScene(String name)
 	if(it!=m_Scenes.end())
 	{
 		m_pNextScene = it->second;
+		m_pNextScene->Init();
 	}
 }
 

@@ -39,11 +39,11 @@ void Image::Draw(Graphics2D& g2d)
 };
 
 
-
 Text::Text(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 
 }
+
 Text::~Text()
 {
 

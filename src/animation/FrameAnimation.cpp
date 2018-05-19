@@ -1,4 +1,5 @@
 #include "FrameAnimation.h"
+#include "Engine.h"
 
 
 FrameAnimation::FrameAnimation()
@@ -119,8 +120,9 @@ void FrameAnimation::SetCurrentGroup(int group)
 }
 
 
-void FrameAnimation::OnUpdate(double dt)
+void FrameAnimation::OnUpdate()
 {
+	double dt = ENGINE_INSTANCE->GetDeltaTime();
 	if(m_CurrentFrame <m_IsBlankFrame.size()&& m_IsBlankFrame[m_CurrentFrame])
 		dt = dt * 2;
 	m_DeltaTime += dt;

@@ -20,3 +20,11 @@ struct BoxPos
 {
 	int32 x, y;
 };
+
+struct Bound
+{
+	int left;
+	int right;
+	int top;
+	int bottom;
+};

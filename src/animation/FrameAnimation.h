@@ -64,9 +64,11 @@ public:
 		m_Pos.x = pos.x -m_Width/2;
 		m_Pos.y = pos.y -m_Height/2;
 	}
-	void OnUpdate(double dt);
+	void OnUpdate();
 	void Draw();
 	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};
+
+	Bound GetBound() { return Bound{ (int)m_Pos.x, (int)(m_Pos.x + m_Width), (int)m_Pos.y, (int)(m_Pos.y + m_Height) }; }
 	int m_FrameCount;
 	int m_CurrentFrame;
 	int m_LastFrame;

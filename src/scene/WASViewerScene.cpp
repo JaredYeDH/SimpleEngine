@@ -115,7 +115,7 @@ void WASViewerScene::Update()
 	}
 	double dt = ENGINE_INSTANCE->GetDeltaTime();
 	if(s_FrameAnimation)
-		s_FrameAnimation->OnUpdate(dt);
+		s_FrameAnimation->OnUpdate();
 	
 }
 

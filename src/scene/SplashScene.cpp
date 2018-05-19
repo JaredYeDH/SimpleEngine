@@ -37,6 +37,7 @@ void SplashScene::Update()
 			WASViewerScene* p =(WASViewerScene*) SCENE_MANAGER_INSTANCE->GetScene("WASViewer");
 			p->Reset(list_items[current_wdf_idx]);
 		}
+
 	}
 	else 
 	{

@@ -39,6 +39,8 @@ public:
 
 
 	void RegisterOnKeyClickEvent(int keyCode,std::function<void()> callback) {s_ClickEvents[keyCode] = callback;}
+	void RegisterOnKeyDownEvent(int keyCode, std::function<void()> callback) { s_KeyDownEvents[keyCode] = callback; }
+	void RegisterOnKeyUpEvent(int keyCode, std::function<void()> callback) { s_KeyUpEvents[keyCode] = callback; }
 private:
 	InputManager();
 	~InputManager();
@@ -56,6 +58,8 @@ private:
 	static MousePos s_MousePos;
 
 	static std::map<int,std::function<void()>> s_ClickEvents;
+	static std::map<int, std::function<void()>> s_KeyDownEvents;
+	static std::map<int, std::function<void()>> s_KeyUpEvents;
 };
 
 #define INPUT_MANAGER_INSTANCE InputManager::GetInstance()
