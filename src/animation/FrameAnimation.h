@@ -59,7 +59,7 @@ public:
 	Texture* GetFrame(int index); 
 	String GetFramePath(int index); 
 	int GetSpritesCount(){ return m_Sprites.size();};
-	int SetPivotPos(Pos pos)
+	void SetPivotPos(Pos pos)
 	{
 		m_Pos.x = pos.x -m_Width/2;
 		m_Pos.y = pos.y -m_Height/2;
