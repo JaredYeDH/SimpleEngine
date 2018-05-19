@@ -57,7 +57,9 @@ https://pan.baidu.com/s/1kV9qrEB
 
 ### Glance
 
-<img src="https://github.com/oceancx/SimpleEngine/blob/master/1.gif" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/showoff1.gif" width="50%" height="50%">
 
-<img src="https://github.com/oceancx/SimpleEngine/blob/master/2.gif" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/showoff2.gif" width="50%" height="50%">
+
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/showoff3.gif" width="50%" height="50%">
 
