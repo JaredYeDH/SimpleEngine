@@ -108,6 +108,30 @@ Texture* FrameAnimation::GetFrame(int index = -1)
 	return TextureManager::GetInstance()->GetTexture(path);
 }
 
+bool FrameAnimation::IsAttackFrame()
+{
+	int maxWidthIndex=m_CurrentFrame;
+	int maxWidth=0;
+
+	for(int i=0;i<m_GroupFrameCount ;i++)
+	{	
+		int group =  m_CurrentFrame / m_GroupFrameCount;
+		int index=group*m_GroupFrameCount + i;
+		if(index< m_Sprites.size())
+		{
+			auto path = m_Sprites[index];	
+			auto* t = TextureManager::GetInstance()->GetTexture(path);
+			if(t&& t->GetWidth() > maxWidth)
+			{
+				maxWidth = t->GetWidth();
+				maxWidthIndex = index;
+			}
+		}		
+	}
+	return m_CurrentFrame == maxWidthIndex;
+}
+
+
 String FrameAnimation::GetFramePath(int index = -1)
 { 
 	if ( index  < 0 ) index = m_CurrentFrame;

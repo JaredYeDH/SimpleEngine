@@ -173,7 +173,8 @@ void PlayerCombatAttackState::Execute(Player* player)
 	{
 		auto* playerFrame = player->GetCurrentPlayerFrame();
 		auto* weaponFrame = player->GetCurrentWeaponFrame();
-		if(playerFrame->IsCurrentFrameChangedInUpdate() && playerFrame->GetLastFrame() % playerFrame->GetGroupFrameCount()== 3)
+		
+		if(playerFrame->IsCurrentFrameChangedInUpdate() && playerFrame->GetLastFrame() % playerFrame->GetGroupFrameCount()== 6)
 		{
 			MESSAGE_DISPATCHER_INSTANCE->DispatchMessageX(2,player->GetID(),player->GetTargetID(),(int)MSG_PlayerCombatBeAttackedState,nullptr);
 		}

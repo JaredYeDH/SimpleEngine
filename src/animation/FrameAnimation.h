@@ -30,6 +30,7 @@ public:
 	int GetCurrentFrame() { return m_CurrentFrame;}
 	bool IsFirstFrame() { return m_CurrentFrame %m_GroupFrameCount ==0 ;}
 	int GetLastFrame() { return m_LastFrame;}
+	bool IsAttackFrame();
 	int GetFrameCount() { return m_FrameCount;}
 	int GetCurrentGroup() { return m_CurrentGroup;}
 	bool IsCurrentFrameChangedInUpdate() {return m_bCurrentFrameChangedInUpdate;};

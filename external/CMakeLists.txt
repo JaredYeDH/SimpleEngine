@@ -43,3 +43,6 @@ add_subdirectory(SOIL)
 #adding luadist
 add_subdirectory(luadist)
 
+#adding NESupport
+add_subdirectory(NESupport)
+
