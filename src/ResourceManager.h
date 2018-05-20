@@ -12,9 +12,9 @@
 #include "Singleton.h"
 #include "core/Texture.h"
 #include "core/Shader.h"
-#include "ThirdParty/NetEase/Sprite2.h"
-#include "ThirdParty/NetEase/WDF.h"
-#include "ThirdParty/NetEase/WAS.h"
+#include <Sprite2.h>
+#include <WDF.h>
+#include <WAS.h>
 
 // A static singleton ResourceManager class that hosts several
 // functions to load Textures and Shaders. Each loaded texture

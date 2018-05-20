@@ -1,7 +1,7 @@
 #include "GameMap.h"
 
 #include "../astar/include/InputHandler.h"
-
+#include <SOIL/SOIL.h>
 
 GameMap::GameMap(uint32 mapId)
 {
@@ -288,8 +288,14 @@ void GameMap::Draw(int playerX,int playerY)
             {
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
+				int width = 0,height = 0;
+				uint8_t* imgBuffer = SOIL_load_image_from_memory(mXyqMap->GetUnitBitmap(unit),mXyqMap->GetUnitBitmapSize(unit),
+				 &width, &height, 0,SOIL_LOAD_RGB);
 
-                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,mXyqMap->GetUnitBitmap(unit));
+
+                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,imgBuffer);
+				delete imgBuffer;
+				imgBuffer= nullptr;
 				UpdateCell();
             }
 
@@ -398,7 +404,13 @@ void GameMap::DrawMask(int playerX, int playerY)
             {
             	mXyqMap->ReadUnit(unit);
                 //mXyqMap->SaveUnit(unit);
-                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,mXyqMap->GetUnitBitmap(unit));
+				int width = 0,height = 0;
+				uint8_t* imgBuffer = SOIL_load_image_from_memory(mXyqMap->GetUnitBitmap(unit),mXyqMap->GetUnitBitmapSize(unit),
+				 &width, &height, 0,SOIL_LOAD_RGB);
+
+                mMapTiles[unit] = new Texture(mMapTileWidth,mMapTileHeight, false,imgBuffer);
+				delete imgBuffer;
+				imgBuffer= nullptr;
 				UpdateCell();
             }
 

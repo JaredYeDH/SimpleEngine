@@ -4,10 +4,10 @@
 #include "Engine.h"
 #include "tsv.h"
 #include "environment.h"
-#include "../thirdparty/netease/sprite2.h"
-#include "../thirdparty/netease/wdf.h"
-#include "../thirdparty/netease/was.h"
-#include "../thirdparty/netease/map.h"
+#include <WDF.h>
+#include <WAS.h>
+#include <MAP.h>
+#include <Sprite2.h>
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "TextRenderer.h"

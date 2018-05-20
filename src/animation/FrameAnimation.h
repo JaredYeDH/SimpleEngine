@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "ThirdParty/NetEase/Sprite2.h"
+#include <Sprite2.h>
 #include "core/Texture.h"
 #include "TextureManager.h"
 #include <vector>

@@ -37,6 +37,7 @@ include_directories(
   ./Astar
   ../external/include/freetype2
   ../external/include/lua
+  ../external/include/NESupport
   ../external/include
 )
 
@@ -57,6 +58,7 @@ set(COMMON_LIBS
   glfw3
   glewd 
   SOIL
+  NESupport
   ${ASSIMP_LIB}
   ${FREETYPE_LIB}
   ${LUA_STATIC}

@@ -31,6 +31,7 @@ void PlayerCombatIdleState::Execute(Player* player)
 
 void PlayerIdleState::Enter(Player* player) 
 {
+	player->SetDir(player->GetDir());
 	player->SetActionID(15);
 }
 
@@ -48,14 +49,21 @@ void PlayerMoveState::Enter(Player* player)
 {
 	player->GetMoveList() = player->GetBackupMoveList();
 	Pos d = player->GetMoveList().front();
+	
+	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
+	double localVelocity = player->GetVelocity()*dt;
+
 	Pos dest;
 	dest.x = d.x * 20 + 10;
 	dest.y = d.y * 20 + 10;
-	int degree = player->GetMoveDestAngle(dest);
-	int m_Dir = GMath::Astar_GetDir(degree);
-	player->SetDir(m_Dir);
-
-	player->SetActionID(9);	
+	if (player->GetMoveDestDistSquare(dest) > localVelocity*localVelocity) {
+		int degree = player->GetMoveDestAngle(dest);
+		int m_Dir = GMath::Astar_GetDir(degree);
+		player->SetDir(m_Dir);
+	}
+	
+	if(player->GetActionID()!=9)
+		player->SetActionID(9);	
 }
 
 void PlayerMoveState::Execute(Player* player) 

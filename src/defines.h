@@ -63,7 +63,8 @@ inline void SafeDelete(T * &pointer)
 }
 
 
-
+#ifndef TGA_FILE_HEADER_H
+#define TGA_FILE_HEADER_H
 #pragma pack(push) 
 #pragma pack(1)   
 struct TGA_FILE_HEADER
@@ -82,6 +83,7 @@ struct TGA_FILE_HEADER
 	uint8 ImageDescruptor;
 };
 #pragma pack(pop)
+#endif
 
 #ifdef _T
 	#undef _T
