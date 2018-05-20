@@ -27,7 +27,13 @@ public:
 		return instance;
 	}
 	void RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
-	void RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	
+	void RenderFontText(std::string path,std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+
+	void RenderPlotText(std::wstring text, GLfloat x, GLfloat y);
+	
+
+
 	void Draw(std::wstring text,GLfloat x, GLfloat y,glm::vec3 color);
 private:
 

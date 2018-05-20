@@ -153,7 +153,7 @@ void TextRenderer::RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat s
 }
 
 
-void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void TextRenderer::RenderFontText(std::string path,std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	// Activate corresponding render state	
 	shader->Bind();
@@ -174,11 +174,11 @@ void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLflo
 	FT_Face face;
 
 	// simsun resource/font/msyh.ttf
-	if (FT_New_Face(ft, Environment::GetAbsPath("resource/font/msht.ttf").c_str(), 0, &face))
+	if (FT_New_Face(ft, path.c_str(), 0, &face))
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 12);
+	FT_Set_Pixel_Sizes(face, 0, 36);
 
 	// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -187,7 +187,7 @@ void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLflo
 	{
 		wchar_t *c = &text[i];
 
-		if (Characters.find(*c) == Characters.end()) {
+		// if (Characters.find(*c) == Characters.end()) {
 			// Load character glyph 
 			if (FT_Load_Char(face, *c, FT_LOAD_RENDER))
 			{
@@ -223,7 +223,7 @@ void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLflo
 			};
 	
 			Characters[*c] = character;
-		}
+		// }
 
 		Character ch = Characters[*c];
 
@@ -263,3 +263,10 @@ void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y, GLflo
 	glBindTexture(GL_TEXTURE_2D, 0);
 	shader->Unbind();
 }
+
+void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y);
+{
+	RenderFontText( Environment::GetFontPath("msyh.ttf"), text,
+	 x,y,0.35,	glm::vec3(1.0f, 1.0f,1.0f) );
+}
+	

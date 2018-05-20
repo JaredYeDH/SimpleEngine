@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 
 
+
 struct Button
 {
 	Button(FrameAnimation* frame)
@@ -128,18 +129,19 @@ UIScene::~UIScene()
 
 Button* pButton;
 FrameAnimation* test;
+
+
+
 void UIScene::Init()
 {
 	RENDERER_2D_INSTANCE->AddObject(new Line({ 0,0 }, {50,50}));
 	//0x1732c1ef 0x49386FCE
 	FrameAnimation* f = new FrameAnimation(RESOURCE_MANAGER_INSTANCE->LoadWASSprite( ResourceManager::SHAPEWDF  ,0x49386FCE));
 	 test = new FrameAnimation(RESOURCE_MANAGER_INSTANCE->LoadWASSprite( ResourceManager::WZIFEWDF ,0x1732c1ef ));
-	 test->SetPos({180,180});
+	 test->SetPos({180,130});
 	pButton = new Button(f);
 
-	
 	TextRenderer::GetInstance();
-	
 }
 
 
@@ -158,5 +160,6 @@ void UIScene::Draw()
 	
 	RENDERER_2D_INSTANCE->Render();
 
-	TextRenderer::GetInstance()->RenderPlotText(L"对！这个灵芝就可以！太好了，快请！",200,SCREEN_HEIGHT- 215,1.0,	glm::vec3(1.0f, 1.0f,1.0f) );
+
+	
 }
