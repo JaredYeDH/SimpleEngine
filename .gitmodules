@@ -28,3 +28,6 @@
 [submodule "external/luadist/lua-cjson"]
 	path = external/luadist/lua-cjson
 	url = git@github.com:oceancx/lua-cjson.git
+[submodule "external/NESupport"]
+	path = external/NESupport
+	url = git@github.com:oceancx/NESupport.git
