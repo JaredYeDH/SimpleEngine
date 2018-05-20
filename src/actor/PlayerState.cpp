@@ -48,9 +48,14 @@ void PlayerMoveState::Enter(Player* player)
 {
 	player->GetMoveList() = player->GetBackupMoveList();
 	Pos d = player->GetMoveList().front();
-	player->SetX(d.x * 20 + 10);
-	player->SetY(d.y * 20 + 10);
-	player->SetActionID(9);
+	Pos dest;
+	dest.x = d.x * 20 + 10;
+	dest.y = d.y * 20 + 10;
+	int degree = player->GetMoveDestAngle(dest);
+	int m_Dir = GMath::Astar_GetDir(degree);
+	player->SetDir(m_Dir);
+
+	player->SetActionID(9);	
 }
 
 void PlayerMoveState::Execute(Player* player) 
