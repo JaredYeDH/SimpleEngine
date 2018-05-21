@@ -48,7 +48,7 @@ m_FrameTime (0)
 		m_Frames[i].height= sprite->mFrames[i].height;
 
 		String tPath = sprite->mPath + "/" + std::to_string(i);
-		uint8_t* img =(uint8_t*) sprite->mFrames[i].src;
+		uint8_t* img =(uint8_t*) sprite->mFrames[i].src.data();
 		if (img) {
 
 			Texture* t = TextureManager::GetInstance()->LoadTexture(
@@ -96,6 +96,7 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_Height = rhs.m_Height;
 
     this->m_Sprites = rhs.m_Sprites;
+	this->m_Frames = rhs.m_Frames;
 	this->m_IsBlankFrame = rhs.m_IsBlankFrame;
     this->m_bVisible = rhs.m_bVisible;
 	this->m_bLoop = rhs.m_bLoop;
@@ -147,13 +148,22 @@ bool FrameAnimation::IsAttackFrame()
 String FrameAnimation::GetFramePath(int index = -1)
 { 
 	if ( index  < 0 ) index = m_CurrentFrame;
+	if (m_Sprites.size() == 0)return "";
 	return  m_Sprites[index];		
 }
 
 void FrameAnimation::SetCurrentGroup(int group)
 {
-	m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
-	m_CurrentGroup = group;
+	if (m_GroupFrameCount == 0)
+	{
+		m_CurrentGroup = group;
+	}
+	else 
+	{
+		m_CurrentFrame = m_CurrentFrame%m_GroupFrameCount + group*m_GroupFrameCount;
+		m_CurrentGroup = group;
+	}
+	
 }
 
 
@@ -231,7 +241,7 @@ void FrameAnimation::Draw()
 
 	auto path = m_Sprites[frameToDraw];
 	auto* t = TextureManager::GetInstance()->GetTexture(path);
-	if(t)
+	if(t && m_Frames.size()>m_CurrentFrame)
 	{
 		int kx = (m_KeyX - m_Frames[m_CurrentFrame].key_x);
 		int ky = (m_KeyY - m_Frames[m_CurrentFrame].key_y);

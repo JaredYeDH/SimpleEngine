@@ -32,7 +32,7 @@ public:
 	friend Singleton<ResourceManager>;
 
 	Sprite2* LoadWdfSprite(uint32 wasId);
-	Sprite2* LoadMagicSprite(uint32 wasId);
+	
 	Sprite2* LoadWd3Sprite(uint32 wasId);
 	Sprite2* LoadWASSprite(int pack,uint32 wasId);
 
