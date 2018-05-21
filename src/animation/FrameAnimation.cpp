@@ -9,9 +9,8 @@ FrameAnimation::FrameAnimation()
 }
 
 FrameAnimation::FrameAnimation(Sprite* sprite)
-:m_Pos({0,0}),
-m_Sprites(0),
-m_IsBlankFrame(0),
+:m_pSprite(sprite),
+m_Pos({0,0}),
 m_bIsNextFrameRestart(false),
 m_LastFrame(-1),
 m_LastNotBlankFrame(0),
@@ -29,7 +28,7 @@ m_bLoop (true),
 m_FrameTimeBase(0),
 m_FrameTime (0)
 {
-	if (!sprite) return;
+	if (!m_pSprite) return;
 
 	m_GroupFrameCount = sprite->mFrameSize;
 	m_FrameCount = sprite->mFrameSize * sprite->mGroupSize;
@@ -38,30 +37,7 @@ m_FrameTime (0)
 	m_KeyY = sprite->mKeyY;
 	m_Width = sprite->mWidth;
 	m_Height = sprite->mHeight;
-	
-	m_Frames.resize(m_FrameCount);
-	for (int i = 0; i < m_FrameCount; i++) {
 
-		m_Frames[i].key_x = sprite->mFrames[i].key_x;
-		m_Frames[i].key_y = sprite->mFrames[i].key_y;
-		m_Frames[i].width = sprite->mFrames[i].width;
-		m_Frames[i].height= sprite->mFrames[i].height;
-
-		String tPath = sprite->mPath + "/" + std::to_string(i);
-		uint8_t* img =(uint8_t*) sprite->mFrames[i].src.data();
-		if (img) {
-
-			Texture* t = TextureManager::GetInstance()->LoadTexture(
-				tPath,
-				m_Frames[i].width, m_Frames[i].height, true,
-				img
-			);
-			m_Sprites.push_back(tPath);
-			m_IsBlankFrame.push_back(sprite->mFrames[i].IsBlank);
-		}
-	
-		
-	}
 	m_bVisible = true;
 	m_bLoop = true;
 	m_FrameTimeBase = 1.0 / 60 * 4 ;
@@ -87,7 +63,7 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
 	this->m_FrameCount = rhs.m_FrameCount;
 	this->m_DeltaTime = rhs.m_DeltaTime;
-
+	this->m_pSprite = rhs.m_pSprite;
 	this->m_bIsNextFrameRestart= rhs.m_bIsNextFrameRestart;
 	
 	this->m_KeyX = rhs.m_KeyX;
@@ -95,9 +71,6 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_Width = rhs.m_Width;
 	this->m_Height = rhs.m_Height;
 
-    this->m_Sprites = rhs.m_Sprites;
-	this->m_Frames = rhs.m_Frames;
-	this->m_IsBlankFrame = rhs.m_IsBlankFrame;
     this->m_bVisible = rhs.m_bVisible;
 	this->m_bLoop = rhs.m_bLoop;
 	this->m_Pos = rhs.m_Pos;
@@ -114,11 +87,29 @@ FrameAnimation::~FrameAnimation()
 	// }
 }
 
+String FrameAnimation::GetFramePath(int index)
+{
+	if(m_pSprite)
+	{
+		return m_pSprite->mPath.append("/" + std::to_string(index));
+	}
+	return "";
+}
 Texture* FrameAnimation::GetFrame(int index = -1)
 { 
-	if ( index  < 0 ) index = m_CurrentFrame;
-	auto path =  m_Sprites[index];		
-	return TextureManager::GetInstance()->GetTexture(path);
+	if ( index  < 0  || index >= m_FrameCount) return nullptr;
+	
+	auto path =  GetFramePath(index);	
+	auto* texture= TextureManager::GetInstance()->GetTexture(path);
+	if(texture)
+	{
+		return texture;
+	}
+	else 
+	{
+		auto& frame = m_pSprite->mFrames[index];
+		return TextureManager::GetInstance()->LoadTexture(path,frame.width,frame.height,true,(uint8_t*)frame.src.data());
+	}
 }
 
 bool FrameAnimation::IsAttackFrame()
@@ -129,28 +120,21 @@ bool FrameAnimation::IsAttackFrame()
 	for(int i=0;i<m_GroupFrameCount ;i++)
 	{	
 		int group =  m_CurrentFrame / m_GroupFrameCount;
-		int index=group*m_GroupFrameCount + i;
-		if(index< m_Sprites.size())
+		int index =  group*m_GroupFrameCount + i;
+		if(index < m_FrameCount)
 		{
-			auto path = m_Sprites[index];	
-			auto* t = TextureManager::GetInstance()->GetTexture(path);
-			if(t&& t->GetWidth() > maxWidth)
+			auto* texture = GetFrame(index);
+			if(texture &&  texture->GetWidth() > maxWidth)
 			{
-				maxWidth = t->GetWidth();
+				maxWidth = texture->GetWidth();
 				maxWidthIndex = index;
 			}
-		}		
+		}
 	}
 	return m_CurrentFrame == maxWidthIndex;
 }
 
 
-String FrameAnimation::GetFramePath(int index = -1)
-{ 
-	if ( index  < 0 ) index = m_CurrentFrame;
-	if (m_Sprites.size() == 0)return "";
-	return  m_Sprites[index];		
-}
 
 void FrameAnimation::SetCurrentGroup(int group)
 {
@@ -169,8 +153,10 @@ void FrameAnimation::SetCurrentGroup(int group)
 
 void FrameAnimation::OnUpdate()
 {
+	if(m_CurrentFrame <  0 || m_CurrentFrame >= m_FrameCount || !m_pSprite) return;
+	
 	double dt = ENGINE_INSTANCE->GetDeltaTime();
-	if(m_CurrentFrame >= 0 &&m_CurrentFrame <m_IsBlankFrame.size()&& m_IsBlankFrame[m_CurrentFrame])
+	if(m_pSprite->mFrames[m_CurrentFrame].IsBlank)
 		dt = dt * 2;
 	m_DeltaTime += dt;
 	m_bIsNextFrameRestart = false;
@@ -181,7 +167,7 @@ void FrameAnimation::OnUpdate()
 		m_DeltaTime = m_DeltaTime - m_FrameTime;
 
 		m_LastFrame = m_CurrentFrame;
-        if(m_LastFrame>=0&& m_LastFrame<m_IsBlankFrame.size()&& !m_IsBlankFrame[m_LastFrame] )
+        if(!m_pSprite->mFrames[m_LastFrame].IsBlank)
         {
             m_LastNotBlankFrame = m_LastFrame;
         }
@@ -190,7 +176,7 @@ void FrameAnimation::OnUpdate()
 		{
 			m_bIsNextFrameRestart = true;
 			m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
-            if(m_LastFrame>=0&&m_LastFrame<m_IsBlankFrame.size()&& !m_IsBlankFrame[m_LastFrame] )
+            if(!m_pSprite->mFrames[m_LastFrame].IsBlank)
             {
                 m_LastNotBlankFrame = m_LastFrame;
             }
@@ -230,24 +216,22 @@ void FrameAnimation::SetVisible(bool visible)
 
 void FrameAnimation::Draw()
 {
-	// m_CurrentFrame = m_Sprites.size()/2;
-	if (m_CurrentFrame >= m_Sprites.size()) return;
-    SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
-	int frameToDraw = m_CurrentFrame;
-	if(m_LastNotBlankFrame < m_IsBlankFrame.size() && m_IsBlankFrame[m_CurrentFrame] )
+	if(m_CurrentFrame <  0 || m_CurrentFrame >= m_FrameCount || !m_pSprite) return;
+	
+	if(m_pSprite->mFrames[m_CurrentFrame].IsBlank)
 	{
-		frameToDraw = m_LastNotBlankFrame  ;
+		m_CurrentFrame = m_LastNotBlankFrame  ;
 	}
 
-	auto path = m_Sprites[frameToDraw];
-	auto* t = TextureManager::GetInstance()->GetTexture(path);
-	if(t && m_Frames.size()>m_CurrentFrame)
+	auto* texture = GetFrame( m_CurrentFrame);
+	if(texture)
 	{
-		int kx = (m_KeyX - m_Frames[m_CurrentFrame].key_x);
-		int ky = (m_KeyY - m_Frames[m_CurrentFrame].key_y);
-		renderer->DrawFrameSprite(t,
+		auto& frame = m_pSprite->mFrames[m_CurrentFrame];
+		int kx = (m_KeyX - frame.key_x);
+		int ky = (m_KeyY - frame.key_y);
+		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 			glm::vec2(m_Pos.x + kx, m_Pos.y + ky),
-			glm::vec2(t->GetWidth(), t->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+			glm::vec2(texture->GetWidth(), texture->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 	
 }

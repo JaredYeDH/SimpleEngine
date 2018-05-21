@@ -17,6 +17,7 @@ public:
 		int width;
 		int height;
 	};
+
 	enum struct Dir : int
 	{
 		N = 6,
@@ -49,7 +50,6 @@ public:
 
 	const IntPos GetPos() { return m_Pos; }
 	void SetPos(IntPos pos) { m_Pos = pos; }
-	
 
 	void SetVisible(bool visible);
 
@@ -66,7 +66,7 @@ public:
 	void SetPlayLoop(bool loop) {m_bLoop = loop;};
 	Texture* GetFrame(int index); 
 	String GetFramePath(int index); 
-	int GetSpritesCount(){ return m_Sprites.size();};
+	int GetSpritesCount(){ return m_FrameCount;};
 	void SetPivotPos(Pos pos)
 	{
 		m_Pos.x =static_cast<int>( pos.x -m_Width/2);
@@ -97,8 +97,6 @@ public:
 
 	double m_FrameTime;
 	double m_FrameTimeBase;
-	std::vector<String> m_Sprites;
-	std::vector<Frame> m_Frames;
-	
-	std::vector<int> m_IsBlankFrame;
+
+	Sprite* m_pSprite;
 };
