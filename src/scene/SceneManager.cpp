@@ -24,15 +24,16 @@ m_MapTSV(utils::tsv(Environment::GetTSVPath("map")))
 		auto iter = m_Scenes.begin();
 		for(;randomMapID>=0;iter++,randomMapID--);
 		m_pCurrentScene = iter->second;
-	//	m_pCurrentScene->Init();
+		//m_pCurrentScene->Init();
 	}
 	m_pNextScene = nullptr;
+
 	AddScene(new SplashScene(100,"Splash"));
 	AddScene(new WASViewerScene(101,"WASViewer"));
 	AddScene(new UIScene(102, "UIScene"));
-	SwitchScene("UIScene");
+	SwitchScene("Splash");
 
-//	m_pNextScene = nullptr;
+	
 	
 }
 

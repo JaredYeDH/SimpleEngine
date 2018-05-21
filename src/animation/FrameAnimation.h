@@ -10,6 +10,13 @@ class FrameAnimation
 {
 public:
 
+	struct Frame
+	{
+		int key_x;
+		int key_y;
+		int width;
+		int height;
+	};
 	enum struct Dir : int
 	{
 		N = 6,
@@ -91,5 +98,7 @@ public:
 	double m_FrameTime;
 	double m_FrameTimeBase;
 	std::vector<String> m_Sprites;
+	std::vector<Frame> m_Frames;
+	
 	std::vector<int> m_IsBlankFrame;
 };

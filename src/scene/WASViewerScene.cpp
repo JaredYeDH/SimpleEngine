@@ -13,6 +13,7 @@ static bool s_ShowListBox = true;
 
 void SwitchFrameAnimation()
 {	
+	s_FrameAnimation = nullptr;
 	s_LastWASIndex = s_CurrentWASIndex;
 	if(s_CurrentWASIndex >= s_WASIDs.size()) return;
 	auto id = s_WASIDs[s_CurrentWASIndex];
@@ -45,6 +46,12 @@ WASViewerScene::~WASViewerScene()
 
 void WASViewerScene::Reset(String wdf)
 {
+	if (s_pWDF)
+	{
+		delete s_pWDF;
+		s_pWDF = nullptr;
+	}
+	s_FrameAnimation = nullptr;
 	s_pWDF = new NetEase::WDF(Environment::GetWDFPath(wdf));
 	s_WASIDs.clear();
 	s_WASIDs = s_pWDF->GetAllWASIDs();
@@ -79,7 +86,7 @@ void WASViewerScene::Reset(String wdf)
 		return s_WASIDStrings[lhs] > s_WASIDStrings[rhs];
 	});
 
-	s_LastWASIndex = s_CurrentWASIndex = 0;
+	s_LastWASIndex = s_CurrentWASIndex = -1;
 	SwitchFrameAnimation();
 	
 }

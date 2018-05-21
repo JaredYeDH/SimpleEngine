@@ -37,7 +37,7 @@ include_directories(
   ./Astar
   ../external/include/freetype2
   ../external/include/lua
-  ../external/include/NESupport
+  ../external/NESupport/src
   ../external/include
 )
 
@@ -58,7 +58,7 @@ set(COMMON_LIBS
   glfw3
   glewd 
   SOIL
-  NESupport
+  #NESupport
   ${ASSIMP_LIB}
   ${FREETYPE_LIB}
   ${LUA_STATIC}
@@ -250,6 +250,10 @@ time/TimerManager.h
 tsv.h
 Window.cpp
 Window.h
+../external/NESupport/src/Sprite2.cpp
+../external/NESupport/src/WAS.cpp
+../external/NESupport/src/WDF.cpp
+../external/NESupport/src/MAP.cpp
 )
 
 add_executable(${PROJECT_NAME}

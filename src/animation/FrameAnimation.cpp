@@ -3,55 +3,64 @@
 
 
 FrameAnimation::FrameAnimation()
-:m_Pos({0,0})
+:FrameAnimation(nullptr)
 {
-	m_LastFrame = -1;
-    m_LastNotBlankFrame = 0;
-	m_CurrentFrame = 0;
-	m_CurrentGroup = 1;
-	m_GroupFrameCount = 1;
-	m_FrameCount = 1;
-	m_DeltaTime = 0;
-	m_bIsNextFrameRestart = false;
-	m_bVisible = false;
-	m_bLoop = false;
-	m_IsBlankFrame.clear();
-	m_Sprites.clear();
+	
 }
 
 FrameAnimation::FrameAnimation(Sprite2* sprite)
-:m_Pos({0,0})
+:m_Pos({0,0}),
+m_Sprites(0),
+m_IsBlankFrame(0),
+m_bIsNextFrameRestart(false),
+m_LastFrame(-1),
+m_LastNotBlankFrame(0),
+m_CurrentFrame(0),
+m_CurrentGroup (0),
+m_GroupFrameCount(0),
+m_FrameCount(0),
+m_DeltaTime(0),
+m_KeyX (0),
+m_KeyY(0),
+m_Width(0),
+m_Height(0),
+m_bVisible (true),
+m_bLoop (true),
+m_FrameTimeBase(0),
+m_FrameTime (0)
 {
-	m_Sprites.clear();
-	m_IsBlankFrame.clear();
-	if(!sprite ) return;
-	m_LastFrame = -1;
-    m_LastNotBlankFrame =0;
-	m_CurrentFrame = 0;
-	m_CurrentGroup = 0;
+	if (!sprite) return;
+
 	m_GroupFrameCount = sprite->mFrameSize;
 	m_FrameCount = sprite->mFrameSize * sprite->mGroupSize;
-	m_DeltaTime = 0;
-	m_bIsNextFrameRestart = false;
 	
 	m_KeyX = sprite->mKeyX;
 	m_KeyY = sprite->mKeyY;
 	m_Width = sprite->mWidth;
 	m_Height = sprite->mHeight;
 	
+	m_Frames.resize(m_FrameCount);
+	for (int i = 0; i < m_FrameCount; i++) {
 
+		m_Frames[i].key_x = sprite->mFrames[i].key_x;
+		m_Frames[i].key_y = sprite->mFrames[i].key_y;
+		m_Frames[i].width = sprite->mFrames[i].width;
+		m_Frames[i].height= sprite->mFrames[i].height;
+
+		String tPath = sprite->mPath + "/" + std::to_string(i);
+		uint8_t* img =(uint8_t*) sprite->mFrames[i].src;
+		if (img) {
+
+			Texture* t = TextureManager::GetInstance()->LoadTexture(
+				tPath,
+				m_Frames[i].width, m_Frames[i].height, true,
+				img
+			);
+			m_Sprites.push_back(tPath);
+			m_IsBlankFrame.push_back(sprite->mFrames[i].IsBlank);
+		}
 	
-	for (int i = 0; i< m_FrameCount ; i++) {
-		int gpos = i / m_GroupFrameCount;
-		int cpos = i % m_GroupFrameCount;
-        String tPath = sprite->mPath+"/"+std::to_string(i);
-		Texture* t = TextureManager::GetInstance()->LoadTexture(
-		tPath,
-		sprite->mWidth,sprite->mHeight,true,
-			reinterpret_cast<uint8_t*>(sprite->mFrames[i].src.data())
-		);
-        m_Sprites.push_back(tPath);
-		m_IsBlankFrame.push_back(sprite->mFrames[i].IsBlank  );
+		
 	}
 	m_bVisible = true;
 	m_bLoop = true;
@@ -78,6 +87,8 @@ FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs)
 	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
 	this->m_FrameCount = rhs.m_FrameCount;
 	this->m_DeltaTime = rhs.m_DeltaTime;
+
+	this->m_bIsNextFrameRestart= rhs.m_bIsNextFrameRestart;
 	
 	this->m_KeyX = rhs.m_KeyX;
 	this->m_KeyY = rhs.m_KeyY;
@@ -222,9 +233,11 @@ void FrameAnimation::Draw()
 	auto* t = TextureManager::GetInstance()->GetTexture(path);
 	if(t)
 	{
-	renderer->DrawFrameSprite(t,
-		glm::vec2(m_Pos.x, m_Pos.y),
-		glm::vec2(t->GetWidth(), t->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		int kx = (m_KeyX - m_Frames[m_CurrentFrame].key_x);
+		int ky = (m_KeyY - m_Frames[m_CurrentFrame].key_y);
+		renderer->DrawFrameSprite(t,
+			glm::vec2(m_Pos.x + kx, m_Pos.y + ky),
+			glm::vec2(t->GetWidth(), t->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 	
 }

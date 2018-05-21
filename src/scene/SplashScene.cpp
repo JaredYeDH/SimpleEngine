@@ -33,9 +33,10 @@ void SplashScene::Update()
 		ImGui::ListBox("##wdf_list",&current_wdf_idx,list_items,list_size, list_size);
 		if(current_wdf_idx < list_size && last_wdf_idx!=current_wdf_idx)
 		{
-			SCENE_MANAGER_INSTANCE->SwitchScene("WASViewer");
+			
 			WASViewerScene* p =(WASViewerScene*) SCENE_MANAGER_INSTANCE->GetScene("WASViewer");
 			p->Reset(list_items[current_wdf_idx]);
+			SCENE_MANAGER_INSTANCE->SwitchScene("WASViewer");
 		}
 	}
 	else 
