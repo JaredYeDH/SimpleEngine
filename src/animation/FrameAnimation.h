@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <Sprite2.h>
+#include <Sprite.h>
 #include "core/Texture.h"
 #include "TextureManager.h"
 #include <vector>
@@ -29,7 +29,7 @@ public:
 		S_W = 1,
 	};
 
-	FrameAnimation(Sprite2* sprite);
+	FrameAnimation(Sprite* sprite);
 	FrameAnimation();
 	FrameAnimation& operator=(const FrameAnimation& rhs);
 	~FrameAnimation();

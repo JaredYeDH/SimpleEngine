@@ -8,7 +8,7 @@ FrameAnimation::FrameAnimation()
 	
 }
 
-FrameAnimation::FrameAnimation(Sprite2* sprite)
+FrameAnimation::FrameAnimation(Sprite* sprite)
 :m_Pos({0,0}),
 m_Sprites(0),
 m_IsBlankFrame(0),

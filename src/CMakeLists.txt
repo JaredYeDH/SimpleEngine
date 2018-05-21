@@ -227,8 +227,6 @@ scene/WASViewerScene.h
 simple_engine.h
 Singleton.h
 Singleton.inl
-Sprite.cpp
-Sprite.h
 SpriteBatch.cpp
 SpriteBatch.h
 SpriteRenderer.cpp
@@ -250,7 +248,10 @@ time/TimerManager.h
 tsv.h
 Window.cpp
 Window.h
-../external/NESupport/src/Sprite2.cpp
+)
+
+set(SRC_EXTERNAL_CPP_FILES
+../external/NESupport/src/Sprite.cpp
 ../external/NESupport/src/WAS.cpp
 ../external/NESupport/src/WDF.cpp
 ../external/NESupport/src/MAP.cpp
@@ -259,6 +260,7 @@ Window.h
 add_executable(${PROJECT_NAME}
 ${SRC_CPP_FILES}
 ${IMGUI_SRCS}
+${SRC_EXTERNAL_CPP_FILES}
 )
 
 

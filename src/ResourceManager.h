@@ -12,7 +12,7 @@
 #include "Singleton.h"
 #include "core/Texture.h"
 #include "core/Shader.h"
-#include <Sprite2.h>
+#include <Sprite.h>
 #include <WDF.h>
 #include <WAS.h>
 
@@ -31,10 +31,10 @@ public:
 
 	friend Singleton<ResourceManager>;
 
-	Sprite2* LoadWdfSprite(uint32 wasId);
+	Sprite* LoadWdfSprite(uint32 wasId);
 	
-	Sprite2* LoadWd3Sprite(uint32 wasId);
-	Sprite2* LoadWASSprite(int pack,uint32 wasId);
+	Sprite* LoadWd3Sprite(uint32 wasId);
+	Sprite* LoadWASSprite(int pack,uint32 wasId);
 
 	void SaveWdfSprite(uint32 wasId);
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader

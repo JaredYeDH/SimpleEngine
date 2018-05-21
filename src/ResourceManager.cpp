@@ -63,14 +63,14 @@ void ResourceManager::Clear()
         // glDeleteTextures(1, &(iter.second.GetTextureID()));
 }
 
-Sprite2* ResourceManager::LoadWdfSprite(uint32 wasID)
+Sprite* ResourceManager::LoadWdfSprite(uint32 wasID)
 {
 	return m_ShapeWdfPtr->LoadSprite(wasID);
 }
 
 static std::vector<String> s_PackToName = {"addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf"};
 static std::map<int,NetEase::WDF*> s_Loaders;
-Sprite2* ResourceManager::LoadWASSprite(int pack, uint32 wasId)
+Sprite* ResourceManager::LoadWASSprite(int pack, uint32 wasId)
 {
     if(pack == 6)
     {
@@ -93,7 +93,7 @@ void ResourceManager::SaveWdfSprite(uint32 wasId)
     m_ShapeWdfPtr->LoadSprite(wasId)->SaveImage(0);
 }
 
-Sprite2* ResourceManager::LoadWd3Sprite(uint32 wasID)
+Sprite* ResourceManager::LoadWd3Sprite(uint32 wasID)
 {
 	return m_ShapeWd3Ptr->LoadSprite(wasID);
 }

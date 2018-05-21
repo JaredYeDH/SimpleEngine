@@ -7,7 +7,7 @@
 #include <WDF.h>
 #include <WAS.h>
 #include <MAP.h>
-#include <Sprite2.h>
+#include <Sprite.h>
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "TextRenderer.h"

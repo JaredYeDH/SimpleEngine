@@ -20,7 +20,7 @@ void SwitchFrameAnimation()
 	if(id < 0 )return;
 	if(!s_pWDF) return;
 
-	Sprite2* sprite=nullptr;
+	Sprite* sprite=nullptr;
 	if(s_LoadFrames.count(id) <=0)
 	{
 		sprite = s_pWDF->LoadSprite(id);

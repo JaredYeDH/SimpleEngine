@@ -1,4 +1,3 @@
-.vscode/
 server/src/defines.h
 test_client/src/defines.h
 imgui.ini
