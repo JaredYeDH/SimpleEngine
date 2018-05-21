@@ -47,7 +47,7 @@ m_Enemies(10,nullptr)
 	AddEnemy(8, f(4, 100.0f / 640 * SCREEN_WIDTH, 270.0f / 480 * SCREEN_HEIGHT, L"\u654c\u65b9\u7ec408"));
 	AddEnemy(9, f(4, 340.0f / 640 * SCREEN_WIDTH, 150.0f / 480 * SCREEN_HEIGHT, L"\u654c\u65b9\u7ec409"));
 
-	std::shared_ptr<Sprite2> sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::ADDONWDF, 0x708C11A0);
+	Sprite2* sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::ADDONWDF, 0x708C11A0);
 	FrameAnimation combatBG(sp);
 	RENDERER_2D_INSTANCE->AddObject(new Image(
 		combatBG.GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))

@@ -264,7 +264,7 @@ void TextRenderer::RenderFontText(std::string path,std::wstring text, GLfloat x,
 	shader->Unbind();
 }
 
-void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y);
+void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y)
 {
 	RenderFontText( Environment::GetFontPath("msyh.ttf"), text,
 	 x,y,0.35,	glm::vec3(1.0f, 1.0f,1.0f) );

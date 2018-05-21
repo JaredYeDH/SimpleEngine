@@ -63,22 +63,18 @@ void ResourceManager::Clear()
         // glDeleteTextures(1, &(iter.second.GetTextureID()));
 }
 
-std::shared_ptr<Sprite2> ResourceManager::LoadWdfSprite(uint32 wasID)
+Sprite2* ResourceManager::LoadWdfSprite(uint32 wasID)
 {
-    if(m_WDFSpriteCache.find(wasID) == m_WDFSpriteCache.end())
-    {
-        m_WDFSpriteCache[wasID]=m_ShapeWdfPtr->LoadSprite(wasID);
-    }
-	return m_WDFSpriteCache[wasID];
+	return m_ShapeWdfPtr->LoadSprite(wasID);
 }
 
 static std::vector<String> s_PackToName = {"addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf"};
 static std::map<int,NetEase::WDF*> s_Loaders;
-std::shared_ptr<Sprite2> ResourceManager::LoadWASSprite(int pack, uint32 wasId)
+Sprite2* ResourceManager::LoadWASSprite(int pack, uint32 wasId)
 {
     if(pack == 6)
     {
-        static auto* loader =new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
+        static auto* loader = new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
         return loader->LoadSprite(wasId);
     }
     else
@@ -97,13 +93,9 @@ void ResourceManager::SaveWdfSprite(uint32 wasId)
     m_ShapeWdfPtr->LoadSprite(wasId)->SaveImage(0);
 }
 
-std::shared_ptr<Sprite2> ResourceManager::LoadWd3Sprite(uint32 wasID)
+Sprite2* ResourceManager::LoadWd3Sprite(uint32 wasID)
 {
-    if(m_WD3SpriteCache.find(wasID) == m_WD3SpriteCache.end())
-    {
-        m_WD3SpriteCache[wasID]=m_ShapeWd3Ptr->LoadSprite(wasID);
-    }
-	return m_WD3SpriteCache[wasID];
+	return m_ShapeWd3Ptr->LoadSprite(wasID);
 }
 
 

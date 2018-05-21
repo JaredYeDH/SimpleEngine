@@ -22,7 +22,7 @@ public:
 		S_W = 1,
 	};
 
-	FrameAnimation(std::shared_ptr<Sprite2> sprite);
+	FrameAnimation(Sprite2* sprite);
 	FrameAnimation();
 	FrameAnimation& operator=(const FrameAnimation& rhs);
 	~FrameAnimation();
@@ -62,8 +62,8 @@ public:
 	int GetSpritesCount(){ return m_Sprites.size();};
 	void SetPivotPos(Pos pos)
 	{
-		m_Pos.x = pos.x -m_Width/2;
-		m_Pos.y = pos.y -m_Height/2;
+		m_Pos.x =static_cast<int>( pos.x -m_Width/2);
+		m_Pos.y = static_cast<int>(pos.y -m_Height/2);
 	}
 	void OnUpdate();
 	void Draw();

@@ -19,11 +19,11 @@ void SwitchFrameAnimation()
 	if(id < 0 )return;
 	if(!s_pWDF) return;
 
-	std::shared_ptr<Sprite2>sprite=nullptr;
+	Sprite2* sprite=nullptr;
 	if(s_LoadFrames.count(id) <=0)
 	{
 		sprite = s_pWDF->LoadSprite(id);
-		if(!sprite || sprite->Error){return;} 
+		if(!sprite ){return;} 
 		s_LoadFrames[id] = new FrameAnimation(sprite);
 	}
 	s_FrameAnimation = s_LoadFrames[id];

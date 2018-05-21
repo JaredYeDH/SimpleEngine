@@ -19,12 +19,12 @@ FrameAnimation::FrameAnimation()
 	m_Sprites.clear();
 }
 
-FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
+FrameAnimation::FrameAnimation(Sprite2* sprite)
 :m_Pos({0,0})
 {
 	m_Sprites.clear();
 	m_IsBlankFrame.clear();
-	if(!sprite || sprite->Error) return;
+	if(!sprite ) return;
 	m_LastFrame = -1;
     m_LastNotBlankFrame =0;
 	m_CurrentFrame = 0;
@@ -47,10 +47,11 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Sprite2> sprite)
         String tPath = sprite->mPath+"/"+std::to_string(i);
 		Texture* t = TextureManager::GetInstance()->LoadTexture(
 		tPath,
-		sprite->mWidth,sprite->mHeight,true,(uint8*)&(sprite->mFrames[gpos][cpos].src[0])
+		sprite->mWidth,sprite->mHeight,true,
+			reinterpret_cast<uint8_t*>(sprite->mFrames[i].src.data())
 		);
         m_Sprites.push_back(tPath);
-		m_IsBlankFrame.push_back(sprite->mFrames[gpos][cpos].IsBlank  );
+		m_IsBlankFrame.push_back(sprite->mFrames[i].IsBlank  );
 	}
 	m_bVisible = true;
 	m_bLoop = true;

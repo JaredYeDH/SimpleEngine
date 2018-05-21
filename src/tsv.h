@@ -73,7 +73,7 @@ namespace utils
 			std::cout << std::endl;
 		}
 
-		String val(int row,int col) 
+		String val(size_t row, size_t col)
 		{
             if(row <0 || row >= rows.size() || col < 0 || col >= titles.size())return "";
 			return cols[row][col];

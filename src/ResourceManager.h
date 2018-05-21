@@ -31,10 +31,10 @@ public:
 
 	friend Singleton<ResourceManager>;
 
-	std::shared_ptr<Sprite2> LoadWdfSprite(uint32 wasId);
-	std::shared_ptr<Sprite2> LoadMagicSprite(uint32 wasId);
-	std::shared_ptr<Sprite2> LoadWd3Sprite(uint32 wasId);
-	std::shared_ptr<Sprite2> LoadWASSprite(int pack,uint32 wasId);
+	Sprite2* LoadWdfSprite(uint32 wasId);
+	Sprite2* LoadMagicSprite(uint32 wasId);
+	Sprite2* LoadWd3Sprite(uint32 wasId);
+	Sprite2* LoadWASSprite(int pack,uint32 wasId);
 
 	void SaveWdfSprite(uint32 wasId);
     // Loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
@@ -53,9 +53,7 @@ private:
 	ResourceManager();
 	~ResourceManager();
 
-	std::map<uint32,std::shared_ptr<Sprite2>> m_WDFSpriteCache;
-	std::map<uint32,std::shared_ptr<Sprite2>> m_WD3SpriteCache;
-	
+
 	NetEase::WDF* m_ShapeWdfPtr;
 	NetEase::WDF* m_ShapeWd3Ptr;
 	

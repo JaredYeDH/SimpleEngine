@@ -28,9 +28,9 @@ add_subdirectory(glm)
 
 
 # adding assimp
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Do not build the tools" FORCE)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build the tests" FORCE)
-add_subdirectory(assimp)
+# set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Do not build the tools" FORCE)
+# set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build the tests" FORCE)
+# add_subdirectory(assimp)
 
 # adding freetype
 add_subdirectory(freetype)
