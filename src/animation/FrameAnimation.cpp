@@ -8,41 +8,43 @@ FrameAnimation::FrameAnimation()
 	
 }
 
-FrameAnimation::FrameAnimation(Sprite* sprite)
-:m_pSprite(sprite),
-m_Pos({0,0}),
-m_bIsNextFrameRestart(false),
-m_LastFrame(-1),
-m_LastNotBlankFrame(0),
-m_CurrentFrame(0),
-m_CurrentGroup (0),
-m_GroupFrameCount(0),
+FrameAnimation::FrameAnimation(Sprite* sprite) :
 m_FrameCount(0),
-m_DeltaTime(0),
-m_KeyX (0),
+m_CurrentFrame(0),
+m_LastFrame(-1),
+m_CurrentGroup(0),
+m_GroupFrameCount(0),
+m_KeyX(0),
 m_KeyY(0),
+m_Pos({0}),
 m_Width(0),
 m_Height(0),
-m_bVisible (true),
-m_bLoop (true),
+m_bLoop(true),
+m_bIsNextFrameRestart(false),
+m_DeltaTime(0.),
+m_bVisible(false),
+m_bCurrentFrameChangedInUpdate(false),
+m_LastNotBlankFrame(false),
+m_FrameTime(0),
 m_FrameTimeBase(0),
-m_FrameTime (0)
+m_pSprite(sprite)
 {
 	if (!m_pSprite) return;
 
-	m_GroupFrameCount = sprite->mFrameSize;
-	m_FrameCount = sprite->mFrameSize * sprite->mGroupSize;
+	m_GroupFrameCount = m_pSprite->mFrameSize;
+	m_FrameCount = m_pSprite->mFrames.size();
 	
-	m_KeyX = sprite->mKeyX;
-	m_KeyY = sprite->mKeyY;
-	m_Width = sprite->mWidth;
-	m_Height = sprite->mHeight;
+	m_KeyX = m_pSprite->mKeyX;
+	m_KeyY = m_pSprite->mKeyY;
+	m_Width = m_pSprite->mWidth;
+	m_Height = m_pSprite->mHeight;
 
 	m_bVisible = true;
 	m_bLoop = true;
 	m_FrameTimeBase = 1.0 / 60 * 4 ;
 	m_FrameTime = m_FrameTimeBase;
 }
+
 void FrameAnimation::ResetFrameTimeByGroupCount(int groupCount)
 {
 	m_FrameTime = m_FrameTimeBase * groupCount/ m_GroupFrameCount;
@@ -57,34 +59,32 @@ void FrameAnimation::SetFrameTimeBase(double base)
 
 FrameAnimation& FrameAnimation::operator=(const FrameAnimation& rhs) 
 {
-	this->m_LastFrame = 0;
-	this->m_CurrentFrame = 0;
-	this->m_CurrentGroup = 0;
-	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
 	this->m_FrameCount = rhs.m_FrameCount;
-	this->m_DeltaTime = rhs.m_DeltaTime;
-	this->m_pSprite = rhs.m_pSprite;
-	this->m_bIsNextFrameRestart= rhs.m_bIsNextFrameRestart;
-	
+	this->m_CurrentFrame = rhs.m_CurrentFrame;
+	this->m_LastFrame = rhs.m_LastFrame;
+	this->m_CurrentGroup = rhs.m_CurrentGroup;
+	this->m_GroupFrameCount = rhs.m_GroupFrameCount;
 	this->m_KeyX = rhs.m_KeyX;
 	this->m_KeyY = rhs.m_KeyY;
+	this->m_Pos = rhs.m_Pos;
 	this->m_Width = rhs.m_Width;
 	this->m_Height = rhs.m_Height;
-
-    this->m_bVisible = rhs.m_bVisible;
 	this->m_bLoop = rhs.m_bLoop;
-	this->m_Pos = rhs.m_Pos;
+	this->m_bIsNextFrameRestart = rhs.m_bIsNextFrameRestart;
+	this->m_DeltaTime = rhs.m_DeltaTime;
+	this->m_bVisible = rhs.m_bVisible;
+	this->m_bCurrentFrameChangedInUpdate = rhs.m_bCurrentFrameChangedInUpdate;
+	this->m_LastNotBlankFrame = rhs.m_LastNotBlankFrame;
 	this->m_FrameTime = rhs.m_FrameTime;
+	this->m_FrameTimeBase = rhs.m_FrameTimeBase;
+	this->m_pSprite = rhs.m_pSprite;
 	return *this;
 }
 
 
 FrameAnimation::~FrameAnimation()
 {
-	// for (auto p_texture: m_Textures)
-	// {
-	// 	delete p_texture;
-	// }
+	
 }
 
 String FrameAnimation::GetFramePath(int index)
@@ -230,8 +230,8 @@ void FrameAnimation::Draw()
 		int kx = (m_KeyX - frame.key_x);
 		int ky = (m_KeyY - frame.key_y);
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-			glm::vec2(m_Pos.x + kx, m_Pos.y + ky),
-			glm::vec2(texture->GetWidth(), texture->GetHeight()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+			glm::vec2( m_Pos.x + kx, m_Pos.y + ky),
+			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 	
 }

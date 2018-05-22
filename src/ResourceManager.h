@@ -12,9 +12,7 @@
 #include "Singleton.h"
 #include "core/Texture.h"
 #include "core/Shader.h"
-#include <Sprite.h>
-#include <WDF.h>
-#include <WAS.h>
+#include <NESupport.h>
 
 // A static singleton ResourceManager class that hosts several
 // functions to load Textures and Shaders. Each loaded texture
@@ -54,8 +52,8 @@ private:
 	~ResourceManager();
 
 
-	NetEase::WDF* m_ShapeWdfPtr;
-	NetEase::WDF* m_ShapeWd3Ptr;
+	NE::WDF* m_ShapeWdfPtr;
+	NE::WDF* m_ShapeWd3Ptr;
 	
 	// Resource storage
 	std::map<std::string, Shader*>  Shaders;

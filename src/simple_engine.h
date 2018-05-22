@@ -4,10 +4,7 @@
 #include "Engine.h"
 #include "tsv.h"
 #include "environment.h"
-#include <WDF.h>
-#include <WAS.h>
-#include <MAP.h>
-#include <Sprite.h>
+#include <NESupport.h>
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "TextRenderer.h"

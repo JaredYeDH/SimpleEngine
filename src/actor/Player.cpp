@@ -11,19 +11,24 @@
 #include "../animation/FrameAnimation.h"
 #include "PlayerState.h"
 
+
+	
+
 Player::Player(int roleID):
 m_RoleID(roleID),
+m_NickName(L""),
+// m_HasWeapon(false),
 m_WeaponID(1),
 m_ActionID(1),
-m_HasWeapon(false),
+m_pFSM(nullptr),
+m_Dir(FrameAnimation::S),
 m_IsMove(false),
 m_MoveVelocity(400),
-m_MoveList(),
-m_BackupMoveList(),
-m_AnimDB(),
 m_bInCombat(false),
-m_CombatPos({0.0f,0.0f}),
-m_CombatTargetPos({0.0f,0.0f})
+m_TargetID(-1),
+m_bSkillFrameShow(false),
+m_GameMapPtr(nullptr),
+m_AnimDB()
 {
 	LogInfo();
 	ChangeRole(m_RoleID);
@@ -198,7 +203,6 @@ void Player::OnUpdate(double dt)
 
 void Player::OnDraw(int px,int py)
 {	
-	SpriteRenderer* renderer = SPRITE_RENDERER_INSTANCE;
 	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
 	{
 		auto& player = m_PlayerFrames[m_ActionID];

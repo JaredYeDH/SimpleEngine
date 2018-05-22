@@ -4,7 +4,7 @@
 
 static std::vector<uint32> s_WASIDs;
 static std::map<uint32,String> s_WASIDStrings;
-static NetEase::WDF* s_pWDF;
+static NE::WDF* s_pWDF;
 static FrameAnimation* s_FrameAnimation;
 static std::map<uint32,FrameAnimation*> s_LoadFrames;
 static int s_LastWASIndex = 0;
@@ -17,7 +17,6 @@ void SwitchFrameAnimation()
 	s_LastWASIndex = s_CurrentWASIndex;
 	if(s_CurrentWASIndex >= s_WASIDs.size()) return;
 	auto id = s_WASIDs[s_CurrentWASIndex];
-	if(id < 0 )return;
 	if(!s_pWDF) return;
 
 	Sprite* sprite=nullptr;
@@ -52,7 +51,7 @@ void WASViewerScene::Reset(String wdf)
 		s_pWDF = nullptr;
 	}
 	s_FrameAnimation = nullptr;
-	s_pWDF = new NetEase::WDF(Environment::GetWDFPath(wdf));
+	s_pWDF = new NE::WDF(Environment::GetWDFPath(wdf));
 	s_WASIDs.clear();
 	s_WASIDs = s_pWDF->GetAllWASIDs();
 
@@ -128,10 +127,8 @@ void WASViewerScene::Update()
 				
 			}
 			ImGui::PopItemWidth();	
-		}		
-		
+		}			
 	}
-	double dt = ENGINE_INSTANCE->GetDeltaTime();
 	if(s_FrameAnimation)
 		s_FrameAnimation->OnUpdate();
 	

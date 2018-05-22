@@ -93,35 +93,50 @@ public:
 	std::list<Pos>& GetMoveList() { return m_MoveList;} ;
     std::list<Pos>& GetBackupMoveList(){ return m_BackupMoveList; };
 private:
-	GameMap* m_GameMapPtr;
+	void LogInfo();	
+
+	int m_RoleID;				//current role
+	
+	std::wstring m_NickName;
+
+	// bool m_HasWeapon;
+	
+	int m_WeaponID;				//current weapon
+	int m_ActionID;				//current action
+
 	StateMachine<Player>* m_pFSM;
+
 	std::map<int,FrameAnimation> m_PlayerFrames;
 	std::map<int,FrameAnimation> m_WeaponFrames;
 	FrameAnimation m_SkillFrame;
-	bool m_bSkillFrameShow;
-	std::wstring m_NickName;
-	int m_AnimationState;
-	int m_Dir;
+
 	Pos m_Pos;
-	Pos m_CombatPos;
-	Pos m_CombatPosBackup;
-	Pos m_CombatTargetPos;
+	
     BoxPos m_Box;
 	std::list<Pos> m_MoveList;
     std::list<Pos> m_BackupMoveList;
-	bool m_IsMove;
-	double m_MoveVelocity;
-	bool m_bInCombat;
 
-	int m_RoleID;				//current role
-	int m_ActionID;				//current action
-	int m_WeaponID;				//current weapon
-	bool m_HasWeapon;
+	int m_Dir;
+
+	bool m_IsMove;
+
+	double m_MoveVelocity;
+	
+	
+	bool m_bInCombat;
+	Pos m_CombatPos;
+	Pos m_CombatPosBackup;
+	Pos m_CombatTargetPos;
 	int m_TargetID;
+
+	bool m_bSkillFrameShow;
+
+	
+
+	GameMap* m_GameMapPtr;
 
 	utils::AnimDB m_AnimDB;
 
-	void LogInfo();
 	
 };
 

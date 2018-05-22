@@ -38,7 +38,7 @@ protected:
 	Vec4 color;
 private:
 	bool mVisible;
-	bool mKeyBlock;
+	// bool mKeyBlock;
 };
 
 class Line : public Object2D

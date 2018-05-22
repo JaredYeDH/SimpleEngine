@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <Sprite.h>
+#include "simple_engine.h"
 #include "core/Texture.h"
 #include "TextureManager.h"
 #include <vector>
@@ -18,7 +18,7 @@ public:
 		int height;
 	};
 
-	enum struct Dir : int
+	enum Dir
 	{
 		N = 6,
 		S = 4,
@@ -77,6 +77,9 @@ public:
 	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};
 
 	Bound GetBound() { return Bound{ (int)m_Pos.x, (int)(m_Pos.x + m_Width), (int)m_Pos.y, (int)(m_Pos.y + m_Height) }; }
+	void SetWidth(int w){ m_Width = w;}
+	void SetHeight(int h){m_Height= h;}
+private:
 	int m_FrameCount;
 	int m_CurrentFrame;
 	int m_LastFrame;
@@ -89,14 +92,11 @@ public:
 	int m_Height;
 	bool m_bLoop;
 	bool m_bIsNextFrameRestart;
-
 	double m_DeltaTime;
 	bool m_bVisible;
 	bool m_bCurrentFrameChangedInUpdate;
 	int m_LastNotBlankFrame;
-
 	double m_FrameTime;
 	double m_FrameTimeBase;
-
 	Sprite* m_pSprite;
 };

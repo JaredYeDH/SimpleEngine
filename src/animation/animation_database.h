@@ -25,7 +25,7 @@ namespace utils
             {
                 auto row = role_wasTSV.cols[i];
 
-                int _id = atoi( row[0].c_str());
+                // int _id = atoi( row[0].c_str());
                 int _role_id =  atoi( row[1].c_str());
                 int _action_id =  atoi( row[2].c_str());
                 int _action_weapon_id =  atoi( row[3].c_str());

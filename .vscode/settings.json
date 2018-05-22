@@ -67,6 +67,7 @@
         "sstream": "cpp",
         "strstream": "cpp",
         "cmath": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "numeric": "cpp"
     }
 }

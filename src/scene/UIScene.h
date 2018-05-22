@@ -25,8 +25,8 @@ public:
 	void Update() override;
 	void Draw() override;
 private:
-	int m_State;
-	bool m_bDragStart;
+//	int m_State;
+//	bool m_bDragStart;
 };
 
 

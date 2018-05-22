@@ -251,10 +251,7 @@ Window.h
 )
 
 set(SRC_EXTERNAL_CPP_FILES
-../external/NESupport/src/Sprite.cpp
-../external/NESupport/src/WAS.cpp
-../external/NESupport/src/WDF.cpp
-../external/NESupport/src/MAP.cpp
+../external/NESupport/src/NESupport.cpp
 )
 
 add_executable(${PROJECT_NAME}

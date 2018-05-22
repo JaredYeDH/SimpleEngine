@@ -8,6 +8,7 @@
 #include "../actor/PlayerState.h"
 #include "../core/Renderer.h"
 
+static	FrameAnimation* s_CombatBG;
 CombatSystem::CombatSystem()
 : m_Ourselves(10,nullptr),
 m_Enemies(10,nullptr)
@@ -48,10 +49,12 @@ m_Enemies(10,nullptr)
 	AddEnemy(9, f(4, 340.0f / 640 * SCREEN_WIDTH, 150.0f / 480 * SCREEN_HEIGHT, L"\u654c\u65b9\u7ec409"));
 
 	Sprite* sp = ResourceManager::GetInstance()->LoadWASSprite(ResourceManager::ADDONWDF, 0x708C11A0);
-	static	FrameAnimation* combatBG=new FrameAnimation(sp);
-	RENDERER_2D_INSTANCE->AddObject(new Image(
-		combatBG->GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
-	);
+	
+	s_CombatBG = new FrameAnimation(sp);
+
+	// RENDERER_2D_INSTANCE->AddObject(new Image(
+	// 	s_CombatBG->GetFramePath(0), Vec2(0, 0), Vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
+	// );
 }
 
 CombatSystem::~CombatSystem()
@@ -80,6 +83,7 @@ void CombatSystem::AddSelf(int pos,Player* self)
 
 void CombatSystem::Update()
 {
+	s_CombatBG->OnUpdate();
 	ProcessInput();
 
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
@@ -88,14 +92,6 @@ void CombatSystem::Update()
 				int enemyID = RANDOM_INSTANCE->NextInt(0,9);
 				auto& self = m_Ourselves[selfID];
 				auto& enemy = m_Enemies[enemyID];
-				int degree = GMath::Astar_GetAngle(self->GetCombatPos().x, self->GetCombatPos().y, 
-				enemy->GetCombatPos().x + 90 , enemy->GetCombatPos().y + 60);
-				int dir = GMath::Astar_GetDir(degree);	
-				double stepRangeX = cos(DegreeToRadian(degree)) * 90;
-				double stepRangeY = sin(DegreeToRadian(degree)) * 90;
-
-				float x = enemy->GetCombatPos().x - stepRangeX;
-				float y = enemy->GetCombatPos().y - stepRangeY;
     			self->SetCombatTargetPos({enemy->GetCombatPos().x + 88 , enemy->GetCombatPos().y + 73});
 				self->SetTargetID(enemyID+10);
 				self->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
@@ -133,7 +129,8 @@ void CombatSystem::Update()
 
 void CombatSystem::Draw()
 {
-	RENDERER_2D_INSTANCE->Render();
+	s_CombatBG->Draw();
+	//RENDERER_2D_INSTANCE->Render();
 
 	for(auto* enemy: m_Enemies)
 	{

@@ -14,8 +14,8 @@ ResourceManager::ResourceManager()
 	:Singleton<ResourceManager>()
 {
 
-	m_ShapeWdfPtr = new NetEase::WDF(Environment::GetWDFPath("shape.wdf"));
-	m_ShapeWd3Ptr = new NetEase::WDF(Environment::GetWDFPath("shape.wd3"));
+	m_ShapeWdfPtr = new NE::WDF(Environment::GetWDFPath("shape.wdf"));
+	m_ShapeWd3Ptr = new NE::WDF(Environment::GetWDFPath("shape.wd3"));
 
 	std::string vPath = Environment::GetAbsPath("Shader/sprite.vs");
 	std::string fPath = Environment::GetAbsPath("Shader/sprite.fs");
@@ -69,22 +69,14 @@ Sprite* ResourceManager::LoadWdfSprite(uint32 wasID)
 }
 
 static std::vector<String> s_PackToName = {"addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf"};
-static std::map<int,NetEase::WDF*> s_Loaders;
+static std::map<int,NE::WDF*> s_Loaders;
 Sprite* ResourceManager::LoadWASSprite(int pack, uint32 wasId)
 {
-    if(pack == 6)
+    if(s_Loaders.find(pack) ==s_Loaders.end()  )
     {
-        static auto* loader = new NetEase::WDF(Environment::GetWDFPath("magic.wdf"));
-        return loader->LoadSprite(wasId);
+        s_Loaders[pack] = new NE::WDF(Environment::GetWDFPath(s_PackToName[pack]));
     }
-    else
-    {
-        if(s_Loaders.find(pack) ==s_Loaders.end()  )
-        {
-            s_Loaders[pack] = new NetEase::WDF(Environment::GetWDFPath(s_PackToName[pack]));
-        }
-        return s_Loaders[pack]->LoadSprite(wasId);
-    }
+    return s_Loaders[pack]->LoadSprite(wasId);
 }
 
 

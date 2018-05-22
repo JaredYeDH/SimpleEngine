@@ -7,7 +7,7 @@ GameMap::GameMap(uint32 mapId)
 {
 	std::string fileName = Environment::GetMapPath(std::to_string(mapId));
 
-	mXyqMap = new NetEase::MAP(fileName);
+	mXyqMap = new NE::MAP(fileName);
 
 	mMapWidth = mXyqMap->MapWidth();
 	mMapHeight = mXyqMap->MapHeight();
@@ -81,7 +81,7 @@ void GameMap::clamp(int val, int min, int max)
 	if (val > max) val = max;
 }
 
-NetEase::MAP* GameMap::GetMapPtr()
+NE::MAP* GameMap::GetMapPtr()
 {
 	return mXyqMap;
 }
@@ -237,10 +237,10 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
             currentNode=lastNextNode;
             smoothMoveList.push_back(moveList[currentNode]);
         }
-        for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
-            Pos node = *i;
+        // for(auto i=smoothMoveList.begin(); i != smoothMoveList.end(); i++){
+            // Pos node = *i;
             // cout << "smoothNode : (" << node.x << "," << node.y << ")" << endl;  
-        }
+        // }
     }
 	return smoothMoveList;
 
@@ -383,7 +383,7 @@ void GameMap::DrawMask(int playerX, int playerY)
 	
 	for (int m = 0; m < mXyqMap->MaskSize(); m++)
 	{
-		NetEase::MaskInfo& info = mXyqMap->GetMask(m);
+		NE::MaskInfo& info = mXyqMap->GetMask(m);
 		int x = info.StartX;
 		int y = info.StartY;
 		int w = info.Width;

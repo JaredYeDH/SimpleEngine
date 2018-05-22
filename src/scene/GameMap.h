@@ -19,7 +19,7 @@ public:
 
 	~GameMap();
 	std::list<Pos> Move(int sx, int sy, int ex, int ey);
-	NetEase::MAP* GetMapPtr();
+	NE::MAP* GetMapPtr();
 	void clamp(int val, int min, int max);
 	Astar* GetAstar() { return mAstar; };
 	int GetRowCount() { return mRow; };
@@ -49,7 +49,7 @@ private:
 	int mMapTileCoef;
 	int mRow;
 	int mCol;
-	NetEase::MAP* mXyqMap;
+	NE::MAP* mXyqMap;
 	Astar* mAstar;
 
 };

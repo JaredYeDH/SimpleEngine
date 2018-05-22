@@ -5,16 +5,15 @@
 #include "../Window.h"
 #include "../TextureManager.h"
 Graphics2D::Graphics2D()
-:m_SpriteVertices({
+:m_SpriteVertices({{
         // Pos      // Tex
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
-})
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 0.0
+}}) //use {{}} make compiler happy
 {
     String  vPath, fPath;
     vPath = Environment::GetShaderPath("LineShader.vs");
@@ -136,7 +135,7 @@ void Graphics2D::DrawCircle(const Circle& circle )
     int x = circle.T().center.x;
     int y = circle.T().center.y;
     int vecSize = 36+1;
-    int doubleSize = vecSize * 2;
+    // int doubleSize = vecSize * 2;
     GLfloat vertices[(36 + 1) * 2];
     GLfloat doublePi = 2.0f * glm::pi<float>();
     for (int i = 0; i < vecSize; i++)
@@ -167,7 +166,7 @@ void Graphics2D::DrawImage(const Image& image)
         Vec3 pos = image.T().pos;
         Vec2 size = image.T().size;
         Vec3 rotation = image.T().rotation;
-        Vec4 color = image.Color();
+        // Vec4 color = image.Color();
         
         Mat4 model;
         model = glm::translate(model, pos);

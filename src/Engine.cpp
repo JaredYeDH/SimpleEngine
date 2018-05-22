@@ -10,7 +10,7 @@
 
 
 Engine::Engine()
-:m_LastTime(0),m_DeltaTime(0)
+:m_DeltaTime(0),m_LastTime(0)
 {
 	
 }

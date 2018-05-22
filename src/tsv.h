@@ -73,11 +73,17 @@ namespace utils
 			std::cout << std::endl;
 		}
 
-		String val(size_t row, size_t col)
+		String val(int row, int col)
 		{
-            if(row <0 || row >= rows.size() || col < 0 || col >= titles.size())return "";
-			return cols[row][col];
+			auto it = cols.find(row);
+			if(it == cols.end()) return "";
+			if(col >=0 && col < it->second.size())
+			{
+				return it->second[col];
+			}
+			return "";
 		}
+
 		std::vector<String> query(int id)
 		{
 			return cols[id-1];

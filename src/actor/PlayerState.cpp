@@ -118,8 +118,6 @@ void PlayerCombatMoveState::Enter(Player* player)
 	
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
-    Pos combatPos =player->GetCombatPos();
-    Pos targetPos =player->GetCombatTargetPos();
     
 	double dist_sqr = player->GetCombatDistSquare();
 	double d = std::sqrt(dist_sqr) *1.0 / playerFrame->GetGroupFrameCount();
@@ -135,7 +133,7 @@ void PlayerCombatMoveState::Execute(Player* player)
 	double dt = ENGINE_INSTANCE->GetDeltaTime(); 
 	double localVelocity = player->GetVelocity()*dt;
     Pos combatPos =player->GetCombatPos();
-    Pos targetPos =player->GetCombatTargetPos();
+    
     double dist_sqr = player->GetCombatDistSquare();
 	if (dist_sqr > localVelocity*localVelocity) {
 		int degree = player->GetCombatAngle() ;
@@ -172,7 +170,7 @@ void PlayerCombatAttackState::Execute(Player* player)
 	if(player->GetPlayerFrames().find(6)!= player->GetPlayerFrames().end() )
 	{
 		auto* playerFrame = player->GetCurrentPlayerFrame();
-		auto* weaponFrame = player->GetCurrentWeaponFrame();
+
 		
 		if(playerFrame->IsCurrentFrameChangedInUpdate() && (playerFrame->GetLastFrame() % playerFrame->GetGroupFrameCount()) == (int)(playerFrame->GetGroupFrameCount()*0.65))
 		{
@@ -245,7 +243,7 @@ void PlayerCombatBeAttackedState::Execute(Player* player)
 	if(player->GetPlayerFrames().find(11)!= player->GetPlayerFrames().end() )
 	{
 		auto* playerFrame = player->GetCurrentPlayerFrame();
-		auto* weaponFrame = player->GetCurrentWeaponFrame();
+
 		
 		if(playerFrame->IsNextFrameRestart())
 		{
@@ -257,7 +255,7 @@ void PlayerCombatBeAttackedState::Execute(Player* player)
 
 void PlayerCombatBeCastAttackedState::Enter(Player* player) 
 {
-	auto* playerFrame = player->GetCurrentPlayerFrame();
+
 	FrameAnimation* frame = SKILL_MANAGER_INSTANCE->GetRandomSkill();
 	frame->SetFrameTimeBase(1.0 / 60 * 4 );
 	//int x = std::floor(player->GetCombatPos().x - frame->GetKeyX());
@@ -314,7 +312,7 @@ void PlayerCombatCastAttackState::Execute(Player* player)
 	{
 		
 		auto* playerFrame = player->GetCurrentPlayerFrame();
-		auto* weaponFrame = player->GetCurrentWeaponFrame();
+		
 		if(playerFrame->IsCurrentFrameChangedInUpdate() && playerFrame->GetLastFrame() % playerFrame->GetGroupFrameCount()== playerFrame->GetGroupFrameCount()/3)
 		{
 			SKILL_MANAGER_INSTANCE->SetRandomSkillID();
