@@ -19,7 +19,7 @@ add_subdirectory(glew-cmake)
 # adding glfw
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Do not build the GLFW example programs" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "Do not build the GLFW tests programs" FORCE)
-set(GLFW_INSTALL OFF CACHE STRING "" FORCE)
+set(GLFW_INSTALL ON CACHE STRING "" FORCE)
 add_subdirectory(glfw)
 
 

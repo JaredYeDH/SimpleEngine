@@ -24,7 +24,7 @@ public:
 
 	void SetRandomSkillID(){ 
 
-		m_RandomIndex=RANDOM_INSTANCE->NextInt(0,m_Skills.size()-1);
+		m_RandomIndex=RANDOM_INSTANCE->NextInt(0,static_cast<int>( m_Skills.size()-1));
 	};
 
 protected:

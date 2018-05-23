@@ -49,8 +49,8 @@ public:
 	double GetX() { return m_Pos.x; }
 	double GetY() { return m_Pos.y; }
 
-	int GetBoxX() { return m_Pos.x/20; }
-	int GetBoxY() { return m_Pos.y/20; }
+	int GetBoxX() { return static_cast<int>(m_Pos.x/20); }
+	int GetBoxY() { return static_cast<int>(m_Pos.y/20); }
 
 	void SetX(double x) { m_Pos.x = x; }
 	void SetY(double y) { m_Pos.y = y; }

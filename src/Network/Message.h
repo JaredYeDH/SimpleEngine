@@ -34,7 +34,7 @@ public:
 		return m_Data;
 	}
 
-	int Length() const
+	size_t Length() const
 	{
 		return HEADER_LEN + m_BodyLength;
 	}
@@ -47,7 +47,7 @@ public:
 		return m_Data + HEADER_LEN;
 	}
 
-	int BodyLength() const
+	size_t BodyLength() const
 	{
 		return m_BodyLength;
 	}
@@ -82,7 +82,7 @@ public:
 
 	virtual void EncodeBody() = 0;
 	virtual void DecodeBody() = 0;
-	int m_BodyLength;
+	size_t m_BodyLength;
 private:
 	
 	char m_Data[MAX_BODY_LEN+HEADER_LEN];
@@ -147,7 +147,7 @@ private:
 
 	void PutString(std::string s)
 	{
-		int len = strlen(s.c_str());
+		size_t len = strlen(s.c_str());
 		char* body = Body();
 		std::memcpy(body + m_BodyLength, s.c_str(), len);
 		m_BodyLength += len;

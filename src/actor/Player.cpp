@@ -223,7 +223,11 @@ void Player::OnDraw(int px,int py)
 		if(!m_NickName.empty())
 		{
 			auto green = glm::vec3(115/255.0f,1.0f,137/255.0f);
-			TextRenderer::GetInstance()->RenderText(m_NickName,px - m_NickName.length()*1.8,SCREEN_HEIGHT-py-32,0.5f,green);
+			TextRenderer::GetInstance()->RenderText(m_NickName, 
+				static_cast<GLfloat>(px- m_NickName.length()*1.8),
+				static_cast<GLfloat>(SCREEN_HEIGHT-py-32.0),
+				0.5,
+				green);
 		}
 		if(m_bSkillFrameShow)
 		{

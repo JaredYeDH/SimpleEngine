@@ -26,6 +26,7 @@ add_definitions(
   -DTW_NO_DIRECT3D
   -DGLEW_STATIC
   -D_CRT_SECURE_NO_WARNINGS
+  -D_WIN32_WINNT=0x0501
 )
 
 if(WIN32)

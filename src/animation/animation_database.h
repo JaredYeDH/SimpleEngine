@@ -21,7 +21,8 @@ namespace utils
 	public:
 		uint32 query(int role_id,int action_id  ,int action_weapon_id,int weapon_id)
 		{
-            for(size_t i=0;i<role_wasTSV.rows.size()-1;i++)
+			int count = static_cast<int>( role_wasTSV.rows.size() - 1);
+            for(int i=0;i< count;i++)
             {
                 auto row = role_wasTSV.cols[i];
 
