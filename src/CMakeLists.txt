@@ -48,12 +48,12 @@ link_directories(
 )
 
 if(WIN32)
-  set(ASSIMP_LIB assimp-vc120-mt)
-  set(FREETYPE_LIB freetype)
+  set(ASSIMP_LIB assimp-vc140-mt)
 elseif(UNIX)
   set(ASSIMP_LIB assimp)
-  set(FREETYPE_LIB freetyped)
 endif(WIN32)
+
+set(FREETYPE_LIB freetyped)
 
 set(COMMON_LIBS 
   glfw3
